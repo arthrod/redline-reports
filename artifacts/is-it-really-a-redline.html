@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Is it really a redline? · jubarte</title>
+<meta name="description" content="Drop a Word file and see what Word sees: tracked changes by author, comments still inside, and markup that only looks tracked. Nothing is uploaded.">
+<style>
+:root{
+  color-scheme: light dark;
+  --paper: light-dark(oklch(97% 0.003 106.4), oklch(20% 0.023 249));
+  --ink: light-dark(oklch(18.2% 0 0), oklch(96.2% 0.008 241.7));
+  --lead: light-dark(oklch(21.8% 0 0), oklch(79.1% 0.094 237.6));
+  --lead-pressed: light-dark(oklch(0% 0 0), oklch(86.2% 0.065 236));
+  --on-deep: light-dark(oklch(100% 0 0), oklch(22.7% 0.038 244.5));
+  --muted: light-dark(oklch(42% 0.005 106.6), oklch(74% 0.028 244.6));
+  --hairline: light-dark(oklch(87.5% 0.005 106.5), oklch(33.4% 0.039 250.5));
+  --hairline-strong: light-dark(oklch(73.3% 0.007 106.6), oklch(43.6% 0.043 246.4));
+  --surface: light-dark(oklch(94.2% 0.004 106.5), oklch(23.9% 0.026 249));
+  --hover: light-dark(oklch(92.4% 0.005 106.5), oklch(27.1% 0.029 246.9));
+  --mark: light-dark(oklch(91.6% 0.128 94.1), oklch(40.5% 0.075 243));
+  --mark-soft: light-dark(oklch(96.2% 0.062 95.4), oklch(28.4% 0.046 245.3));
+  --ins: light-dark(oklch(45.3% 0.209 262), oklch(83.2% 0.087 249.4));
+  --ins-wash: light-dark(oklch(92.8% 0.034 267.6), oklch(30.6% 0.071 253.5));
+  --del: light-dark(oklch(52.7% 0.199 27.5), oklch(79.4% 0.119 30));
+  --del-wash: light-dark(oklch(93.6% 0.032 17.7), oklch(29.3% 0.073 28.4));
+  --move: light-dark(oklch(51% 0.13 150.7), oklch(81.9% 0.108 163.1));
+  --move-wash: light-dark(oklch(94.4% 0.031 154.2), oklch(31.8% 0.055 162.9));
+  --sans: "Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --serif: "Source Serif 4", "Iowan Old Style", "Palatino Linotype", Georgia, serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 16px/1.6 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+.label{font:400 11px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+a{color:inherit;text-underline-offset:3px}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:2px solid var(--ins);outline-offset:2px;border-radius:3px}
+code,kbd{font:400 12.5px/1.6 var(--mono)}
+header.top{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;border-bottom:1px solid var(--hairline)}
+.brand{font:700 17px/1 var(--sans);letter-spacing:-.02em;text-decoration:none}
+.brand span{font-weight:400;color:var(--muted)}
+h1{font:700 clamp(38px,6vw,68px)/1.06 var(--sans);letter-spacing:-.034em;margin:56px 0 18px;text-wrap:balance}
+h1 mark,.hl{background:var(--mark);color:light-dark(oklch(0% 0 0),oklch(96.2% 0.008 241.7));padding:0 .12em;border-radius:3px}
+.lead{font-size:18px;line-height:1.55;max-width:62ch;margin:0 0 32px;color:var(--ink)}
+h2{font:700 clamp(26px,3.4vw,36px)/1.1 var(--sans);letter-spacing:-.026em;margin:0 0 10px;text-wrap:balance}
+h3{font:600 18px/1.3 var(--sans);letter-spacing:-.01em;margin:0 0 8px}
+section{padding:56px 0;border-top:1px solid var(--hairline)}
+section.first{border-top:0;padding-top:0}
+p{margin:0 0 14px;max-width:68ch}
+.muted{color:var(--muted)}
+
+/* drop zone */
+.drop{display:grid;place-items:center;text-align:center;gap:14px;padding:44px 24px;border:1px dashed var(--hairline-strong);border-radius:6px;background:var(--surface);transition:background .15s,border-color .15s}
+.drop.over{background:var(--mark-soft);border-color:var(--ink)}
+.drop p{margin:0}
+.btn{display:inline-flex;align-items:center;gap:8px;font:600 15px/1 var(--sans);padding:12px 20px;border-radius:6px;border:1px solid var(--lead);background:var(--lead);color:var(--on-deep);cursor:pointer;text-decoration:none}
+.btn:hover{background:var(--lead-pressed);border-color:var(--lead-pressed)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--hairline-strong)}
+.btn.ghost:hover{background:var(--hover)}
+.btn input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.promise{display:flex;gap:8px;align-items:baseline;justify-content:center;flex-wrap:wrap}
+#status{min-height:1.6em;margin:14px 0 0}
+#status.err{color:var(--del);font-weight:600}
+
+/* verdict */
+#out[hidden]{display:none}
+.verdict{margin:36px 0 0;padding:22px 24px;border:1px solid var(--hairline-strong);border-radius:6px;background:var(--paper)}
+.verdict.warn{border-color:var(--del);background:var(--del-wash)}
+.verdict.good{border-color:var(--ins);background:var(--ins-wash)}
+.verdict .big{font:700 clamp(22px,2.8vw,30px)/1.2 var(--sans);letter-spacing:-.02em;margin:6px 0 6px;text-wrap:balance}
+.verdict p{margin:0;max-width:74ch}
+.fname{overflow-wrap:anywhere}
+
+.cells{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--hairline);border-radius:6px;overflow:hidden;margin:18px 0 0}
+.cell{padding:20px 20px 22px;border-right:1px solid var(--hairline);min-width:0}
+.cell:last-child{border-right:0}
+.cell .n{font:700 40px/1 var(--mono);letter-spacing:-.04em;margin:10px 0 6px;font-variant-numeric:tabular-nums}
+.cell .d{font-size:14px;line-height:1.45;color:var(--muted)}
+.cell.alert .n{color:var(--del)}
+@media (max-width:760px){.cells{grid-template-columns:1fr 1fr}.cell:nth-child(2){border-right:0}.cell:nth-child(-n+2){border-bottom:1px solid var(--hairline)}}
+
+.block{margin-top:44px}
+.tablewrap{overflow-x:auto;border:1px solid var(--hairline);border-radius:6px}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{padding:10px 14px;text-align:right;border-bottom:1px solid var(--hairline);white-space:nowrap;font-variant-numeric:tabular-nums}
+th:first-child,td:first-child{text-align:left;white-space:normal;min-width:170px}
+thead th{font:400 11px/1.4 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:var(--surface)}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-family:var(--mono);font-size:13.5px}
+
+/* the page */
+.page{background:#fff;color:#161616;border:1px solid var(--hairline);border-radius:4px;padding:34px clamp(18px,5vw,56px);font:400 16px/1.7 var(--serif);max-height:560px;overflow:auto}
+.page p{max-width:none;margin:0 0 14px}
+.page p:last-child{margin-bottom:0}
+.page .pn{font:400 10.5px/1 var(--mono);letter-spacing:.08em;color:#7a7a7a;margin-right:8px;user-select:none}
+.page ins{color:oklch(45.3% 0.209 262);text-decoration:underline;text-decoration-thickness:1.5px;text-underline-offset:3px;background:oklch(92.8% 0.034 267.6 / .55)}
+.page del{color:oklch(52.7% 0.199 27.5);text-decoration:line-through;background:oklch(93.6% 0.032 17.7 / .55)}
+.page .mv{color:oklch(45% 0.13 150.7);background:oklch(94.4% 0.031 154.2 / .7)}
+.page .mv.from{text-decoration:line-through double}
+.page .mv.to{text-decoration:underline double;text-underline-offset:3px}
+.page .fake{outline:1.5px dashed oklch(52.7% 0.199 27.5);outline-offset:1px;background:oklch(96.2% 0.062 95.4)}
+.page .fake.s{text-decoration:line-through}
+.page .fake.u{text-decoration:underline}
+.page .hid{background:#161616;color:#fff;padding:0 3px;border-radius:2px;font-style:italic}
+.page .fmt{border-bottom:2px dotted oklch(45% 0.13 150.7)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;margin:12px 0 0;font-size:13.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;padding:0 5px;border-radius:2px;font-family:var(--serif);font-size:14px}
+.sw.i{color:var(--ins);background:var(--ins-wash);text-decoration:underline}
+.sw.d{color:var(--del);background:var(--del-wash);text-decoration:line-through}
+.sw.m{color:var(--move);background:var(--move-wash);text-decoration:underline double}
+.sw.f{outline:1.5px dashed var(--del);background:var(--mark-soft);color:var(--ink);text-decoration:line-through}
+.sw.h{background:var(--ink);color:var(--paper);font-style:italic}
+
+ul.plain{list-style:none;margin:0;padding:0;border:1px solid var(--hairline);border-radius:6px}
+ul.plain li{padding:12px 16px;border-bottom:1px solid var(--hairline);display:grid;grid-template-columns:minmax(120px,220px) 1fr;gap:6px 18px;align-items:baseline}
+ul.plain li:last-child{border-bottom:0}
+ul.plain .k{font:400 11px/1.5 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+ul.plain .v{overflow-wrap:anywhere}
+ul.plain .v q{font-family:var(--serif);quotes:"\201C" "\201D"}
+@media (max-width:620px){ul.plain li{grid-template-columns:1fr}}
+
+pre{margin:0;padding:14px 16px;background:var(--surface);border:1px solid var(--hairline);border-radius:6px;overflow-x:auto;font:400 12.5px/1.75 var(--mono)}
+pre .c{color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:36px}
+.two>*{min-width:0}
+@media (max-width:820px){.two{grid-template-columns:minmax(0,1fr)}}
+
+/* measured */
+.bars{display:grid;gap:26px;margin-top:22px}
+.bar h3{margin-bottom:2px}
+.bar .sub{font-size:14px;color:var(--muted);margin:0 0 10px}
+.row{display:grid;grid-template-columns:92px 1fr 84px;gap:12px;align-items:center;margin:6px 0}
+.row .who{font:400 11px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.track{height:14px;background:var(--surface);border-radius:2px;overflow:hidden}
+.fill{height:100%;background:var(--hairline-strong);border-radius:2px}
+.row.j .fill{background:var(--ink)}
+.row .val{font:400 13.5px/1 var(--mono);text-align:right;font-variant-numeric:tabular-nums}
+.delta{display:inline-block;font:400 12px/1 var(--mono);padding:5px 8px;border-radius:6px;background:var(--mark-soft);color:light-dark(oklch(0% 0 0),var(--ink));margin-top:6px}
+.note{font-size:14.5px;color:var(--muted);max-width:74ch}
+footer{padding:36px 0 56px;border-top:1px solid var(--hairline);font-size:14px;color:var(--muted)}
+footer p{max-width:none}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="https://github.com/jandira-tech/jubarte" target="_blank" rel="noopener">jubarte <span>· the redline desk</span></a>
+    <span class="label">Apache-2.0 · runs in this tab</span>
+  </header>
+
+  <main>
+  <section class="first">
+    <h1>Is it <mark>really</mark> a redline?</h1>
+    <p class="lead">Drop a Word file. See what Word sees: every tracked change and who made it, the comments still inside, and markup that only looks tracked. Then see what the file would tell the other side about you.</p>
+
+    <div class="drop" id="drop">
+      <p class="label">.docx · up to 60 MB</p>
+      <div class="actions">
+        <label class="btn" tabindex="0" id="pick">Choose a Word file<input type="file" id="file" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" tabindex="-1"></label>
+        <button class="btn ghost" id="sample" type="button">Try the sample contract</button>
+      </div>
+      <p class="promise muted"><span>Or drag a file here.</span> <span>It is read in this browser tab and is not sent anywhere.</span></p>
+    </div>
+    <p id="status" class="muted" role="status" aria-live="polite"></p>
+
+    <div id="out" hidden>
+      <div class="verdict" id="verdict">
+        <div class="label fname" id="fname"></div>
+        <div class="big" id="vbig"></div>
+        <p id="vtext"></p>
+      </div>
+
+      <div class="cells">
+        <div class="cell"><div class="label">Tracked changes</div><div class="n" id="nTracked">0</div><div class="d" id="dTracked"></div></div>
+        <div class="cell" id="cFake"><div class="label">Looks tracked, is not</div><div class="n" id="nFake">0</div><div class="d" id="dFake"></div></div>
+        <div class="cell"><div class="label">Comments inside</div><div class="n" id="nCom">0</div><div class="d" id="dCom"></div></div>
+        <div class="cell" id="cLeak"><div class="label">Names it discloses</div><div class="n" id="nNames">0</div><div class="d" id="dNames"></div></div>
+      </div>
+
+      <div class="block" id="bAuthors">
+        <h3>Who changed what</h3>
+        <div class="tablewrap"><table>
+          <thead><tr><th>Author</th><th>Inserted</th><th>Deleted</th><th>Moved</th><th>Formatting</th><th>Comments</th><th>First</th><th>Last</th></tr></thead>
+          <tbody id="tAuthors"></tbody>
+        </table></div>
+      </div>
+
+      <div class="block" id="bPage">
+        <h3>The marked paragraphs</h3>
+        <p class="muted" id="pageNote"></p>
+        <div class="page" id="page" tabindex="0" aria-label="Paragraphs that carry markup"></div>
+        <div class="legend" aria-hidden="true">
+          <span><span class="sw i">inserted</span> tracked</span>
+          <span><span class="sw d">deleted</span> tracked</span>
+          <span><span class="sw m">moved</span> tracked</span>
+          <span><span class="sw f">struck</span> formatting only: Word does not track it</span>
+          <span><span class="sw h">hidden</span> hidden text</span>
+        </div>
+      </div>
+
+      <div class="block">
+        <h3>What this file says about you</h3>
+        <ul class="plain" id="leaks"></ul>
+      </div>
+
+      <div class="block two">
+        <div>
+          <h3>Fix it with jubarte</h3>
+          <p class="muted">This page only reads. jubarte is the engine that writes: one free program, no Word needed.</p>
+          <pre id="cmds"></pre>
+        </div>
+        <div>
+          <h3>Or ask your agent</h3>
+          <p class="muted">Add jubarte to Claude Code or Codex once, then ask in plain words.</p>
+          <pre><span class="c"># Claude Code</span>
+claude mcp add --transport stdio jubarte --scope project \
+  -- uvx --from 'jubarte-docx[mcp]' jubarte-mcp --root .
+<span class="c"># Codex</span>
+codex mcp add jubarte \
+  -- uvx --from 'jubarte-docx[mcp]' jubarte-mcp --root .</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="label">Why this page exists</div>
+    <h2>One benchmark "redline" had no tracked changes in it.</h2>
+    <p>We ran AI agents on two public legal benchmarks, Crosby's RedlineBench and Harvey's Legal Agent Benchmark. In one delivered file, old words were struck through and new ones sat beside them. Inside, Word had recorded <span class="hl">39 runs of strikethrough formatting and no insertions or deletions</span>. Accept All does nothing to a file like that. The grader reads only the text, and gave it 0.90 out of 1.</p>
+    <p>In another, the agent accepted the other side's markup and re-issued its own. All 182 insertions carried one name, and nobody could see any longer what the counterparty had proposed.</p>
+    <p class="note">Both files came from the benchmark's own tooling. The same tasks done with jubarte produced 38 tracked insertions and 39 deletions in the first case, and kept 191 of the counterparty's changes beside 89 of ours in the second.</p>
+  </section>
+
+  <section>
+    <div class="label">What we measured</div>
+    <h2>Same score. Half the time on one benchmark, an eighth less on the other.</h2>
+    <p>Each task was run twice with the same model, brief and grader: once with the benchmark's own Word tools, once with jubarte in their place. We hoped the score would rise. It did not. The cost fell.</p>
+    <div class="two">
+      <div class="bars" id="barsA"></div>
+      <div class="bars" id="barsB"></div>
+    </div>
+    <p class="note" style="margin-top:26px">RedlineBench: DeepSeek-V4.1-Flash in Claude Code, 127 held-out tasks for time and 134 for score and tokens, one judge model. Harvey: 90 paired redline tasks, same model. Differences in score are inside the noise of the graders. One early run, Claude Haiku 5.5 on jubarte 0.12, was 2 minutes slower than its control; every run since 0.14 was faster. Runs used jubarte 0.12 to 0.16, not 0.19. No frontier model was tested.</p>
+  </section>
+  </main>
+
+  <footer>
+    <p><strong>jubarte</strong> reads, edits, redlines and renders Word documents without Word. Apache-2.0 from version 0.19.0. <a href="https://github.com/jandira-tech/jubarte" target="_blank" rel="noopener">github.com/jandira-tech/jubarte</a></p>
+    <p>This page reads the file with your browser's own unzip and XML parser. It makes no network request, stores nothing, and is not legal advice. It reports what is in the file; whether to send it is your call. Not affiliated with Microsoft, Crosby or Harvey.</p>
+  </footer>
+</div>
+
+<script>
+(() => {
+'use strict';
+const W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+const W15 = 'http://schemas.microsoft.com/office/word/2012/wordml';
+const MAX_FILE = 60 * 1024 * 1024, MAX_PART = 120 * 1024 * 1024, MAX_PARAS = 80;
+const SAMPLE = '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';
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+const plural = (n, one, many) => n + ' ' + (n === 1 ? one : (many || one + 's'));
+
+/* ---------- zip ---------- */
+async function unzip(buf) {
+  const dv = new DataView(buf), u8 = new Uint8Array(buf);
+  let eocd = -1;
+  for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 66000); i--) {
+    if (dv.getUint32(i, true) === 0x06054b50) { eocd = i; break; }
+  }
+  if (eocd < 0) throw new Error('This is not a .docx file (no zip directory found).');
+  const count = dv.getUint16(eocd + 10, true);
+  let p = dv.getUint32(eocd + 16, true);
+  if (count === 0xffff || p === 0xffffffff) throw new Error('This file uses the zip64 format, which this page cannot read.');
+  const td = new TextDecoder('utf-8');
+  const entries = new Map();
+  for (let i = 0; i < count; i++) {
+    if (p + 46 > buf.byteLength || dv.getUint32(p, true) !== 0x02014b50) throw new Error('The zip directory is damaged.');
+    const method = dv.getUint16(p + 10, true), csize = dv.getUint32(p + 20, true), usize = dv.getUint32(p + 24, true);
+    const nlen = dv.getUint16(p + 28, true), xlen = dv.getUint16(p + 30, true), clen = dv.getUint16(p + 32, true);
+    const off = dv.getUint32(p + 42, true);
+    const name = td.decode(u8.subarray(p + 46, p + 46 + nlen));
+    entries.set(name, { method, csize, usize, off });
+    p += 46 + nlen + xlen + clen;
+  }
+  async function read(name) {
+    const e = entries.get(name);
+    if (!e) return null;
+    if (e.usize > MAX_PART) throw new Error('A part of this file is too large to read here: ' + name);
+    if (dv.getUint32(e.off, true) !== 0x04034b50) throw new Error('The zip entry for ' + name + ' is damaged.');
+    const start = e.off + 30 + dv.getUint16(e.off + 26, true) + dv.getUint16(e.off + 28, true);
+    const data = u8.subarray(start, start + e.csize);
+    if (e.method === 0) return new TextDecoder('utf-8').decode(data);
+    if (e.method !== 8) throw new Error('Unsupported compression in ' + name + '.');
+    if (typeof DecompressionStream === 'undefined') throw new Error('This browser is too old to unzip the file. Try a current Chrome, Edge, Firefox or Safari.');
+    const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'));
+    const out = await new Response(stream).arrayBuffer();
+    if (out.byteLength > MAX_PART) throw new Error('A part of this file is too large to read here: ' + name);
+    return new TextDecoder('utf-8').decode(out);
+  }
+  return { names: [...entries.keys()], read };
+}
+const parse = xml => {
+  if (!xml) return null;
+  const d = new DOMParser().parseFromString(xml, 'application/xml');
+  return d.getElementsByTagName('parsererror').length ? null : d;
+};
+
+/* ---------- analysis ---------- */
+const wa = (n, name) => n.getAttributeNS(W, name) || n.getAttribute('w:' + name) || '';
+const isW = (n, name) => n.nodeType === 1 && n.namespaceURI === W && n.localName === name;
+const on = n => { if (!n) return false; const v = wa(n, 'val'); return !(v === '0' || v === 'false' || v === 'none'); };
+const kid = (n, name) => { for (const c of n.children) if (isW(c, name)) return c; return null; };
+const FMT = ['rPrChange','pPrChange','sectPrChange','tblPrChange','tblPrExChange','tcPrChange','trPrChange','tblGridChange','numberingChange','cellIns','cellDel','cellMerge'];
+const TRACK = { ins:'ins', del:'del', moveFrom:'from', moveTo:'to' };
+
+function runText(r) {
+  let s = '';
+  for (const c of r.children) {
+    if (c.namespaceURI !== W) continue;
+    if (c.localName === 't' || c.localName === 'delText') s += c.textContent;
+    else if (c.localName === 'tab') s += '\t';
+    else if (c.localName === 'br' || c.localName === 'cr') s += ' ';
+    else if (c.localName === 'noBreakHyphen') s += '‑';
+  }
+  return s;
+}
+
+function analyse(docs, comments, commentsEx, core, app, settings, people) {
+  const A = new Map();
+  const author = name => {
+    const k = name || '(no name)';
+    if (!A.has(k)) A.set(k, { name: k, ins: 0, del: 0, move: 0, fmt: 0, com: 0, first: '', last: '' });
+    return A.get(k);
+  };
+  const stamp = (a, d) => { if (!d) return; if (!a.first || d < a.first) a.first = d; if (!a.last || d > a.last) a.last = d; };
+  const R = { ins: 0, del: 0, move: 0, fmt: 0, strike: 0, underline: 0, hidden: 0, fakes: [], hiddens: [], paras: [], parasTotal: 0 };
+
+  for (const { part, doc } of docs) {
+    if (!doc) continue;
+    const all = doc.getElementsByTagNameNS(W, '*');
+    for (const n of all) {
+      const ln = n.localName;
+      if (ln === 'ins' || ln === 'del') {
+        const a = author(wa(n, 'author')); a[ln]++; R[ln]++; stamp(a, wa(n, 'date'));
+      } else if (ln === 'moveTo' && wa(n, 'author')) {
+        const a = author(wa(n, 'author')); a.move++; R.move++; stamp(a, wa(n, 'date'));
+      } else if (ln === 'moveFrom' && wa(n, 'author')) {
+        stamp(author(wa(n, 'author')), wa(n, 'date'));
+      } else if (FMT.includes(ln)) {
+        const a = author(wa(n, 'author')); a.fmt++; R.fmt++; stamp(a, wa(n, 'date'));
+      }
+    }
+    for (const p of doc.getElementsByTagNameNS(W, 'p')) {
+      const segs = []; let marked = false;
+      const walk = (node, state) => {
+        for (const c of node.children) {
+          if (c.namespaceURI !== W) { walk(c, state); continue; }
+          const ln = c.localName;
+          if (TRACK[ln] && (ln === 'ins' || ln === 'del' || wa(c, 'author'))) { marked = true; walk(c, { kind: TRACK[ln], who: wa(c, 'author'), link: state.link }); }
+          else if (ln === 'hyperlink') walk(c, { kind: state.kind, who: state.who, link: true });
+          else if (ln === 'r') {
+            const text = runText(c); if (!text) continue;
+            const rp = kid(c, 'rPr');
+            let kind = state.kind, who = state.who, extra = '';
+            if (rp) {
+              if (kid(rp, 'rPrChange')) { marked = true; extra = 'fmt'; }
+              if (!kind) {
+                const struck = on(kid(rp, 'strike')) || on(kid(rp, 'dstrike'));
+                const u = kid(rp, 'u'), col = kid(rp, 'color');
+                const colv = col ? wa(col, 'val').toLowerCase() : '';
+                const coloured = col && colv && colv !== 'auto' && colv !== '000000';
+                const style = kid(rp, 'rStyle');
+                const linkish = state.link || (style && /hyperlink/i.test(wa(style, 'val')));
+                if (on(kid(rp, 'vanish'))) { kind = 'hid'; R.hidden++; R.hiddens.push(text.trim()); marked = true; }
+                else if (struck && text.trim()) { kind = 'fake s'; R.strike++; R.fakes.push({ how: 'Struck through', text: text.trim() }); marked = true; }
+                else if (u && on(u) && coloured && !linkish && text.trim()) { kind = 'fake u'; R.underline++; R.fakes.push({ how: 'Coloured and underlined', text: text.trim() }); marked = true; }
+              }
+            }
+            segs.push({ text, kind, who, extra });
+          } else if (ln !== 'pPr' && ln !== 'rPr') walk(c, state);
+        }
+      };
+      walk(p, { kind: '', who: '', link: false });
+      const pp = kid(p, 'pPr');
+      if (pp) { const rp = kid(pp, 'rPr'); if ((rp && (kid(rp, 'ins') || kid(rp, 'del'))) || kid(pp, 'pPrChange')) marked = true; }
+      if (marked) { R.parasTotal++; if (R.paras.length < MAX_PARAS) R.paras.push({ part, segs }); }
+    }
+  }
+
+  const C = { n: 0, resolved: 0, list: [] };
+  if (comments) for (const c of comments.getElementsByTagNameNS(W, 'comment')) {
+    const a = author(wa(c, 'author')); a.com++; C.n++; stamp(a, wa(c, 'date'));
+    let t = ''; for (const x of c.getElementsByTagNameNS(W, 't')) t += x.textContent;
+    C.list.push({ who: wa(c, 'author') || '(no name)', text: t.trim() });
+  }
+  if (commentsEx) for (const c of commentsEx.getElementsByTagNameNS(W15, 'commentEx')) {
+    if ((c.getAttributeNS(W15, 'done') || c.getAttribute('w15:done')) === '1') C.resolved++;
+  }
+
+  const first = (d, name) => { if (!d) return ''; const n = d.getElementsByTagNameNS('*', name)[0]; return n ? n.textContent.trim() : ''; };
+  const meta = {
+    creator: first(core, 'creator'), lastBy: first(core, 'lastModifiedBy'), revision: first(core, 'revision'),
+    created: first(core, 'created'), modified: first(core, 'modified'),
+    company: first(app, 'Company'), manager: first(app, 'Manager'), template: first(app, 'Template'), minutes: first(app, 'TotalTime'),
+    rsids: settings ? settings.getElementsByTagNameNS(W, 'rsid').length : 0,
+    tracking: settings ? settings.getElementsByTagNameNS(W, 'trackRevisions').length > 0 : false,
+    people: people ? [...people.getElementsByTagNameNS(W15, 'person')].map(p => p.getAttributeNS(W15, 'author') || p.getAttribute('w15:author') || '').filter(Boolean) : []
+  };
+  const names = new Set();
+  for (const a of A.values()) if (a.name !== '(no name)') names.add(a.name);
+  for (const v of [meta.creator, meta.lastBy, meta.manager, meta.company, ...meta.people]) if (v) names.add(v);
+  return { R, C, authors: [...A.values()].sort((x, y) => (y.ins + y.del + y.move + y.fmt + y.com) - (x.ins + x.del + x.move + x.fmt + x.com)), meta, names: [...names] };
+}
+
+/* ---------- render ---------- */
+const day = iso => { if (!iso) return '–'; const d = new Date(iso); return isNaN(d) ? iso.slice(0, 10) : d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' }); };
+const clip = (s, n) => s.length > n ? s.slice(0, n - 1).trimEnd() + '…' : s;
+const sh = s => "'" + String(s).replace(/'/g, "'\\''") + "'";
+
+function render(name, X) {
+  const { R, C, authors, meta, names } = X;
+  const tracked = R.ins + R.del + R.move + R.fmt;
+  const writers = authors.filter(a => a.ins + a.del + a.move + a.fmt > 0).length;
+  const v = $('verdict'); v.className = 'verdict';
+  $('fname').textContent = name;
+  let big, text;
+  if (!tracked && R.strike) {
+    v.classList.add('warn'); big = 'Not a redline.';
+    text = plural(R.strike, 'passage is', 'passages are') + ' struck through with ordinary formatting. Word has no tracked changes in this file, so Accept All does nothing and the struck words stay in the contract.';
+  } else if (!tracked) {
+    big = 'No tracked changes.';
+    text = 'This is a clean document, or every change in it has already been accepted or rejected.' + (R.underline ? ' ' + plural(R.underline, 'passage is', 'passages are') + ' coloured and underlined by formatting, which Word does not track.' : '');
+  } else if (R.strike + R.underline) {
+    v.classList.add('warn'); big = 'A redline, with markup Word does not track.';
+    text = plural(tracked, 'tracked change') + ' by ' + plural(writers, 'author') + ', and ' + plural(R.strike + R.underline, 'passage') + ' marked up with formatting only. Accept All and Reject All will skip ' + (R.strike + R.underline === 1 ? 'that passage' : 'those passages') + '.';
+  } else {
+    v.classList.add('good'); big = 'A real redline.';
+    text = plural(tracked, 'tracked change') + ' by ' + plural(writers, 'author') + '. Word will accept or reject each of them.';
+  }
+  $('vbig').textContent = big; $('vtext').textContent = text;
+
+  $('nTracked').textContent = tracked;
+  $('dTracked').textContent = tracked ? [R.ins && plural(R.ins, 'insertion'), R.del && plural(R.del, 'deletion'), R.move && plural(R.move, 'move'), R.fmt && plural(R.fmt, 'formatting change')].filter(Boolean).join(', ') : 'Nothing for Accept All to act on.';
+  const fake = R.strike + R.underline;
+  $('nFake').textContent = fake; $('cFake').classList.toggle('alert', fake > 0);
+  $('dFake').textContent = fake ? [R.strike && plural(R.strike, 'struck passage'), R.underline && plural(R.underline, 'coloured underline')].filter(Boolean).join(', ') + ', by formatting.' : 'No strikethrough or coloured underline posing as markup.';
+  $('nCom').textContent = C.n;
+  $('dCom').textContent = C.n ? (C.resolved ? C.resolved + ' marked resolved. Resolved comments are still in the file.' : 'They travel with the file unless you remove them.') : 'None.';
+  $('nNames').textContent = names.length; $('cLeak').classList.toggle('alert', R.hidden > 0);
+  $('dNames').textContent = names.length ? clip(names.join(', '), 90) : 'No author or company names found.';
+
+  const tb = $('tAuthors'); tb.replaceChildren();
+  $('bAuthors').hidden = !authors.length;
+  for (const a of authors) {
+    const tr = el('tr'); tr.append(el('td', '', a.name));
+    for (const k of ['ins', 'del', 'move', 'fmt', 'com']) tr.append(el('td', 'num', a[k] || '–'));
+    tr.append(el('td', 'num', day(a.first)), el('td', 'num', day(a.last))); tb.append(tr);
+  }
+
+  const page = $('page'); page.replaceChildren();
+  $('bPage').hidden = !R.paras.length;
+  $('pageNote').textContent = R.parasTotal > R.paras.length ? 'Showing the first ' + R.paras.length + ' of ' + R.parasTotal + ' paragraphs that carry markup.' : plural(R.parasTotal, 'paragraph carries', 'paragraphs carry') + ' markup. Hover a change to see its author.';
+  R.paras.forEach((para, i) => {
+    const p = el('p'); p.append(el('span', 'pn', para.part === 'document' ? '¶' + (i + 1) : para.part));
+    for (const s of para.segs) {
+      let n;
+      if (s.kind === 'ins') n = el('ins', '', s.text);
+      else if (s.kind === 'del') n = el('del', '', s.text);
+      else if (s.kind === 'from' || s.kind === 'to') n = el('span', 'mv ' + s.kind, s.text);
+      else if (s.kind === 'hid') n = el('span', 'hid', s.text);
+      else if (s.kind) n = el('span', s.kind, s.text);
+      else n = el('span', s.extra, s.text);
+      if (s.who) n.title = s.who;
+      else if (s.kind && s.kind.startsWith('fake')) n.title = 'Formatting only: not a tracked change';
+      else if (s.kind === 'hid') n.title = 'Hidden text';
+      p.append(n);
+    }
+    page.append(p);
+  });
+
+  const ul = $('leaks'); ul.replaceChildren();
+  const add = (k, node) => { const li = el('li'); li.append(el('span', 'k', k)); const v = el('span', 'v'); v.append(...[].concat(node)); li.append(v); ul.append(li); };
+  const quote = t => { const q = el('q'); q.textContent = clip(t, 160); return q; };
+  if (R.hidden) add('Hidden text', [plural(R.hidden, 'run') + ' of hidden text. It does not print, and anyone can reveal it. First: ', quote(R.hiddens[0])]);
+  if (R.fakes.length) add('Untracked markup', [R.fakes[0].how + ' by formatting: ', quote(R.fakes[0].text), R.fakes.length > 1 ? ' and ' + (R.fakes.length - 1) + ' more.' : '']);
+  if (C.n) add('Comments', [plural(C.n, 'comment') + '. First, by ' + C.list[0].who + ': ', quote(C.list[0].text || '(empty)')]);
+  if (authors.length) add('Reviewer names', authors.filter(a => a.name !== '(no name)').map(a => a.name).join(' · ') || 'Changes carry no author name.');
+  if (meta.creator || meta.lastBy) add('Created / last saved by', [meta.creator || '–', ' / ', meta.lastBy || '–']);
+  if (meta.company || meta.manager) add('Organisation', [meta.company, meta.manager].filter(Boolean).join(' · '));
+  if (meta.template && !/^normal(\.dotm?)?$/i.test(meta.template)) add('Template', meta.template);
+  if (meta.created || meta.modified) add('Dates', 'Created ' + day(meta.created) + ', last saved ' + day(meta.modified) + (meta.revision ? ', saved ' + (meta.revision === '1' ? 'once' : meta.revision + ' times') : ''));
+  if (meta.minutes && +meta.minutes > 0) add('Editing time', meta.minutes + ' minutes recorded by Word');
+  if (meta.rsids) add('Editing sessions', plural(meta.rsids, 'session id') + '. They show which passages were written in the same sitting.');
+  add('Track Changes switch', meta.tracking ? 'On. New edits made in Word will be tracked.' : 'Off. New edits made in Word will not be tracked.');
+  if (!ul.children.length) add('Nothing found', 'No names, comments or hidden text.');
+
+  const f = sh(name), lines = [];
+  lines.push(['# list every tracked change with its id and author', 'jubarte changes ' + f]);
+  if (tracked) lines.push(['# a clean copy with everything accepted', 'jubarte accept ' + f + ' -o clean.docx']);
+  if (writers > 1) lines.push(['# reject one side only', 'jubarte reject ' + f + ' -o ours.docx --author ' + sh(authors.find(a => a.ins + a.del + a.move + a.fmt > 0).name)]);
+  lines.push(['# will Word open it without a repair prompt?', 'jubarte validate ' + f]);
+  lines.push(['# remove names, history, metadata and comments', 'jubarte scrub ' + f + ' -o to-send.docx']);
+  const pre = $('cmds'); pre.replaceChildren(el('span', 'c', '# cargo install jubarte\n'));
+  for (const [c, cmd] of lines) pre.append(el('span', 'c', c + '\n'), document.createTextNode(cmd + '\n'));
+
+  $('out').hidden = false;
+  v.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+}
+
+/* ---------- load ---------- */
+const status = (t, err) => { const s = $('status'); s.textContent = t; s.className = err ? 'err' : 'muted'; };
+async function load(name, buf) {
+  try {
+    if (buf.byteLength > MAX_FILE) throw new Error('This file is larger than 60 MB.');
+    status('Reading ' + name + '…');
+    const z = await unzip(buf);
+    if (!z.names.includes('word/document.xml')) {
+      throw new Error(/\.doc$/i.test(name) ? 'This is an old .doc file. Save it as .docx in Word first.' : 'This zip is not a Word document (no word/document.xml).');
+    }
+    const parts = [['document', 'word/document.xml']];
+    for (const n of z.names.sort()) {
+      const m = /^word\/(header|footer)(\d*)\.xml$/.exec(n);
+      if (m) parts.push([m[1] + (m[2] || ''), n]);
+      else if (n === 'word/footnotes.xml') parts.push(['footnotes', n]);
+      else if (n === 'word/endnotes.xml') parts.push(['endnotes', n]);
+    }
+    const docs = [];
+    for (const [part, n] of parts) docs.push({ part, doc: parse(await z.read(n)) });
+    if (!docs[0].doc) throw new Error('The main document part could not be parsed.');
+    const g = async n => parse(await z.read(n));
+    const X = analyse(docs, await g('word/comments.xml'), await g('word/commentsExtended.xml'), await g('docProps/core.xml'), await g('docProps/app.xml'), await g('word/settings.xml'), await g('word/people.xml'));
+    render(name, X);
+    status('Read ' + name + ' in this tab. Nothing was uploaded.');
+  } catch (e) {
+    $('out').hidden = true;
+    status(e && e.message ? e.message : 'This file could not be read.', true);
+  }
+}
+const fromFile = f => f && f.arrayBuffer().then(b => load(f.name, b));
+$('file').addEventListener('change', e => { fromFile(e.target.files[0]); e.target.value = ''; });
+$('pick').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); $('file').click(); } });
+$('sample').addEventListener('click', () => {
+  const bin = atob(SAMPLE), u = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+  load('sample-services-agreement.docx', u.buffer);
+});
+const drop = $('drop');
+for (const t of ['dragenter', 'dragover']) addEventListener(t, e => { e.preventDefault(); drop.classList.add('over'); });
+for (const t of ['dragleave', 'drop']) addEventListener(t, e => { e.preventDefault(); if (t === 'drop' || e.relatedTarget === null) drop.classList.remove('over'); });
+addEventListener('drop', e => fromFile(e.dataTransfer && e.dataTransfer.files[0]));
+
+/* ---------- measured ---------- */
+const BARS = {
+  barsA: [
+    { t: 'Score', sub: 'RedlineBench, 134 tasks. Higher is better.', a: 0.494, b: 0.492, max: 1, fmt: v => v.toFixed(3), d: 'a tie' },
+    { t: 'Minutes per round of markup', sub: 'RedlineBench, 127 tasks.', a: 18.6, b: 9.2, fmt: v => v.toFixed(1), d: '−51%' },
+    { t: 'Output tokens per task', sub: 'RedlineBench, 134 tasks.', a: 44800, b: 20400, fmt: v => (v / 1000).toFixed(1) + 'k', d: '−54%' }
+  ],
+  barsB: [
+    { t: 'Score', sub: 'Harvey redline tasks, 90 pairs. Higher is better.', a: 0.936, b: 0.941, max: 1, fmt: v => v.toFixed(3), d: 'a tie' },
+    { t: 'Minutes per task', sub: 'Harvey redline tasks, 90 pairs.', a: 37.2, b: 32.4, fmt: v => v.toFixed(1), d: '−13%' },
+    { t: 'Tokens per task', sub: 'Harvey redline tasks, 90 pairs.', a: 10.4, b: 8.9, fmt: v => v.toFixed(1) + 'M', d: '−14%' }
+  ]
+};
+for (const [id, list] of Object.entries(BARS)) for (const m of list) {
+  const box = el('div', 'bar'); box.append(el('h3', '', m.t), el('p', 'sub', m.sub));
+  const max = m.max || Math.max(m.a, m.b);
+  for (const [who, val, cls] of [['Their tools', m.a, 'row'], ['jubarte', m.b, 'row j']]) {
+    const row = el('div', cls), track = el('div', 'track'), fill = el('div', 'fill');
+    fill.style.width = (100 * val / max).toFixed(1) + '%'; track.append(fill);
+    row.append(el('span', 'who', who), track, el('span', 'val', m.fmt(val))); box.append(row);
+  }
+  box.append(el('span', 'delta', m.d)); $(id).append(box);
+}
+})();
+</script>
+</body>
+</html>
