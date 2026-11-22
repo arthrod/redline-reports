@@ -24,39 +24,58 @@ import numpy as np
 
 SEED = 20261122
 DRAWS = 10_000
+DATA = Path(__file__).resolve().parent.parent / "data" / "task_pairs.csv"
+
+type Pairs = tuple[np.ndarray, np.ndarray]
+type Summary = dict[str, float | int]
 
 
-def summarize(control: np.ndarray, jubarte: np.ndarray) -> dict[str, float | int]:
+def load(path: Path) -> dict[str, Pairs]:
+    """Read the pairs file into {arm: (control scores, jubarte scores)}, in file order."""
+    rows: dict[str, list[tuple[float, float]]] = defaultdict(list)
+    with path.open(newline="") as fh:
+        for r in csv.DictReader(fh):
+            rows[r["arm"]].append((float(r["control"]), float(r["jubarte"])))
+    return {arm: (np.array([c for c, _ in v]), np.array([j for _, j in v])) for arm, v in rows.items()}
+
+
+def _r(x: float) -> float:
+    """Round to 3 decimals; floating-point noise around zero prints as +0.000, a real -0.0004 as -0.000."""
+    return 0.0 if abs(x) < 1e-12 else round(x, 3)
+
+
+def summarize(control: np.ndarray, jubarte: np.ndarray) -> Summary:
+    """Means, paired difference, task-level bootstrap interval and win/loss/tie counts."""
+    if control.shape != jubarte.shape or control.size == 0:
+        raise ValueError("control and jubarte must be non-empty arrays of the same length")
     diff = jubarte - control
     rng = np.random.default_rng(SEED)
     boot = diff[rng.integers(0, len(diff), (DRAWS, len(diff)))].mean(axis=1)
     return {
         "tasks": len(diff),
-        "control": round(float(control.mean()), 3),
-        "jubarte": round(float(jubarte.mean()), 3),
-        "diff": round(float(diff.mean()), 3),
-        "lo": round(float(np.percentile(boot, 2.5)), 3),
-        "hi": round(float(np.percentile(boot, 97.5)), 3),
+        "control": _r(float(control.mean())),
+        "jubarte": _r(float(jubarte.mean())),
+        "diff": _r(float(diff.mean())),
+        "lo": _r(float(np.percentile(boot, 2.5))),
+        "hi": _r(float(np.percentile(boot, 97.5))),
         "wins": int((diff > 0).sum()),
         "losses": int((diff < 0).sum()),
         "ties": int((diff == 0).sum()),
     }
 
 
+def format_line(arm: str, s: Summary) -> str:
+    return (
+        f"{arm}: {s['tasks']} tasks, {s['control']:.3f} vs {s['jubarte']:.3f}, "
+        f"{s['diff']:+.3f} ({s['lo']:+.3f} to {s['hi']:+.3f}), "
+        f"W/L/T {s['wins']}/{s['losses']}/{s['ties']}"
+    )
+
+
 def main(path: Path) -> None:
-    rows: dict[str, list[tuple[float, float]]] = defaultdict(list)
-    with path.open(newline="") as fh:
-        for r in csv.DictReader(fh):
-            rows[r["arm"]].append((float(r["control"]), float(r["jubarte"])))
-    for arm, pairs in rows.items():
-        a = np.array(pairs)
-        s = summarize(a[:, 0], a[:, 1])
-        print(f"{arm}: {s['tasks']} tasks, {s['control']} vs {s['jubarte']}, "
-              f"{s['diff']:+.3f} ({s['lo']:+.3f} to {s['hi']:+.3f}), "
-              f"W/L/T {s['wins']}/{s['losses']}/{s['ties']}")
+    for arm, (control, jubarte) in load(path).items():
+        print(format_line(arm, summarize(control, jubarte)))
 
-
-DATA = Path(__file__).resolve().parent.parent / "data" / "task_pairs.csv"
 
 if __name__ == "__main__":
     main(DATA)
