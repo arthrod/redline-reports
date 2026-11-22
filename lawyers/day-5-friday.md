@@ -14,7 +14,7 @@ Trae's community skill: compares two files and adds comments. No tracked changes
 Grok: a built-in Word skill whose source is not public.
 Z.ai's Z Code: supports skills; I found no Word skill to check.
 
-That gap is the 18.5 minutes against 9.2 from Monday. Without a redline engine, the agent builds one, every task.
+Monday's numbers sit next to that gap: 18.5 minutes a task without a redline engine, 9.2 with one. Those arms ran on different days, so I report the gap, not its cause.
 
 jubarte 0.19 is out under Apache-2.0, so a lab can ship it inside a closed product. I drafted a drop-in skill for each harness that accepts contributions.
 
@@ -40,7 +40,7 @@ The audit, by repository and commit:
 - `xai-org/plugin-marketplace`: no Word plugin. Grok's built-in "Word Documents" skill is described on x.ai; its source is not published.
 - Anthropic's `docx` skill for Claude Code: LibreOffice, Poppler, pandoc and docx-js, about 850 MB together, against 36 MB for jubarte, measured 4 October on Ubuntu 24.04.
 
-In plain English. A skill is a set of instructions and tools an agent loads when a task needs them. When the skill has no redline tool, the model writes the file format itself, which is where the extra time and tokens on Monday came from.
+In plain English. A skill is a set of instructions and tools an agent loads when a task needs them. When the skill has no redline tool, the model writes the file format itself. That was the arm with more time and tokens on Monday; the arms ran on different days, so the comparison does not prove the file format was the cause.
 
 VISUAL SUGGESTIONS:
 7 | AGENTS CHECKED FOR A WORD SKILL | none of the open ones has a command that makes a tracked change

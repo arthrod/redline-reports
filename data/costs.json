@@ -1,4 +1,5 @@
 {
+ "per_task_population": "Top-level *_per_task fields: ds-v12 against the control on all 139 graded tasks. The heldout127 block: the 127 held-out tasks.",
  "archive_deepseek_peak": 702.0,
  "archive_sonnet55": 4839.0,
  "archive_opus55": 9679.0,
@@ -46,6 +47,14 @@
   "sweep140_opus": [
    321.0,
    184.0
+  ],
+  "uncached_in_k": [
+   232.3,
+   163.0
+  ],
+  "cache_share": [
+   0.911,
+   0.884
   ]
  }
 }

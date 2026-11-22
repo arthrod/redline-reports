@@ -80,7 +80,7 @@ On the held-out tasks alone:
 
 Two short study arms are not in the table. `jubarte-study-v13` (0.14.0, 33 tasks, 12 of them development tasks) scored lower: 0.455 against 0.523, −0.068 (−0.120 to −0.019), 7 wins and 16 losses, while still cutting time (8.4 against 19.6 minutes) and input (1.09 M against 2.65 M). It is the one arm whose interval excludes zero. `jubarte-study-v15` (14 tasks) came in at −0.044 (−0.107 to +0.029).
 
-Per-task scores for every arm in this section, the table rows included, are in `data/task_pairs.csv`; `uv run scripts/paired_bootstrap.py` recomputes each score, difference, interval and win/loss count above. The token, time and turn figures in sections 1 and 3 come from `data/deepseek_pairs.csv`, which has a row for each arm above, the held-out ones included. The interval bounds are Monte Carlo estimates and move by up to about 0.003 with the seed; no conclusion changes.
+Per-task scores for every arm in this section, the table rows included, are in `data/task_pairs.csv`; `uv run scripts/paired_bootstrap.py` recomputes each score, difference, interval and win/loss count above. The token, time and turn figures in sections 1 and 3 come from `data/deepseek_pairs.csv`, which has a row for each arm above, the held-out ones included. The uncached-input row in section 1 comes from `heldout127.uncached_in_k` in `data/costs.json`; the per-task fields at the top of that file cover all 139 graded tasks. The interval bounds are Monte Carlo estimates and move by up to about 0.003 with the seed; no conclusion changes.
 
 No full-length arm showed a score difference whose interval excluded zero. No equivalence margin was set or tested, so the claim is "no difference detected", not "equal". Every arm cut input tokens by 41% to 51% and agent time by 40% to 50%. The efficiency result repeats across three skill versions and two binaries.
 
@@ -111,8 +111,8 @@ The small model went the other way. On Nemotron 30B-A3B, 11 of 12 skill iteratio
 
 ## 5. How the grade can move
 
-- **One judge, one grade per trial, mostly.** GLM-5.3-Flash graded every trial with the benchmark's rubric. 47 trials were graded twice; the two grades differ by 0.108 on average (median 0.062, largest 0.5). These 47 are the trials that happened to be regraded, not a random sample. Per-task differences of that size are judge noise. The 139-task mean averages much of it out, which is why the intervals above are about ±0.03.
-- **One control run per task.** The control ran once per task (`deepseek-full` 9 tasks, `deepseek-full-b` 131, with one task, `redline-s1-t4-g11a`, graded only by the 3-judge panel). Control run-to-run variance is not measured here.
+- **One judge, one grade per trial, mostly.** GLM-5.3-Flash graded every trial in the paired comparisons with the benchmark's rubric. 47 trials were graded twice; the two grades differ by 0.108 on average (median 0.062, largest 0.5). These 47 are the trials that happened to be regraded, not a random sample. Per-task differences of that size are judge noise. The 139-task mean averages much of it out, which is why the intervals above are about ±0.03.
+- **One control run per task.** The control ran once per task (`deepseek-full` 9 tasks, `deepseek-full-b` 131, with one task, `redline-s1-t4-g11a`, graded only by a 3-judge panel and therefore left out of every paired comparison). Control run-to-run variance is not measured here.
 - **Not simultaneous.** The control ran Oct 27 to 28; the 0.14 arms ran Oct 28 to 30. Same model ID, same provider, same harness version. Provider-side changes in between cannot be ruled out.
 - **No frontier model as the agent.** DeepSeek-V4.1-Flash and Nemotron are cost choices. A frontier agent may use fewer turns on its own, which would shrink the efficiency gap.
 
