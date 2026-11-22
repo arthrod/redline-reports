@@ -21,6 +21,8 @@ The runs in the Hugging Face datasets are preserved. One set is not confirmed: t
 | `T-jubarte-loop-releases` | private | release workspaces 0.14.0 to 0.17.0 | n/a |
 | `T-logs-archive` | private | 8,158 `.log` and `.console` files (about 8.0 GB raw) | n/a |
 
+How these were checked: each dataset was read through the Hugging Face API from this session, with private ones through the owner's token. On 2026-11-22 the five datasets named in the PR review (`redline-bench-deepseek-trajectories`, `harvey-redline-hub-ab-2026-11`, `redline-bench-local-archive`, `redline-bench-jubarte-trajectories`, `redline-bench-jubarte-tasks`) were listed again and match the folders above. A path search for `codex` in the first three returned no file.
+
 ## The one gap that could mean lost data
 
 **The 41 Codex trials are in no dataset I could read.**
@@ -56,7 +58,7 @@ The runs in the Hugging Face datasets are preserved. One set is not confirmed: t
 - **Four early Hub jobs** (83d0516d, 8c6295fd, 7ef83246, a955fdc1) were cancelled before scoring: no artifact, the judge at OpenRouter 402, jubarte built for aarch64 only. The handoff records them. They are not in any trial table, which is correct, but say so on the card.
 - **Harvey judges changed mid-study.** gpt-5.4 graded until 2026-11-03 19:40Z, gpt-6-luna after. Each pair shares a judge, and each trial's `local-verifier/judge.txt` names it. A 12-trial gpt-5.6-luna batch was regraded and kept separately.
 - **Harvey 0.17 missing slots.** Eight of 96 registered slots never started. They are in `design` with reward missing, not zero.
-- **RedlineBench control.** Ran once per task. One task (`redline-s1-t4-g11a`) has no GLM grade because GLM hit its output limit 8 times. A 3-judge panel (gpt-5.4-mini, claude-haiku-4-5, gemini-3.1-flash-lite) graded it in the DeepSeek control (`deepseek-full-b`), both full 0.14 jubarte arms (`jubarte-ds-v9-rest`, `jubarte-ds-v12-rest`) and the Nemotron control. It is left out of every paired comparison: the full-set comparisons (ds-v9, ds-v12) use 139 tasks, not 140, and the held-out comparisons use 127 (139 minus the 12 development tasks).
+- **RedlineBench control.** Ran once per task. One task (`redline-s1-t4-g11a`) has no GLM grade because GLM hit its output limit 8 times. A 3-judge panel (gpt-5.4-mini, claude-haiku-4-5, gemini-3.1-flash-lite) graded it in the DeepSeek control (`deepseek-full-b`), both full 0.14 jubarte arms (`jubarte-ds-v9-rest`, `jubarte-ds-v12-rest`) and the Nemotron control. It is left out of every paired comparison: the full-set comparisons (ds-v9, ds-v12) use 139 tasks, not 140, the ds-v9 and ds-v12 held-out comparisons use 127 (139 minus the 12 development tasks), and the study-v14 held-out comparison uses 113.
 - **Judge repeatability.** 47 RedlineBench trials carry two GLM grades; the two grades differ by 0.108 on average (median 0.062, largest 0.5), a mean per-trial standard deviation of 0.077. These 47 are the trials that happened to be regraded, not a random sample.
 
 ## Harbor Hub
