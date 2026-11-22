@@ -239,13 +239,13 @@ codex mcp add jubarte \
 
   <section>
     <div class="label">What we measured</div>
-    <h2>Same score. Half the time on one benchmark, an eighth less on the other.</h2>
+    <h2>No score difference detected. Almost half the time on one benchmark, an eighth less on the other.</h2>
     <p>Each task was run twice with the same model, brief and grader: once with the benchmark's own Word tools, once with jubarte in their place. We hoped the score would rise. It did not. The cost fell.</p>
     <div class="two">
       <div class="bars" id="barsA"></div>
       <div class="bars" id="barsB"></div>
     </div>
-    <p class="note" style="margin-top:26px">RedlineBench: DeepSeek-V4.1-Flash in Claude Code, 127 held-out tasks for time and 134 for score and tokens, one judge model. Harvey: 90 paired redline tasks, same model. Differences in score are inside the noise of the graders. One early run, Claude Haiku 5.5 on jubarte 0.12, was 2 minutes slower than its control; every run since 0.14 was faster. Runs used jubarte 0.12 to 0.16, not 0.19. No frontier model was tested.</p>
+    <p class="note" style="margin-top:26px">RedlineBench: DeepSeek-V4.1-Flash in Claude Code with jubarte 0.15.0, 125 paired tasks, one judge model (GLM-5.3-Flash). Harvey: 90 paired redline tasks with jubarte 0.16, same model, Harvey's judge. In neither was a score difference detected. Of six cohorts tested, jubarte lost on one: Nemotron 30B, a small model, scored lower with it. Runs used jubarte 0.14 to 0.17, not 0.19. No frontier model was the agent.</p>
   </section>
   </main>
 
@@ -558,14 +558,14 @@ addEventListener('drop', e => fromFile(e.dataTransfer && e.dataTransfer.files[0]
 /* ---------- measured ---------- */
 const BARS = {
   barsA: [
-    { t: 'Score', sub: 'RedlineBench, 134 tasks. Higher is better.', a: 0.494, b: 0.492, max: 1, fmt: v => v.toFixed(3), d: 'a tie' },
-    { t: 'Minutes per round of markup', sub: 'RedlineBench, 127 tasks.', a: 18.6, b: 9.2, fmt: v => v.toFixed(1), d: '−51%' },
-    { t: 'Output tokens per task', sub: 'RedlineBench, 134 tasks.', a: 44800, b: 20400, fmt: v => (v / 1000).toFixed(1) + 'k', d: '−54%' }
+    { t: 'Score', sub: 'RedlineBench, jubarte 0.15, 125 tasks. Higher is better.', a: 0.503, b: 0.501, max: 1, fmt: v => v.toFixed(3), d: 'no difference detected' },
+    { t: 'Minutes per round of markup', sub: 'RedlineBench, jubarte 0.15, 125 tasks.', a: 18.4, b: 10.1, fmt: v => v.toFixed(1), d: '−45%' },
+    { t: 'Output tokens per task', sub: 'RedlineBench, jubarte 0.15, 125 tasks.', a: 44400, b: 20200, fmt: v => (v / 1000).toFixed(1) + 'k', d: '−54%' }
   ],
   barsB: [
-    { t: 'Score', sub: 'Harvey redline tasks, 90 pairs. Higher is better.', a: 0.936, b: 0.941, max: 1, fmt: v => v.toFixed(3), d: 'a tie' },
+    { t: 'Score', sub: 'Harvey redline tasks, 90 pairs. Higher is better.', a: 0.936, b: 0.941, max: 1, fmt: v => v.toFixed(3), d: 'no difference detected' },
     { t: 'Minutes per task', sub: 'Harvey redline tasks, 90 pairs.', a: 37.2, b: 32.4, fmt: v => v.toFixed(1), d: '−13%' },
-    { t: 'Tokens per task', sub: 'Harvey redline tasks, 90 pairs.', a: 10.4, b: 8.9, fmt: v => v.toFixed(1) + 'M', d: '−14%' }
+    { t: 'Tokens per task', sub: 'Harvey redline tasks, 90 pairs.', a: 10.45, b: 8.95, fmt: v => v.toFixed(2) + 'M', d: '−14%' }
   ]
 };
 for (const [id, list] of Object.entries(BARS)) for (const m of list) {

@@ -1,182 +1,168 @@
-# Numbers used in every piece, with where each comes from
+# Every number in this repository, with its source
 
-Every figure in the posts, the report and the artifacts is on this page.
+Scope: the six cohorts in `reports/jubarte-six-cohorts.md` and nothing else. Every figure in the report, the harness article and the five posts is on this page.
 
-## jubarte 0.14 on RedlineBench: the numbers this week's posts use (added 2026-11-22)
+Two scripts produce every figure:
 
-Source for every row: `reports/jubarte-0.14-redlinebench.md`, rebuilt from the `result.json`, `grade.json` and `agent/trajectory.json` of every trial in `redline-bench-deepseek-trajectories/redlinebench/`. Binary `f4c352db…` (0.14.0) in every jubarte trial below.
+- `uv run python scripts/cohorts.py` reads `data/cohort_trials.csv`.
+- `uv run python scripts/harness.py` reads `data/harness_responses.parquet` and `data/harness_requests.csv`.
 
-| Per task, 127 held-out tasks (`jubarte-ds-v12-rest` against `deepseek-full` + `deepseek-full-b`) | Scripts | jubarte 0.14 | Change |
-|---|---:|---:|---:|
-| Score | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.033); 48 better, 40 worse, 39 equal |
-| Agent minutes | 18.5 | 9.2 | −50% |
-| Turns | 71 | 37 | −48% |
-| Input tokens | 2.61M | 1.40M | −46% |
-| Output tokens | 44.5k | 20.8k | −53% |
-| At Claude Opus 5.5 list | $2.29 | $1.32 | −43% |
+`uv run pytest` pins the headline figures, so a change to the data fails a test instead of drifting silently.
 
-The "held-out 127" row further down (0.489 vs 0.493) is this same run; it took one grade per trial where 47 trials had two. This page now averages both.
+## The cohorts
 
-| Scale | 0.14 arms | Whole RedlineBench archive |
-|---|---:|---:|
-| Runs with a result | 716 (30 jobs) | 1,357 (49 jobs) |
-| Run time, summed | 157.8 h | 414.5 h |
-| Input / output tokens | 1.43B / 21.1M | 3.29B / 46.2M |
-| Agent turns | 35,496 | 78,524 |
-| Runs per task | 2 to 27, median 3 | 4 to 42, median 7.5 |
-| At DeepSeek list / Sonnet 5.5 / Opus 5.5 | | $702 / $4,839 / $9,679 |
+| Cohort | Agent | Benchmark | jubarte build | Judge, both arms | jubarte trials | Control |
+|---|---|---|---|---|---:|---|
+| 0.14.0 DeepSeek | DeepSeek-V4.1-Flash-1017, Claude Code 2.1.310 | RedlineBench | 0.14.0 (`f4c352db…`) | GLM-5.3-Flash | 560 (17 jobs) | `deepseek-full-b`, 131 trials |
+| 0.14.0 Nemotron | Nemotron 3.5 Lightning 30B-A3B, Claude Code, one RTX 5090 | RedlineBench, 12 tasks | 0.14.0 | GLM-5.3-Flash | 144 (11 jobs) | `nemotron-full-5090`, 160 trials |
+| 0.15.0 DeepSeek | DeepSeek-V4.1-Flash-1017, Claude Code | RedlineBench | 0.15.0 (`469c7ff4…`) | GLM-5.3-Flash | 147 (2 jobs) | `deepseek-full-b` |
+| 0.16 Harvey | DeepSeek-V4.1-Flash, Claude Code, Harbor Hub | Harvey LAB redline tasks | 0.16.x | LAB judge: gpt-5.4 (106 trials), then gpt-6-luna (74) | 90 | 90, paired A/B |
+| 0.17 Harvey | DeepSeek Flash 1017, Claude Code, self-hosted MI355X | Harvey LAB editing tasks, 16 | 0.17.x | LAB judge, gpt-6-luna | 48 | 48 |
+| Muse Spark 1.3 | Muse Spark 1.3 Contributor | RedlineBench | not recorded | gpt-6.1-sol panel | 140 | 158 |
 
-Development set against held-out (DeepSeek, same control):
+The control always uses the benchmark's own tooling: RedlineBench's Python docx scripts and contract-redliner skill, or Harvey LAB's docx skill.
 
-- The best drafts scored up to 0.579 against 0.515 on the 12 tuning tasks.
-- On the 127 held-out tasks, ds-v12 scored +0.004 and ds-v9 scored −0.024.
+## Paired results (report, section 1)
 
-Nemotron 30B-A3B: 11 of 12 drafts below the control on the 12 tasks (lowest 0.059 against 0.401).
+| Cohort | Tasks | Control | jubarte | Change (95% CI) | Better/worse/equal | Minutes | Output | Input |
+|---|---:|---:|---:|---|---|---|---|---|
+| 0.14.0 DeepSeek | 130 | 0.503 | 0.497 | −0.007 (−0.030 to +0.016) | 57/56/17 | 18.3 → 10.3 | 44.2k → 21.5k | 2.54M → 1.39M |
+| 0.14.0 Nemotron | 12 | 0.401 | 0.308 | −0.093 (−0.170 to −0.018) | 4/7/1 | 30.8 → 24.1 | 64.4k → 67.4k | 4.05M → 4.80M |
+| 0.15.0 DeepSeek | 125 | 0.503 | 0.501 | −0.003 (−0.028 to +0.024) | 36/43/46 | 18.4 → 10.1 | 44.4k → 20.2k | 2.57M → 1.24M |
+| 0.16 Harvey | 90 | 0.936 | 0.941 | +0.006 (−0.004 to +0.017) | 33/24/33 | 37.2 → 32.4 | 53.3k → 46.5k | 10.45M → 8.95M |
+| 0.17 Harvey | 16 | 0.925 | 0.923 | −0.002 (−0.026 to +0.022) | 8/8/0 | 28.4 → 26.6 | 143.5k → 133.1k | 17.20M → 16.16M |
+| Muse Spark 1.3 | 140 | 0.297 | 0.316 | +0.019 (−0.033 to +0.071) | 57/60/23 | 48.8 → 36.1 | 226.3k → 180.7k | 3.98M → 2.93M |
 
-Judge repeatability: 47 trials graded twice by GLM-5.3-Flash. The two grades differ by 0.108 on average (median 0.062, largest 0.5); the mean per-trial standard deviation is 0.077. The 47 are the trials that happened to be regraded, not a random sample.
+Method:
 
-## Corrections (2026-11-22)
+- A task's score is the mean of its graded trials.
+- The interval is a bootstrap over tasks: 10,000 draws, seed 20261122, with tasks sorted so the draw is reproducible.
+- Input tokens are Harbor's totals, which count DeepSeek's uncached input twice (see "Prices" below).
 
-- RedlineBench's judge reads the markup (an annotated view with deletions, insertions and comment markers). Only Harvey LAB's extractor reads accepted text. The harness report said both read accepted text; it no longer does.
-- The 134-task row (0.494 vs 0.492) is jubarte **0.15.0** (`jubarte-study-v14b-015`, binary `469c7ff4…`), not 0.14.
-- The Harvey A/B has 180 trials (90 pairs). The public table has 181 rows because a folder named `analysis` was read in as a trial.
-- The 41 Codex trials and the 134 pi trials are not in the public dataset yet (see `DATA-AUDIT.md`).
+## Inside the 0.14.0 DeepSeek cohort (report, section 3)
 
-## What was run
+- The 12 tuning tasks (10 with a control grade): +0.030 (−0.017 to +0.080).
+- Every other task (120): −0.010 (−0.034 to +0.014).
+- `ds-v12-rest`: +0.002 (−0.029 to +0.032).
+- `ds-v9-rest`: −0.025 (−0.060 to +0.008).
+- `study-v14-rest`: +0.015 (−0.013 to +0.044).
+- `study-v14`: −0.050 (−0.106 to +0.000).
+- `study-v13`: −0.090 (−0.150 to −0.035), the only DeepSeek job whose interval excludes zero.
+- Draft means on the tuning tasks run from 0.510 (`ds-v3`) to 0.576 (`ds-v9`).
+- Minutes fell 37% to 57% in every job.
 
-| Benchmark | Owner | Tasks | Agent harness | Model | jubarte | Judge |
-|---|---|---|---|---|---|---|
-| RedlineBench | Crosby + micro1 | 140 (3 scenarios × 4 turns) | Claude Code | DeepSeek-V4.1-Flash | 0.14.0 (all jobs except `jubarte-study-v14b-015`, which is 0.15.0) | GLM-5.3-Flash, one judge |
-| RedlineBench | same | 134 common | pi | DeepSeek-V4.1-Flash | 0.15.0 | same |
-| RedlineBench | same | 41 (hardest first) | Codex | DeepSeek-V4.1-Flash | 0.15.0 | same |
-| RedlineBench | same | 69 + 33 | Claude Code | Claude Haiku 5.5 | 0.12.0 | Crosby's panel |
-| RedlineBench | same | 40 paired | Claude Code | GLM-5.3-flash | 0.12.0 | Crosby's panel |
-| RedlineBench | same | 12 | Claude Code | Nemotron 3.5 Lightning | 0.14.0 | GLM-5.3-Flash |
-| Harvey LAB, redline tasks | Harvey | 90 pairs | Claude Code | DeepSeek-V4.1-Flash | 0.16.0 | gpt-5.4 (53 pairs), gpt-6-luna (37) |
+## Inside the Nemotron cohort
 
-The control arm is always the benchmark's own tooling: RedlineBench's Python docx
-scripts, and Harvey LAB's docx skill with its `redline.py`.
+- Control on the 12 tasks: 0.401.
+- Job means: v1 0.059, v2 0.349, v3 0.351, v4 0.308, v5 0.272, v6 0.331, v7 0.255, v8 0.303, v9 0.425, v10 0.368, v11 0.360.
+- Only v9 is above the control.
 
-## Scores (higher is better)
+## By negotiation round (report, section 4)
 
-| Run | Tasks | Benchmark's own tools | jubarte | Difference |
-|---|---|---|---|---|
-| RedlineBench, DeepSeek, Claude Code, 0.15.0 binary | 134 | 0.494 (0.493 averaging double grades) | 0.492 | −0.002 (−0.000) |
-| RedlineBench, DeepSeek, Claude Code, held-out set, 0.14.0 | 127 | 0.489 (0.491 averaging double grades) | 0.493 (0.495) | +0.004 |
-| RedlineBench, DeepSeek, pi, 0.15.0 skill | 134 | 0.494 (Claude Code plain) | 0.486 | −0.008 |
-| RedlineBench, Haiku 5.5, first 69 | 69 | 0.394 | 0.427 | +0.033 (35 wins, 24 losses, 10 ties) |
-| RedlineBench, Haiku 5.5, second block | 33 | 0.430 | 0.412 | −0.018 (12 wins, 8 losses, 13 ties) |
-| RedlineBench, GLM-5.3-flash | 40 | 0.350 | 0.364 | +0.014 (15 / 10 / 15) |
-| RedlineBench, Nemotron 3.5 Lightning | 12 | 0.401 | 0.425 | +0.024, the best of 12 drafts; the other 11 scored 0.059 to 0.381 |
-| Harvey LAB redline tasks, DeepSeek | 90 pairs | 0.936 | 0.941 | +0.006, standard error 0.005 (33 / 24 / 33) |
-
-Per-task noise on RedlineBench is about ±0.04, and Harvey's judge moves about 0.02
-between runs. None of these differences is outside the noise except Haiku's first 69.
-
-## Time and tokens (lower is better)
-
-| Run | Measure | Own tools | jubarte | Change |
-|---|---|---|---|---|
-| RedlineBench, DeepSeek, held-out 127 | agent minutes per task | 18.6 | 9.2 | −51% |
-| same | input tokens per task | 2.61M | 1.40M | −46% |
-| same | output tokens per task | 44.5k | 20.8k | −53% |
-| RedlineBench, DeepSeek, 134 tasks, 0.15.0 | output tokens | 44.8k | 20.4k | −54% |
-| same | input tokens | 2.60M | 1.27M | −51% |
-| same, pi instead of Claude Code | output tokens | 44.8k | 15.0k | −67% |
-| same, pi | input tokens | 2.60M | 1.42M | −45% |
-| RedlineBench, GLM-5.3-flash | minutes per attempt | 102 | 68 | −33% |
-| same | output tokens per attempt | 0.24M | 0.18M | −25% |
-| same | tasks that finished with a valid score, of 69 | 42 | 59 | +17 tasks |
-| Harvey LAB, 90 pairs | minutes per task | 37.2 | 32.4 | −13% |
-| same | tokens per task | 10.4M | 8.9M | −14% |
-| Harvey LAB, first 10 pairs | hard tool failures | 38 | 5 | |
-| RedlineBench, Haiku 5.5, 0.12.0 | minutes per attempt | 24 | 26 | **+8%** |
-| same | cached input per attempt | 9.9M | 8.5M | −14% |
-| same | output per attempt | 0.30M | 0.30M | 0 |
-| same | estimated cost per scored task | $0.91 | $0.98 | **+8%** |
-
-## A later study on jubarte 0.17
-
-Data: `harvey_lab_017/` in the DeepSeek dataset linked under Sources. Harvey LAB tasks, DeepSeek-V4.1-Flash
-in Claude Code on a self-hosted node, jubarte 0.17 against LAB's tools: 88 trials,
-44 matched pairs, 16 tasks, up to 3 repeats.
-
-| Measure | LAB tools | jubarte 0.17 | Change |
+| Round | 0.14.0 DeepSeek | 0.15.0 DeepSeek | Muse Spark 1.3 |
 |---|---|---|---|
-| Task-balanced mean score | 0.925 | 0.923 | −0.002, 95% interval −0.026 to +0.022 |
-| Minutes per trial | 28.4 | 26.6 | −6.4% |
-| Input tokens per trial | 17.2M | 16.2M | −6.1% |
-| Output tokens per trial | 143k | 133k | −7.2% |
+| 1 | −0.060 (−0.127 to +0.017) | −0.092 (−0.179 to +0.017) | −0.001 (−0.059 to +0.058) |
+| 2 | +0.017 (−0.024 to +0.058) | +0.040 (+0.001 to +0.082) | +0.017 (−0.090 to +0.128) |
+| 3 | +0.014 (−0.018 to +0.048) | +0.006 (−0.035 to +0.053) | +0.077 (−0.004 to +0.156) |
+| 4 | −0.038 (−0.083 to +0.007) | −0.035 (−0.085 to +0.016) | −0.031 (−0.135 to +0.070) |
 
-Its own card says the design prevents a causal efficiency claim. It is the only run
-on 0.17 and it is not yet used in the posts, the report or the artifact.
+## Outcomes of the jubarte trials (report, section 5)
 
-Other models in the archives were run with the benchmark's own tools only, so they
-add no jubarte comparison: Muse Spark 1.3 Contributor (52 valid, mean 0.385), Muse
-Glimmer 30B (44 graded, 0.269), Qwen 3.8 27B (21 graded, 0.106), and DeepSeek at low
-effort (33 valid, 0.405). A jubarte arm for Muse on 18 October failed at
-authentication on every trial.
+| | 0.14.0 DeepSeek | Nemotron | 0.15.0 DeepSeek | 0.16 Harvey | 0.17 Harvey | Muse |
+|---|---:|---:|---:|---:|---:|---:|
+| Graded | 546 | 131 | 134 | 90 | 44 | 140 |
+| Not graded | 14 | 13 | 13 | 0 | 4 | 0 |
+| Timeouts, still graded | 0 | 12 | 0 | 1 | 0 | 33 |
+| Zeros | 22 | 43 | 6 | 0 | 0 | 41 (29 are timeouts) |
+| Median score | 0.487 | 0.179 | 0.514 | 0.962 | 0.948 | 0.315 |
 
-## Where the claim "always fewer tokens and less time" does not hold
+Control timeouts:
 
-1. Haiku 5.5 on jubarte 0.12.0 took 2 minutes longer per attempt and cost 7 cents
-   more per scored task. Its cached input fell 14% and nothing else moved.
-2. On Harvey LAB, jubarte cost more on individual pairs where the document already
-   carried the other side's tracked changes (for example 8.9M v 3.2M tokens and
-   22.6 v 13.6 minutes on one repo/securities-lending pair). The mean still fell.
-3. Codex was never run without jubarte. Its 41 jubarte trials (hardest tasks first)
-   scored 0.160 against 0.202 for plain Claude Code on the same tasks, and wrote
-   40-126k output tokens per trial, more than plain Claude Code. That is a cross-harness
-   comparison: with no plain-Codex control, it says nothing about whether jubarte helps
-   or hurts Codex against Codex's own tools.
-4. One short 0.14 arm lost on score. `jubarte-study-v13` (33 tasks, 12 of them
-   development tasks) scored 0.455 against 0.523: −0.068 (−0.121 to −0.018), 7 wins
-   and 16 losses. Its time and input still fell (8.4 v 19.6 minutes, 1.09M v 2.65M).
+- DeepSeek: 1 in 131.
+- Nemotron: 25 in 160.
+- Muse: 78 in 158.
 
-The accurate sentence: with DeepSeek-V4.1-Flash in Claude Code, in every 0.14 and 0.15
-arm on RedlineBench and in the Harvey LAB studies, mean time and mean tokens fell. No
-score difference was detected in any full-length arm; one 33-task arm, study-v13,
-scored lower (item 4). It does not hold for every model: Nemotron 30B scored below its
-0.401 control with 11 of 12 skill drafts (0.059 to 0.381) on the 12 development tasks.
-The lowest drafts sit far below judge noise; the closest, 0.381, is 0.020 below, inside
-the ±0.04 per-task noise above, and no interval was computed for these 12-task means.
-Codex (item 3) has no control of its own.
+## Harness (harness article)
 
-## What the grading cannot see
+- **Responses.** 63,274 from 63,380 requests. Every request sent adaptive thinking with display `updates`, effort `high`, `max_tokens` 16,384, and `clear_thinking_20251015` with `keep: all`.
+- **How often the model thought.** DeepSeek: 83.8% (0.14.0), 86.5% (0.15.0) and 82.4% (control) of responses. Nemotron: 100%.
+- **How long, when it thought** (median / 90th percentile, characters):
+  - 0.14.0 jubarte: 698 / 15,367.
+  - 0.15.0 jubarte: 746 / 16,020.
+  - DeepSeek control: 1,788 / 17,842.
+  - Nemotron: 356 jubarte and 275 control.
+- **Per trial, DeepSeek** (responses / thinking characters):
+  - Control: 69.8 / 366.8k.
+  - 0.14.0: 39.5 / 180.2k.
+  - 0.15.0: 35.8 / 173.9k.
+  - Thinking share: 86% to 89%.
+- **Stops at the output limit.** DeepSeek: 358 responses, all at exactly 6,897 reported tokens (largest otherwise 6,892). Nemotron: 66, all at 16,384. Median thinking about 70.8k characters, no visible text. About a third of DeepSeek trials hit the limit at least once.
+- **Token accounting:**
+  - `thinking_tokens` is 0 on every response.
+  - DeepSeek runs 9.92 characters per reported output token (fitted about 10 to 11); Nemotron runs about 4.
+  - DeepSeek reports `cache_creation_input_tokens` equal to `input_tokens` on 36,192 of 36,193 responses.
+- **Signatures.** All 32,208 DeepSeek thinking blocks are unsigned; all 27,081 Nemotron blocks are signed.
 
-- Harvey LAB's grader reads the document with every tracked change accepted. It
-  cannot tell a redline from clean text. With the older extractor it also dropped
-  Word comments; under Harvey's current extractor, which shows comments, the first
-  19 pairs moved from 0.890 / 0.876 to 0.936 / 0.938.
-- One control-arm "redline" (capital-markets indenture markup) had 39 strikethrough
-  formatting runs and 0 tracked insertions or deletions. jubarte's had 38 insertions
-  and 39 deletions.
-- On one repo/securities-lending first turn the control arm accepted the other
-  side's markup and re-issued only its own: all 182 insertions under one name.
-  jubarte's file kept 191 of theirs and added 89 of ours.
+## Prices (report, section 6)
 
-## Where jubarte lost points on RedlineBench
+Per trial, from the logs, uncached input counted once, cache-write surcharges excluded:
 
-- Turn 1 (clean template): 0.258 v 0.280 on the held-out set. A rewritten paragraph
-  was marked one word at a time: 254 tracked spans per trial against 73, with a
-  median insertion of 9 characters against 209.
-- Agents with a one-flag strike used it too much. Rubric items "Accepts X": 62 lost,
-  9 gained. Items "Rejects X": 47 gained, 12 lost.
+| | Uncached input | Cached input | DeepSeek on OpenRouter | Weekday peak | Opus 5.5 list |
+|---|---:|---:|---:|---:|---:|
+| DeepSeek control | 114k | 2.32M | $0.051 | $0.102 | $1.81 |
+| 0.14.0 DeepSeek | 107k | 1.21M | $0.033 | $0.066 | $1.11 |
+| 0.15.0 DeepSeek | 108k | 1.05M | $0.032 | $0.063 | $1.05 |
 
-## Release
+Prices per million tokens, from OpenRouter's public model list (`openrouter.ai/api/v1/models`), fetched 2026-11-22:
 
-- jubarte 0.19.0, 2026-11-21, Apache-2.0. Releases up to 0.18.0 stay AGPL-3.0-only.
-- Live on GitHub (`jandira-tech/jubarte`), crates.io (`jubarte`), PyPI
-  (`jubarte-docx`), npm (`jubarte-wasm`). Checked 2026-11-21.
-- 36 MB installed (14 MB download). It replaces 850 MB of tools in Anthropic's `docx`
-  skill and 1,793 MB in OpenAI's `doc` skill (measured 2026-10-04, Ubuntu 24.04).
-- The benchmark runs used 0.12.0 to 0.16.0. 0.19.0 has not been benchmarked.
+- DeepSeek V4.1 Flash 1017 (`deepseek/deepseek-v4.1-flash-1017`): $0.15 in, $0.003 cached, $0.60 out. Doubled ($0.30, $0.006, $1.20) on weekdays 01:00–04:00 and 06:00–10:00 UTC.
+- Nemotron 3.5 Lightning 30B-A3B (`nvidia/nemotron-3.5-lightning`): $0.07 in, $0.04 cached, $0.20 out.
+- Muse Spark 1.3 Contributor (`meta/muse-spark-1.3-contributor`): $0.10 in, $0.002 cached, $0.20 out.
+- Claude Opus 5.5 list: $4, $0.20 cached, $5 cache write, $20 out. Hypothetical: no Claude model was the agent.
+
+What was actually paid: a flat Synthetic subscription for the DeepSeek cohorts, local GPUs for Nemotron, a rented MI355X node for 0.17 Harvey.
+
+## Every metric, both arms (report, section 6 and Appendix A)
+
+Per trial, means, benchmark's tools → jubarte. Medians and per-run figures are in Appendix A and `data/metrics_by_cohort.csv` / `data/metrics_by_run.csv`, pinned by `tests/test_metrics.py`.
+
+| Cohort | API calls | Agent min | Inference min | Output tokens | OpenRouter $ | Opus list $ |
+|---|---:|---:|---:|---:|---:|---:|
+| 0.14.0 DeepSeek | 70 → 39 | 18.5 → 10.7 | 17.4 → 9.4 | 44.5k → 21.8k | 0.051 → 0.033 | 1.81 → 1.11 |
+| 0.14.0 Nemotron | 101 → 99 | 30.6 → 24.1 | 28.8 → 20.6 | 72.3k → 65.7k | 0.329 → 0.341 | 19.41 → 20.07 |
+| 0.15.0 DeepSeek | 70 → 36 | 18.5 → 10.0 | 17.4 → 8.8 | 44.5k → 20.4k | 0.051 → 0.032 | 1.81 → 1.05 |
+| 0.16 Harvey | 158 → 133 | 37.2 → 32.4 | 34.0 → 28.1 | 53.3k → 46.5k | 0.132 → 0.120 | 4.87 → 4.35 |
+| 0.17 Harvey | 168 → 163 | 28.5 → 26.9 | n/a | 144.0k → 134.7k | 2.68 → 2.55 | 71.95 → 68.39 |
+| Muse Spark 1.3 | 47 → 34 | 48.8 → 36.1 | n/a → 35.0 | 226.3k → 181.0k | 0.076 → 0.064 | 6.22 → 5.04 |
+
+- Inference is 86% to 97% of agent working time wherever session logs exist.
+- The non-inference remainder per trial grew with jubarte: DeepSeek 1.1 → 1.3 (0.14.0) / 1.4 (0.15.0) minutes, Nemotron 2.0 → 3.5, 0.16 Harvey 3.2 → 4.4.
+- Median seconds per call: DeepSeek 13.9 → 14.6 (0.14.0) / 15.1 (0.15.0); Nemotron 16.0 → 11.2; 0.16 Harvey 12.8 → 12.9; Muse (jubarte arm) 56.6.
+- Nemotron and 0.17 Harvey reported no prompt caching, so their cost estimates are inflated. OpenRouter $ is the base rate; DeepSeek's weekday peak doubles it.
+
+## Run dates (UTC)
+
+- DeepSeek control: Oct 27 22:05 to Oct 28 05:13.
+- 0.14.0 DeepSeek: Oct 28 05:14 to Oct 30 15:46.
+- 0.15.0 DeepSeek: Oct 30 21:21 to Oct 31 02:05.
+- Nemotron control: Oct 26 02:59 to 12:32. Nemotron jubarte: Oct 26 12:33 to Oct 27 00:10.
+- 0.16 Harvey: Nov 1 to 4.
+- 0.17 Harvey: Nov 4 23:33 to Nov 5 02:56.
+- Muse: jubarte arm Oct 16 21:02 to Oct 17 02:50, before its control (Oct 17 to 18).
+
+## Where the claims stop
+
+- No cohort shows a score gain whose interval excludes zero. Nemotron shows a loss.
+- No equivalence margin was tested: "no difference detected" is not "equal".
+- The arms were never interleaved. A provider-side change between them cannot be ruled out.
+- Scores do not compare across cohorts, because the judges differ.
+- No Claude or other frontier model was the agent.
+- Muse's jubarte build is unrecorded, and its jubarte arm ran first.
 
 ## Sources
 
-- Full trial directories for the DeepSeek runs on both benchmarks and the 0.17 study:
-  https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
-- Agent transcripts for the Haiku and GLM runs:
-  https://huggingface.co/datasets/arthrod/redline-bench-jubarte-trajectories
-- Install sizes and the script-by-script replacement notes:
-  https://github.com/jandira-tech/jubarte/tree/main/docs/adoption
+- Trials: <https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories>. The folders are `redlinebench/`, `harvey_lab/` and `harvey_lab_017/`.
+- Task definitions: <https://huggingface.co/datasets/arthrod/redline-bench-jubarte-tasks>.
+- Muse Spark 1.3 trials: private archive, not yet public (`DATA-AUDIT.md`).
+- RedlineBench: Crosby Legal and micro1, <https://huggingface.co/datasets/crosbylegal/RedlineBench>.
+- Harvey LAB: <https://github.com/harveyai/harvey-labs>.

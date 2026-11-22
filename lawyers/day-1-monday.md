@@ -1,54 +1,61 @@
-# Day 1 · 716 runs for one sentence
+# Day 1 · Six tests, and my tool never made the agent a better lawyer
 
 MAIN POST:
 
-It took 716 agent runs, 158 hours of run time and 1.43 billion input tokens to earn one sentence I can defend: half the work, no detectable change in the score.
+I tested my own redlining tool against the tools two legal benchmarks ship with, in six separate setups. It never raised the score. In five of the six, it halved the work or cut it.
 
-The question was narrow. When an AI agent redlines a contract, does it do better legal work if it gets a real tracked-changes engine instead of the Python scripts the benchmark ships with?
+The question was narrow. When an AI agent redlines a contract, does it do better legal work with a real tracked-changes engine than with the benchmark's own scripts?
 
-The test was Crosby and micro1's RedlineBench: 140 negotiation tasks, four rounds of markup each. DeepSeek-V4.1-Flash ran inside Claude Code. One arm used the benchmark's own scripts. The other used jubarte 0.14, the Word engine I write. Model, brief, contracts and grader stayed the same.
+The engine is jubarte, which I write. The benchmarks are Crosby and micro1's RedlineBench (140 negotiation tasks) and Harvey's Legal Agent Benchmark. Six cohorts: three agent models, four jubarte builds, two benchmarks. Same model, contracts and grader in both arms of each.
 
-On the 127 tasks I never used to tune anything:
+The biggest cohort: DeepSeek in Claude Code, jubarte 0.14, 560 runs, 130 tasks paired against the control.
 
-Score: 0.491 with their tools, 0.495 with mine. No difference detected.
-Minutes per task: 18.5 against 9.2.
-Turns: 71 against 37.
-Output tokens: 44.5k against 20.8k.
+Score: 0.503 with the benchmark's scripts, 0.497 with jubarte. No difference detected.
+Minutes per task: 18.3 against 10.3.
+Output tokens: 44.2k against 21.5k.
 
-Disclosure: jubarte is mine, and I ran every trial. One model grades every file compared; the one task it could not finish grading is left out. On 47 files that happened to be graded twice, the score moved by 0.108 on average, so only the 127-task average means anything.
+The next build, 0.15, on the same model: 0.503 against 0.501, again in about half the time.
 
-Honest reading: the tool did not make the agent a better lawyer. With jubarte it took half the time and stopped writing Word's XML by hand. The arms ran on different days, so a provider change is not ruled out.
+The other four:
+Harvey's tasks, two builds: no difference, 6% to 14% less work.
+Muse Spark 1.3: no difference, a quarter less time.
+Nemotron, a small 30B model: jubarte scored lower, and its interval excludes zero. The one real loss.
 
-Why 716 runs for one comparison? It took a dozen drafts of the agent's instructions, a control arm, and reruns after a full disk, a killed process and a Docker image deleted mid-run. Tomorrow: what those drafts taught me about every vendor demo.
+Honest reading: the tool did not make any of these agents a better lawyer. With a capable model it made the job shorter. With a small one, my instructions got in the way.
 
-Links in comments. If you evaluate legal agents: how many runs sit behind your last headline number?
+Disclosure: jubarte is mine, and I ran every trial. The control and jubarte arms ran hours to days apart, so a change at the model provider is not ruled out.
+
+Tomorrow: the twelve tasks that fooled me.
+
+Links in comments. If you evaluate legal agents: does your headline number come from one setup or several?
 
 COMMENT:
 
-Report: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-0.14-redlinebench.md
+Report: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-six-cohorts.md
 Every trial, file by file: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
-The 140 tasks as configured: https://huggingface.co/datasets/arthrod/redline-bench-jubarte-tasks
 jubarte: https://github.com/jandira-tech/jubarte
 RedlineBench is by Crosby and micro1: https://huggingface.co/datasets/crosbylegal/RedlineBench
 
-In plain English. Score: lawyers wrote a rubric for each task (accept this cure period, reject that uncapped indemnity), and a judge model ticks it, 0 to 1. A turn is one step the agent takes: read a file, run a command, write an edit. Tokens are what the model reads and writes, and what you are billed for. "Never used to tune" means I wrote the agent's instructions while watching 12 tasks and kept the other 127 out of sight; those 127 are the fair test.
+In plain English. Score: lawyers wrote a rubric for each task (accept this cure period, reject that uncapped indemnity), and a judge model ticks it, 0 to 1. Tokens are what the model reads and writes, and what you are billed for. "No difference detected" means the 95% range of plausible differences includes zero. It does not prove the two are equal.
 
 Nitty-gritty:
-- 0.14.0 linux-aarch64 binary, sha256 `f4c352db…`, in every trial of the arm.
-- Control: jobs `deepseek-full` and `deepseek-full-b`, one run per task. jubarte: `jubarte-ds-v12-rest`.
-- Judge: GLM-5.3-Flash with the benchmark's rubric, on every task compared. It hit its output limit on `redline-s1-t4-g11a`; that task went to a three-judge panel and is left out, which is why the full set is 139 tasks, not 140.
-- Difference +0.004, 95% bootstrap interval −0.026 to +0.033.
-- 48 tasks better, 40 worse, 39 equal.
-- The 716 runs cover 30 jobs from 26 to 30 October.
-- The arms were not interleaved: the control ran 27 to 28 October, the jubarte arm 28 to 30 October. Model, harness and grader were pinned, but a provider-side change between those days cannot be ruled out.
-- Later versions on Harvey's benchmark went the same direction with smaller savings. They are in the report and stay out of this post on purpose.
+- All six, change in score (95% interval):
+  - 0.14 DeepSeek: −0.007 (−0.030 to +0.016), 130 tasks.
+  - 0.14 Nemotron: −0.093 (−0.170 to −0.018), 12 tasks.
+  - 0.15 DeepSeek: −0.003 (−0.028 to +0.024), 125 tasks.
+  - 0.16 Harvey: +0.006 (−0.004 to +0.017), 90 pairs.
+  - 0.17 Harvey: −0.002 (−0.026 to +0.022), 16 tasks.
+  - Muse Spark 1.3: +0.019 (−0.033 to +0.071), 140 tasks.
+- One judge per cohort, the same in both arms: GLM-5.3-Flash for DeepSeek and Nemotron, a gpt-6.1-sol panel for Muse, Harvey's LAB judge for Harvey. Scores compare within a cohort, not across cohorts.
+- Bootstrap over tasks, 10,000 draws, seed 20261122.
+- 0.14 binary sha256 `f4c352db…`, 0.15 `469c7ff4…`. The Muse build was not recorded.
 
 VISUAL SUGGESTIONS:
-716 | RUNS ON JUBARTE 0.14 | to reach one clean comparison on 127 held-out contracts
-9.2 min | PER TASK WITH JUBARTE | 18.5 with the benchmark's own scripts, no score difference detected
-0.495 | SCORE, 127 HELD-OUT TASKS | 0.491 with the benchmark's scripts, no difference detected
+0 of 6 | COHORTS WHERE JUBARTE RAISED THE SCORE | five showed no difference, one lost
+10.3 min | PER TASK WITH JUBARTE, DEEPSEEK | 18.3 with the benchmark's own scripts
+−0.093 | NEMOTRON 30B, THE ONE LOSS | same binary, a small model, a long skill
 
 OPEN QUESTIONS FOR ARTHUR:
-1. The old Day 1 led with 134 tasks (0.494 vs 0.492), which is the 0.15.0 run. This version leads with the 0.14.0 held-out set. Confirm you want 0.14 as the headline.
-2. The report links point to `main` and resolve only after PR #1 merges. Merge before posting, or swap in the benchmarks.law URL if you publish it there.
-3. The old Monday opened with the strikethrough "redline". It is now Thursday's hook, where it fits the grader story. Say if you want it back on Monday.
+1. The lead is the whole 0.14 DeepSeek cohort (0.503 vs 0.497, −0.007), tuning tasks included; Tuesday separates them. Confirm you want the cohort figure as Monday's lead.
+2. The Muse row is not in a public dataset yet (`DATA-AUDIT.md`). Publish it before Monday, or drop Muse from the post.
+3. The report link resolves only after this branch merges to `main`.

@@ -1,50 +1,57 @@
-# Day 3 · $702 or $9,679 for the same runs
+# Day 3 · Half the tokens, a third off the bill
 
 MAIN POST:
 
-The same 1,357 agent runs cost $702 or $9,679. The runs do not change. Only the price list does.
+My tool cut the agent's tokens roughly in half. The bill fell by about a third. The gap between those two numbers is worth understanding before you sign an AI contract.
 
-That is the full RedlineBench archive of my jubarte 0.14 study: 140 contract tasks, run many times. 3.29 billion tokens in, 46 million out. Priced at DeepSeek's list: $702. At Claude Sonnet 5.5: $4,839. At Claude Opus 5.5: $9,679.
+Same runs as Monday: DeepSeek in Claude Code, redlining RedlineBench contracts, with the benchmark's scripts or with jubarte. I read the logs of every model response, over 36,000 of them, and priced each trial at OpenRouter's public rates.
 
-What I paid looked like none of them. The agent ran on a flat subscription with weekly credits. During the Harvey runs that followed, the queue stopped itself at 4% credit and again at 0%. One judge model was dropped after ten minutes: too expensive. A later study on rented hardware cost $100 for tokens that would list at $6,175.
+Per contract, at OpenRouter's price for this DeepSeek model: about 5 cents with the scripts, about 3 cents with jubarte. 35% less.
+Priced as if Claude Opus 5.5 had done the work: $1.81 against $1.11. 39% less.
 
-Three things I did not expect:
+So why not 50%?
 
-In the control arm, 91% of what the agent read was cache hits, billed at a twentieth of the normal rate on Claude. Billed as fresh input, one task at Opus prices would list at $11.33 instead of $2.29.
+An agent rereads the whole conversation on every step: the contract, the instructions, everything it has written so far. Providers cache that reread and bill it at a small fraction of the normal rate. In these runs, 92% to 95% of what the agent read was cached.
 
-Grading is a second bill. A model scores every run against a rubric, and every regrade pays again.
+jubarte halved the number of steps, from about 70 per contract to about 40, so it halved the cheap rereads. The expensive part, the new text the model reads for the first time, hardly moved: 114 thousand tokens with the scripts, 107 thousand with jubarte.
 
-The bill moved more than I expected. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, with no score difference detected. In these runs the jubarte arm read 1.40 million tokens, not 2.61 million, and wrote 20.8 thousand, not 44.5 thousand; output was about half the saving. The arms ran on different days, so a provider change is not ruled out.
+Then I checked the provider's numbers. Its usage figures counted that expensive part twice, and its output counts look about 2.4 times too small next to the text actually produced. A tokens-saved claim built on those numbers would have been wrong in both directions. More on that Friday.
 
-Disclosure: jubarte is mine, and these are my runs and my bills.
+Disclosure: jubarte is mine, and these are my runs. The real bill was a flat subscription, so these are estimates at OpenRouter's prices.
 
-For anyone buying legal AI: ask for tokens and turns per matter and the cache rate, not just the price per seat.
+For anyone buying legal AI: ask for tokens per matter split into cached and uncached, and ask how the vendor counted them.
 
-Links in comments. If you have priced an agent deployment, did the cache rate appear in the quote?
+Links in comments. If you have priced an agent deployment, did the quote say how much of the input was cached?
 
 COMMENT:
 
-Cost tables and method: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-0.14-redlinebench.md (section 6)
-Raw token counts per trial: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
+Report, section 6: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-six-cohorts.md
+How the provider's usage numbers go wrong: https://github.com/arthrod/redline-reports/blob/main/harness/report.md (section 5)
 
-In plain English. A token is roughly three quarters of a word. Input tokens are what the model reads (the contract, the playbook, its own earlier steps), and output tokens are what it writes. A cache hit is text the model already read in this session; providers bill it at a fraction of the normal rate. An agent rereads the same contract dozens of times, which is why cache hits are most of what it reads. They are still a small part of the bill: about 21% of the control's cost at Opus prices, 10% at DeepSeek's.
+In plain English. A token is roughly three quarters of a word. Input tokens are what the model reads, and output tokens are what it writes. A cache hit is text the model has already read in this session; providers bill it at a fraction of the normal rate. An agent rereads the same contract dozens of times, which is why cached reads are most of what it reads but a small part of the bill.
 
 Nitty-gritty:
+- Per trial, from the session logs:
+
+  | | Cached input | Uncached input | Output (reported) |
+  |---|---:|---:|---:|
+  | Scripts | 2.32M | 114k | 44.5k |
+  | jubarte 0.14 | 1.21M | 107k | 21.8k |
+  | jubarte 0.15 | 1.05M | 108k | 20.4k |
+
 - Prices per million tokens:
-  - DeepSeek V4.1 Flash, first-party peak: $0.30 in, $0.006 cached, $1.20 out.
-  - Sonnet 5.5: $2, $0.10, $10.
-  - Opus 5.5: $4, $0.20, $20.
-- Cache-write surcharges are excluded, so the Claude figures are a floor.
-- Nemotron ran on a local GPU that reports no cache, so its tokens are priced as uncached.
-- Claude Code's own estimate in the run files: $9,590 for the archive.
-- Per task, 127 held-out: control $2.29 and jubarte $1.32 at Opus prices; $0.137 and $0.081 at DeepSeek's.
-- The $100 is the Harvey LAB study on jubarte 0.17, self-hosted, 88 trials, 1.48 billion recorded input tokens.
+  - DeepSeek V4.1 Flash 1017 on OpenRouter (2026-11-22): $0.15 in, $0.003 cached, $0.60 out. Doubled on weekdays 01:00–04:00 and 06:00–10:00 UTC.
+  - Opus 5.5 list: $4, $0.20, $20.
+- Per contract at OpenRouter's base rate: $0.051 with the scripts, $0.033 with jubarte 0.14. At the weekday peak: $0.102 and $0.066.
+- Cache-write surcharges are excluded, so the Claude figures are a floor. No Claude model was the agent; that column is a what-if.
+- jubarte 0.15 on the same model: $0.032 on OpenRouter ($0.063 at the peak), $1.05 at Opus prices.
+- Agent minutes per contract: 18.3 with the scripts, 10.3 with jubarte 0.14.
 
 VISUAL SUGGESTIONS:
-14x | SAME RUNS, DIFFERENT PRICE LIST | $702 at DeepSeek list, $9,679 at Claude Opus 5.5
-91% | OF WHAT THE AGENT READ WAS CACHED | billed as fresh input, one task would cost about 5x more at Opus prices
-$1.32 | PER CONTRACT AT OPUS PRICES | $2.29 with the benchmark's scripts, no score difference detected
+−51% | OUTPUT TOKENS WITH JUBARTE | 44.2k → 21.5k per contract
+−35% | THE BILL, AT OPENROUTER'S PRICE | $0.051 → $0.033 per contract
+107k vs 114k | THE EXPENSIVE INPUT BARELY MOVED | the savings came from cheap cached rereads
 
 OPEN QUESTIONS FOR ARTHUR:
-1. What did the Synthetic plan cost? The run logs record credit levels but not the plan. If you want "what I actually paid" to carry a number, give me the plan and months used.
-2. The $100 is your figure, recorded in the 0.17 dataset card. Confirm it covers the whole node rental and not only part of it.
+1. Prices are now OpenRouter's (fetched 2026-11-22). The earlier $0.102 → $0.066 was DeepSeek's weekday peak rate, which is double the base rate. Report Appendix A has OpenRouter prices for all six cohorts, including Nemotron and Muse.
+2. The Opus figures dropped from $2.29 → $1.32 to $1.81 → $1.11. The old figures counted DeepSeek's uncached input twice, as Harbor's totals do.

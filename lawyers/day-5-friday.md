@@ -1,54 +1,45 @@
-# Day 5 · Seven agents, one missing tool
+# Day 5 · 70,000 characters of thinking, and no answer
 
 MAIN POST:
 
-I checked what seven AI coding agents, plus MiniMax's skills catalog, ship for Word documents. None of the open ones gives the model a command that makes a tracked change. The model writes the markup itself.
+In one in three of my contract runs, the AI stopped mid-thought, after writing about 70,000 characters of reasoning and not one word of answer.
 
-Here is what each one does today, when you ask it to redline a contract.
+This week's runs used Claude Code, Anthropic's agent, with models that are not Claude: DeepSeek and NVIDIA's Nemotron. I read the logs of more than 63,000 model responses. Three things surprised me.
 
-Codex: no Word skill in OpenAI's open repositories. The old curated one is gone.
-Qwen Code: none bundled.
-DeepSeek's terminal agent: a 19-line skill that says use python-docx or pandoc if available. Neither writes tracked changes.
-MiniMax Code and MiniMax's skills: Microsoft's .NET OpenXML SDK. Tracked changes, if the model writes them.
-Trae's community skill: compares two files and adds comments. No tracked changes.
-Grok: a built-in Word skill whose source is not public.
-Z.ai's Z Code: supports skills; I found no Word skill to check.
+First, Claude Code sends Claude's settings to every model: "think adaptively, effort high, stop at 16,384 tokens." The other models accepted them. DeepSeek decided for itself when to think. It skipped thinking on one response in six and thought for over 20,000 characters on one in fourteen. Nemotron thought before every single step.
 
-Monday's numbers sit next to that gap: 18.5 minutes a task without a redline engine, 9.2 with one. Those arms ran on different days, so I report the gap, not its cause.
+Second, the ceiling. DeepSeek's reported output never went past 6,897 tokens. 358 responses stopped exactly there, almost all of them still thinking, with no text and usually no action. A third of the runs hit it at least once. The agent then has to try again, with that unfinished thought still in its memory.
 
-jubarte 0.19 is out under Apache-2.0, so a lab can ship it inside a closed product. I drafted a drop-in skill for each harness that accepts contributions.
+Third, the counting. The provider reported zero thinking tokens on every response. Its output counts look about 2.4 times too small next to the text actually written. And it reported the expensive part of the input twice.
 
-Honest reading: the benchmarks ran on 0.14 to 0.16, not 0.19. No frontier model was the agent. Codex never ran without jubarte, so I have no Codex control.
+Where my tool fits: with jubarte the model took about 40 steps per contract instead of 70, and its typical thought shrank from about 1,800 characters to about 700. A redline that took several steps of hand-written Word markup became one command, so the model had less to reason about. That is where the time and token savings on Monday came from.
 
-Disclosure: jubarte is mine.
+Why a lawyer should care: when you buy an agent, you buy the model, the harness around it, and the provider's meter. All three shape the bill and the work, and the meter can be wrong.
 
-Links in comments. If you maintain one of these agents: would you run the missing Codex control with me?
+Disclosure: jubarte is mine. I have no relationship with Anthropic, DeepSeek or NVIDIA.
+
+Links in comments. Does anyone on your vendor's side read the raw logs?
 
 COMMENT:
 
+The harness article: https://github.com/arthrod/redline-reports/blob/main/harness/report.md
+The six cohorts: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-six-cohorts.md
 jubarte: https://github.com/jandira-tech/jubarte
-The harness report, with every skill's source and what it calls: https://github.com/arthrod/redline-reports/blob/main/harness/report.md
-The drop-in skills: [links to the pull requests, once open]
 
-The audit, by repository and commit:
-- `openai/codex` (codex-rs skill samples) and `openai/plugins`: no docx skill.
-- `openai/skills` `.curated/`: no `doc` skill at commit 49f948f.
-- `QwenLM/qwen-code`: no docx skill among the bundled skills.
-- `Hmbown/DeepSeek-TUI` `crates/skills/assets/skills/docx/SKILL.md`: 19 lines, python-docx or pandoc.
-- `MiniMax-AI/minimax-code` `packages/local-runtime/assets/skills/docx` and `MiniMax-AI/skills` `skills/minimax-docx`: .NET OpenXML SDK with tracked-change samples.
-- `trae-community/trae-skills` `skills/docx-diff-comment`: pandoc, python-docx and comment scripts.
-- `xai-org/plugin-marketplace`: no Word plugin. Grok's built-in "Word Documents" skill is described on x.ai; its source is not published.
-- Anthropic's `docx` skill for Claude Code: LibreOffice, Poppler, pandoc and docx-js, about 850 MB together, against 36 MB for jubarte, measured 4 October on Ubuntu 24.04.
+In plain English. A harness is the program that runs the AI model as an agent: it hands the model the files, runs its commands, and feeds back the results. "Thinking" is text the model writes to itself before answering. You pay for it, and you rarely see it. A token limit cuts the model off; if it is cut off mid-thought, it produces nothing usable.
 
-In plain English. A skill is a set of instructions and tools an agent loads when a task needs them. When the skill has no redline tool, the model writes the file format itself. That was the arm with more time and tokens on Monday; the arms ran on different days, so the comparison does not prove the file format was the cause.
+Nitty-gritty:
+- Every request carried `thinking: adaptive`, `effort: high`, `max_tokens: 16384`, and `clear_thinking` with `keep: all` (earlier thinking stays in context).
+- DeepSeek thought on 82% to 87% of responses. Median thought when thinking: 1,788 characters with the scripts, 698 with jubarte 0.14, 746 with 0.15.
+- Stops at the limit: 358 DeepSeek responses, all at exactly 6,897 reported tokens. Median 70.8k thinking characters, no visible text, a tool call in 12% to 15%. Nemotron stopped at the requested 16,384 (66 times).
+- DeepSeek reports about 10 characters per output token; Nemotron, about 4. 16,384 ÷ 6,897 = 2.38, which matches the gap. My reading, not proven: the limit works, and the count is on another scale.
+- `thinking_tokens` was 0 on all 63,274 responses. DeepSeek's thinking blocks were all unsigned; Nemotron's were signed.
 
 VISUAL SUGGESTIONS:
-7 | AGENTS CHECKED FOR A WORD SKILL | none of the open ones has a command that makes a tracked change
-36 MB | JUBARTE, INSTALLED | about 850 MB for the tools Anthropic's docx skill installs
-Apache-2.0 | JUBARTE 0.19 | free to ship inside a commercial product
+6,897 | THE CEILING DEEPSEEK NEVER CROSSED | 358 responses stopped there, mid-thought
+70→40 | STEPS PER CONTRACT WITH JUBARTE | and the typical thought shrank from 1,788 to 698 characters
+0 | THINKING TOKENS THE PROVIDER REPORTED | on 63,274 responses, 91% of which contained thinking
 
 OPEN QUESTIONS FOR ARTHUR:
-1. Post only after the pull requests are open, or reword "I drafted" to match what is live. The PR drafts are in `outreach/prs/` in your local folder, not in this public repo.
-2. You listed "mcode" and "minimax code" separately. I read both as MiniMax Code (its CLI is `mcode`) and count MiniMax's skills catalog as a source, not an agent, so the count is seven. If mcode is another product, it becomes eight once checked.
-3. Z Code: zcode.z.ai documents skills and plugins, but its built-in skills could not be fetched from here. Check its built-in list before posting the line.
-4. Claude Code is the eighth harness and the one every paired run used. It is in the comment and stays out of the headline count, because it was not on your list.
+1. Friday is now the harness article in plain words. The survey of other harnesses' Word skills is out of scope for this week.
+2. This post names Anthropic, DeepSeek and NVIDIA. Its tone is factual, but consider sending the harness article to the Claude Code team and to Synthetic before posting.

@@ -1,45 +1,55 @@
-# Day 4 · The redline that wasn't one
+# Day 4 · Which judge graded each side?
 
 MAIN POST:
 
-One "redline" in a benchmark I ran had no tracked changes in it, and it scored 0.90.
+When a vendor shows you an AI score, ask one question first: which judge graded each side?
 
-It looked right: old words struck through, new words beside them. Inside the file, Word had recorded 39 runs of strikethrough formatting and zero insertions or deletions. The agent drew a redline instead of making one. Accept All does nothing to that file.
+I learned this from my own data. The cohort was Muse Spark 1.3 on RedlineBench. Each run is graded by a judge model. Some of the jubarte runs had been graded twice: once by the judge used for both arms, and once by a different model used only on my side. My first pass averaged every grade a run had. That blended two judges into one arm and not the other, and my tool looked 4.6 points ahead.
 
-It passed because Harvey's grader reads the contract with every tracked change accepted, as plain text. It cannot tell a redline from a clean rewrite. On that benchmark, a tool built for real tracked changes can move the score only through the words.
+With one judge per arm, the gap is +0.019, with a 95% range from −0.033 to +0.071. No difference detected.
 
-RedlineBench is different, and that matters for this week's result. Its judge sees every insertion, deletion and comment. jubarte showed no score difference there either, so a grader blind to markup cannot explain it. Whether that judge rewards cleaner markup is untested. My read, not a finding: the score tracks legal judgment, which a tool does not supply.
+Two more things about that cohort, said plainly. The jubarte build was not recorded. And the jubarte arm ran a day before the control, not after.
 
-The judges are noisy, though. 47 RedlineBench runs were graded twice by the same model, and the two grades differ by 0.108 on average.
+The same discipline changes how the other results read. On RedlineBench the judge sees every insertion, deletion and comment. On Harvey's benchmark the grader reads the contract with every change accepted. One control-arm "redline" there had 39 runs of strikethrough formatting and not a single tracked change, and it scored 0.90.
 
-Then I audited my own write-up. My dataset card headlined a 0.15 result inside a 0.14 study. A trial table counted a folder named "analysis" as a run. And the card described Codex runs that the public data does not contain. All of it is listed in the audit, with the fixes.
+Then the rounds. RedlineBench tasks are rounds of a negotiation. Across three cohorts, jubarte did slightly better in the middle rounds, answering the other side's markup, and slightly worse in the first and last. Only one round result clears zero, barely. A pattern to test, not a claim.
 
-Disclosure: jubarte is mine.
+Disclosure: jubarte is mine, and so was the averaging mistake. I caught it before posting.
 
-If a vendor says its redlines score well, ask one question: does the grader open the tracked changes, or read the accepted text?
+If a vendor shows you a score, ask two questions. Which judge graded each side? Does that judge read the tracked changes, or only the accepted text?
 
-Links in comments. Who here checks a redline's markup before trusting its score?
+Links in comments. Have you ever caught a number of your own that was too good?
 
 COMMENT:
 
-The audit: https://github.com/arthrod/redline-reports/blob/main/DATA-AUDIT.md
-Harvey LAB, the benchmark with the accepted-text grader: https://github.com/harveyai/harvey-labs
+Report, sections 3 and 4: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-six-cohorts.md
+How the grades were filtered: https://github.com/arthrod/redline-reports/blob/main/DATA-AUDIT.md
+Harvey LAB: https://github.com/harveyai/harvey-labs
 RedlineBench: https://huggingface.co/datasets/crosbylegal/RedlineBench
 
-In plain English. "Accepted text" means the document as it reads after clicking Accept All. A real redline and a clean rewrite look identical that way. A grader that reads the markup sees who changed what, as a lawyer does in the Reviewing Pane.
+In plain English. A judge model reads the agent's redline and ticks the lawyers' rubric. Different judge models are stricter or looser, so mixing them inside one comparison moves the number for reasons unrelated to the work. "Accepted text" means the document as it reads after clicking Accept All. A real redline and a clean rewrite look identical that way.
 
 Nitty-gritty:
-- The strikethrough file was the control arm of Harvey LAB's capital-markets indenture markup: 39 `w:strike` runs, 0 `w:ins`, 0 `w:del`, scored 0.900. The jubarte file for the same task had 38 insertions and 39 deletions.
-- Harvey's extractor runs `pandoc --track-changes=accept`. Under the upstream extractor, which also shows Word comments, the first 19 pairs moved from 0.890 / 0.876 to 0.936 / 0.938.
-- RedlineBench's judge reads an annotated view with deletions as `~~…~~`, insertions as `++…++` and comment markers.
-- Judge repeatability: 47 trials with two GLM-5.3-Flash grades. Mean absolute difference 0.108, median 0.062, largest 0.5. They are the trials that happened to be regraded, not a random sample.
-- The Harvey runs used jubarte 0.16; the RedlineBench runs used 0.14.
+- Muse Spark 1.3, 140 tasks, gpt-6.1-sol panel in both arms: 0.297 against 0.316, +0.019 (−0.033 to +0.071).
+- Mixing in the GLM-5.3-Flash grades on the jubarte side gave +0.046.
+- The Muse jubarte arm ran Oct 16 to 17 UTC; the control ran Oct 17 to 18.
+- Timeouts: 33 of 140 jubarte trials and 78 of 158 control trials. Timed-out runs are graded on what was saved.
+- Rounds, change with jubarte (95% interval):
+
+  | Round | 0.14 DeepSeek | 0.15 DeepSeek | Muse |
+  |---|---|---|---|
+  | 1 | −0.060 (−0.127 to +0.017) | −0.092 (−0.179 to +0.017) | −0.001 |
+  | 2 | +0.017 | +0.040 (+0.001 to +0.082) | +0.017 |
+  | 3 | +0.014 | +0.006 | +0.077 (−0.004 to +0.156) |
+  | 4 | −0.038 (−0.083 to +0.007) | −0.035 | −0.031 |
+
+- The strikethrough file: the control arm of a Harvey LAB capital-markets indenture task in the 0.16 cohort. It had 39 `w:strike` runs and 0 `w:ins` or `w:del`, and scored 0.900. Harvey's extractor runs `pandoc --track-changes=accept`.
 
 VISUAL SUGGESTIONS:
++0.046 → +0.019 | THE SAME RUNS, ONE JUDGE PER ARM | Muse Spark 1.3, no difference detected
 0 | TRACKED CHANGES IN A "REDLINE" | 39 strikethrough runs, scored 0.90 by an accepted-text grader
-0.108 | SAME FILE, GRADED TWICE | average gap between two grades from one judge model
-7 | ERRORS IN MY OWN DATASET CARDS | found in this week's audit, fixed before this post
+Rounds 2–3 up, 1 and 4 down | WHERE JUBARTE HELPED AND HURT | the same direction in three cohorts
 
 OPEN QUESTIONS FOR ARTHUR:
-1. Post this only after the card fixes in DATA-AUDIT.md are live. The post says they are fixed.
-2. The old harness report says both graders read accepted text. That is wrong for RedlineBench (checked in the judges' annotated views), and the new harness report corrects it. Confirm nothing published elsewhere repeats the old claim.
+1. The hook is now the judge question; the +0.046 blend is the example in the body, not the headline, because +0.046 was never published and the true result is a null. To restore the earlier hook ("The number I almost published"), revert this paragraph.
+2. Publish the Muse trials before this goes out (`DATA-AUDIT.md`). The post rests on them.
