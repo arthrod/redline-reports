@@ -80,6 +80,8 @@ On the held-out tasks alone:
 
 Two short study arms are not in the table. `jubarte-study-v13` (0.14.0, 33 tasks, 12 of them development tasks) scored lower: 0.455 against 0.523, −0.068 (−0.120 to −0.019), 7 wins and 16 losses, while still cutting time (8.4 against 19.6 minutes) and input (1.09 M against 2.65 M). It is the one arm whose interval excludes zero. `jubarte-study-v15` (14 tasks) came in at −0.044 (−0.107 to +0.029).
 
+Per-task scores for these comparisons are in `data/task_pairs.csv`; `uv run scripts/paired_bootstrap.py` recomputes every figure above. The interval bounds are Monte Carlo estimates and move by up to about 0.003 with the seed; no conclusion changes.
+
 No full-length arm showed a score difference whose interval excluded zero. No equivalence margin was set or tested, so the claim is "no difference detected", not "equal". Every arm cut input tokens by 41% to 51% and agent time by 40% to 50%. The efficiency result repeats across three skill versions and two binaries.
 
 The public dataset card's headline (0.494 vs 0.492 on 134 tasks) is the 0.15.0 row. Its 0.494 takes the later grade for the five control trials graded twice; averaging both grades, as this table does, gives 0.493 (the first grades alone give 0.491). This report's headline is the ds-v12 row, the best-documented 0.14.0 arm.
