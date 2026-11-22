@@ -1,4 +1,4 @@
-# jubarte 0.14 on RedlineBench: no score difference, about half the work
+# jubarte 0.14 on RedlineBench: no score difference detected, about half the work
 
 Report date: 2026-11-22. Scope: every RedlineBench run made with the jubarte 0.14.0 binary, against the benchmark's own Python document scripts, plus the runs needed to read them (the controls, and the one 0.15.0 job that the public dataset card currently uses as its headline).
 
@@ -78,9 +78,11 @@ On the held-out tasks alone:
 - ds-v9: −0.024 (−0.056 to +0.007), 127 tasks.
 - study-v14: +0.002 (−0.025 to +0.028), 113 tasks (`jubarte-study-v14` and `v14-rest` together, minus the 12 development tasks; the earlier figure of +0.020 on 92 tasks counted `v14-rest` alone).
 
-No arm showed a score difference whose interval excluded zero. No equivalence margin was set or tested, so the claim is "no difference detected", not "equal". Every arm cut input tokens by 41% to 51% and agent time by 40% to 50%. The efficiency result repeats across three skill versions and two binaries.
+Two short study arms are not in the table. `jubarte-study-v13` (0.14.0, 33 tasks, 12 of them development tasks) scored lower: 0.455 against 0.523, −0.068 (−0.120 to −0.019), 7 wins and 16 losses, while still cutting time (8.4 against 19.6 minutes) and input (1.09 M against 2.65 M). It is the one arm whose interval excludes zero. `jubarte-study-v15` (14 tasks) came in at −0.044 (−0.107 to +0.029).
 
-The public dataset card's headline (0.494 vs 0.492 on 134 tasks) is the 0.15.0 row. This report's headline is the ds-v12 row, the best-documented 0.14.0 arm.
+No full-length arm showed a score difference whose interval excluded zero. No equivalence margin was set or tested, so the claim is "no difference detected", not "equal". Every arm cut input tokens by 41% to 51% and agent time by 40% to 50%. The efficiency result repeats across three skill versions and two binaries.
+
+The public dataset card's headline (0.494 vs 0.492 on 134 tasks) is the 0.15.0 row. Its 0.494 takes the later grade for the five control trials graded twice; averaging both grades, as this table does, gives 0.493 (the first grades alone give 0.491). This report's headline is the ds-v12 row, the best-documented 0.14.0 arm.
 
 ## 4. The development set overstated the gain
 

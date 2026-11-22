@@ -26,13 +26,14 @@ In plain English. A development set is the material you look at while you build.
 Nitty-gritty:
 - DeepSeek drafts on the 12 tasks: v2 0.579, v9 0.576, v12 0.566, v8 and v10 0.562; control 0.515.
 - Held-out 127: v12 0.495 vs 0.491 (−0.026 to +0.034); v9 0.467 vs 0.491 (−0.056 to +0.007). Task bootstrap, 10,000 draws.
+- One short study arm lost outright: `jubarte-study-v13`, 33 tasks, 0.455 vs 0.523 (−0.120 to −0.019).
 - Nemotron 3.5 Lightning 30B-A3B on one RTX 5090, 12 drafts, control 0.401. Only v9 beat it (0.425).
 - Same 0.14.0 binary (`f4c352db…`) in all 22 drafts.
 - Judge: GLM-5.3-Flash for every grade above.
 
 VISUAL SUGGESTIONS:
 +0.064 | TWELVE TASKS I TUNED ON | best draft 0.579 against 0.515 for the benchmark's scripts
-+0.004 | 127 TASKS I DID NOT | the same approach, inside the noise
++0.004 | 127 TASKS I DID NOT | the same approach, no difference detected
 11 of 12 | DRAFTS THAT LOST ON A SMALL MODEL | Nemotron 30B, same binary, different instructions
 
 OPEN QUESTIONS FOR ARTHUR:

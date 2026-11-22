@@ -2,7 +2,7 @@
 
 MAIN POST:
 
-It took 716 agent runs, 158 hours of run time and 1.43 billion input tokens to earn one sentence I can defend: half the work, no measurable change in the score.
+It took 716 agent runs, 158 hours of run time and 1.43 billion input tokens to earn one sentence I can defend: half the work, no detectable change in the score.
 
 The question was narrow. When an AI agent redlines a contract, does it do better legal work if it gets a real tracked-changes engine instead of the Python scripts the benchmark ships with?
 
@@ -10,7 +10,7 @@ The test was Crosby and micro1's RedlineBench: 140 negotiation tasks, four round
 
 On the 127 tasks I never used to tune anything:
 
-Score: 0.491 with their tools, 0.495 with mine. No measurable difference.
+Score: 0.491 with their tools, 0.495 with mine. No difference detected.
 Minutes per task: 18.5 against 9.2.
 Turns: 71 against 37.
 Output tokens: 44.5k against 20.8k.
@@ -44,8 +44,8 @@ Nitty-gritty:
 
 VISUAL SUGGESTIONS:
 716 | RUNS ON JUBARTE 0.14 | to reach one clean comparison on 127 held-out contracts
-9.2 min | PER TASK WITH JUBARTE | 18.5 with the benchmark's own scripts, no measurable score difference
-0.495 | SCORE, 127 HELD-OUT TASKS | 0.491 with the benchmark's scripts, inside the noise
+9.2 min | PER TASK WITH JUBARTE | 18.5 with the benchmark's own scripts, no score difference detected
+0.495 | SCORE, 127 HELD-OUT TASKS | 0.491 with the benchmark's scripts, no difference detected
 
 OPEN QUESTIONS FOR ARTHUR:
 1. The old Day 1 led with 134 tasks (0.494 vs 0.492), which is the 0.15.0 run. This version leads with the 0.14.0 held-out set. Confirm you want 0.14 as the headline.

@@ -8,7 +8,7 @@ It looked right: old words struck through, new words beside them. Inside the fil
 
 It passed because Harvey's grader reads the contract with every tracked change accepted, as plain text. It cannot tell a redline from a clean rewrite. On that benchmark, a tool built for real tracked changes can move the score only through the words.
 
-RedlineBench is different, and that matters for this week's result. Its judge sees every insertion, deletion and comment. jubarte showed no score difference there either. So the missing gain is not the grader hiding the tool's work. It is legal judgment, which a tool does not supply.
+RedlineBench is different, and that matters for this week's result. Its judge sees every insertion, deletion and comment. jubarte showed no score difference there either, so a grader blind to markup cannot explain it. Whether that judge rewards cleaner markup is untested. My read, not a finding: the score tracks legal judgment, which a tool does not supply.
 
 The judges are noisy, though. 47 RedlineBench runs were graded twice by the same model, and the two grades differ by 0.108 on average.
 

@@ -61,7 +61,7 @@ scripts, and Harvey LAB's docx skill with its `redline.py`.
 
 | Run | Tasks | Benchmark's own tools | jubarte | Difference |
 |---|---|---|---|---|
-| RedlineBench, DeepSeek, Claude Code, 0.15.0 binary | 134 | 0.494 | 0.492 | −0.002 |
+| RedlineBench, DeepSeek, Claude Code, 0.15.0 binary | 134 | 0.494 (0.493 averaging double grades) | 0.492 | −0.002 (−0.000) |
 | RedlineBench, DeepSeek, Claude Code, held-out set, 0.14.0 | 127 | 0.489 (0.491 averaging double grades) | 0.493 (0.495) | +0.004 |
 | RedlineBench, DeepSeek, pi, 0.15.0 skill | 134 | 0.494 (Claude Code plain) | 0.486 | −0.008 |
 | RedlineBench, Haiku 5.5, first 69 | 69 | 0.394 | 0.427 | +0.033 (35 wins, 24 losses, 10 ties) |
@@ -126,14 +126,21 @@ authentication on every trial.
    22.6 v 13.6 minutes on one repo/securities-lending pair). The mean still fell.
 3. Codex was never run without jubarte. Its 41 jubarte trials (hardest tasks first)
    scored 0.160 against 0.202 for plain Claude Code on the same tasks, and wrote
-   40-126k output tokens per trial, more than plain Claude Code.
+   40-126k output tokens per trial, more than plain Claude Code. That is a cross-harness
+   comparison: with no plain-Codex control, it says nothing about whether jubarte helps
+   or hurts Codex against Codex's own tools.
+4. One short 0.14 arm lost on score. `jubarte-study-v13` (33 tasks, 12 of them
+   development tasks) scored 0.455 against 0.523: −0.068 (−0.120 to −0.019), 7 wins
+   and 16 losses. Its time and input still fell (8.4 v 19.6 minutes, 1.09M v 2.65M).
 
 The accurate sentence: with DeepSeek-V4.1-Flash in Claude Code, in every 0.14 and 0.15
-arm on RedlineBench and in the Harvey LAB studies, mean time and mean tokens fell and
-no score difference was detected. It does not hold for every model or harness:
-Nemotron 30B scored below its 0.401 control with 11 of 12 skill drafts (0.059 to
-0.381) on the 12 development tasks, a gap far larger than judge noise, and Codex
-(item 3) wrote more output tokens and scored lower than plain Claude Code.
+arm on RedlineBench and in the Harvey LAB studies, mean time and mean tokens fell. No
+score difference was detected in any full-length arm; one 33-task arm, study-v13,
+scored lower (item 4). It does not hold for every model: Nemotron 30B scored below its
+0.401 control with 11 of 12 skill drafts (0.059 to 0.381) on the 12 development tasks.
+The lowest drafts sit far below judge noise; the closest, 0.381, is 0.020 below, inside
+the ±0.04 per-task noise above, and no interval was computed for these 12-task means.
+Codex (item 3) has no control of its own.
 
 ## What the grading cannot see
 

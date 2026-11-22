@@ -14,7 +14,7 @@ In the control arm, 91% of what the agent read was cache hits, billed at a twent
 
 Grading is a second bill. A model scores every run against a rubric, and every regrade pays again.
 
-The tool moved the bill more than I thought a tool could. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, with no measurable score difference. The saving is input the agent no longer reads: 1.40 million tokens per task against 2.61 million, in 37 turns against 71.
+The tool moved the bill more than I thought possible. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, with no score difference detected. The saving is work the agent no longer does: it read 1.40 million tokens, not 2.61 million, and wrote 20.8 thousand, not 44.5 thousand. At Opus prices, output was about half of it.
 
 Disclosure: jubarte is mine, and these are my runs and my bills.
 
@@ -43,7 +43,7 @@ Nitty-gritty:
 VISUAL SUGGESTIONS:
 14x | SAME RUNS, DIFFERENT PRICE LIST | $702 at DeepSeek list, $9,679 at Claude Opus 5.5
 91% | OF WHAT THE AGENT READ WAS CACHED | billed as fresh input, one task would cost about 5x more at Opus prices
-$1.32 | PER CONTRACT AT OPUS PRICES | $2.29 with the benchmark's scripts, no measurable score difference
+$1.32 | PER CONTRACT AT OPUS PRICES | $2.29 with the benchmark's scripts, no score difference detected
 
 OPEN QUESTIONS FOR ARTHUR:
 1. What did the Synthetic plan cost? The run logs record credit levels but not the plan. If you want "what I actually paid" to carry a number, give me the plan and months used.

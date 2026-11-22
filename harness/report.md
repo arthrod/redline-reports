@@ -61,7 +61,7 @@ Other full-length arms on the same control:
 | study-v14, held-out (0.14.0) | 113 | +0.002 (−0.025 to +0.028) | 1.31 M vs 2.66 M | 11.0 vs 18.6 |
 | study-v14b (0.15.0) | 134 | −0.000 (−0.025 to +0.024) | 1.28 M vs 2.60 M | 10.4 vs 18.6 |
 
-No arm showed a score difference whose interval excluded zero (no equivalence margin was tested). The efficiency held in every arm.
+No full-length arm showed a score difference whose interval excluded zero (no equivalence margin was tested). One short arm did: `jubarte-study-v13`, 33 tasks, −0.068 (−0.120 to −0.019). The efficiency held in every arm, that one included.
 
 **The development set overstated the gain.** On the 12 tuning tasks, DeepSeek drafts scored up to 0.579 against 0.515; on the held-out 127 the gain was gone. On Nemotron 30B-A3B, 11 of 12 drafts scored below the control on those 12 tasks (from 0.059 against 0.401). The binary was the same; the skill text was what hurt. Keep a Word skill short for small models.
 
@@ -139,7 +139,7 @@ Qwen Code also converts Gemini CLI extensions, so `qwen extensions install https
 ## 5. What the graders can and cannot see
 
 - **Harvey LAB reads accepted text.** Its extractor runs `pandoc --track-changes=accept`, so a redline and a clean rewrite look the same to the judge. One control-arm "redline" had 39 strikethrough formatting runs and no `w:ins` or `w:del`, and scored 0.900.
-- **RedlineBench reads the markup.** Its judge gets an annotated view with deletions, insertions and comment markers. An earlier version of this report said both graders read accepted text; that was wrong for RedlineBench. Since jubarte showed no score difference there either, the result is not the grader hiding the tool's work.
+- **RedlineBench reads the markup.** Its judge gets an annotated view with deletions, insertions and comment markers. An earlier version of this report said both graders read accepted text; that was wrong for RedlineBench. So the result cannot be blamed on a grader that never sees the markup. Whether this judge rewards better markup has not been tested, so grading insensitivity is not ruled out.
 - **Judges are noisy.** 47 RedlineBench trials were graded twice by GLM-5.3-Flash; the two grades differ by 0.108 on average (median 0.062). Harvey's judge moves about 0.02 between runs.
 - **The RedlineBench judge was one model.** GLM-5.3-Flash, not Crosby's panel, so these scores compare with each other and not with Crosby's leaderboard.
 
