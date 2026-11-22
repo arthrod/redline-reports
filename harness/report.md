@@ -132,7 +132,7 @@ Not benchmarked. Each loads an Agent Skills `SKILL.md`. The drop-in skill is `sk
 | Codex | `.agents/skills/` in the working directory and each parent up to the repository root; developers.openai.com/codex/skills |
 | DeepSeek TUI (Codewhale) | `~/.codewhale/skills/` by default, or `~/.agents/skills/`; `crates/skills/src/lib.rs` |
 | MiniMax Code | workspace `.minimax/skills/`, `.agents/skills/` or `.claude/skills/`; `packages/tui/CHANGELOG.md` and the bundled `skill-creator` skill |
-| Z Code | not checked |
+| Z Code | `~/.zcode/skills/<name>/SKILL.md` (user level), as reported by third-party install guides, which also list `.zcode/skills/` and `~/.agents/skills/`; ZCode's own page is zcode.z.ai/en/docs/skill, not fetched from here. Its built-in Word support was not checked |
 
 Qwen Code also converts Gemini CLI extensions, so `qwen extensions install https://github.com/jandira-tech/jubarte` should load jubarte's MCP server (not yet tested).
 
