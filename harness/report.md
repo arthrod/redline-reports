@@ -6,7 +6,7 @@ Disclosure: Arthur Souza Rodrigues writes jubarte and ran every trial below.
 
 **In one paragraph.**
 - We replaced RedlineBench's own Word tooling with jubarte 0.14 and re-ran the tasks with the same model, brief and grader.
-- On the 127 tasks never used to tune the skill, the score tied: 0.491 vs 0.495.
+- On the 127 tasks never used to tune the skill, no score difference was detected: 0.491 vs 0.495.
 - Agent time halved (18.5 to 9.2 minutes), turns fell from 71 to 37, and output tokens from 44.5k to 20.8k.
 - Getting one clean comparison took 716 runs on 0.14 alone. The whole archive (1,357 runs) would list at $702 on DeepSeek's prices and $9,679 on Claude Opus 5.5.
 - Later binaries on Harvey's benchmark went the same direction, with smaller savings.
@@ -58,10 +58,10 @@ Other full-length arms on the same control:
 |---|---:|---|---:|---:|
 | ds-v12, all 139 tasks (0.14.0) | 139 | +0.008 (−0.020 to +0.035) | 1.41 M vs 2.57 M | 9.3 vs 18.6 |
 | ds-v9, held-out (0.14.0) | 127 | −0.024 (−0.056 to +0.007) | 1.51 M vs 2.61 M | 11.1 vs 18.5 |
-| study-v14, held-out (0.14.0) | 92 | +0.020 (−0.007 to +0.049) | 1.34 M vs 2.61 M | 11.5 vs 18.2 |
+| study-v14, held-out (0.14.0) | 113 | +0.002 (−0.025 to +0.028) | 1.31 M vs 2.66 M | 11.0 vs 18.6 |
 | study-v14b (0.15.0) | 134 | −0.000 (−0.025 to +0.024) | 1.28 M vs 2.60 M | 10.4 vs 18.6 |
 
-The score tied in every arm. The efficiency held in every arm.
+No arm showed a score difference whose interval excluded zero (no equivalence margin was tested). The efficiency held in every arm.
 
 **The development set overstated the gain.** On the 12 tuning tasks, DeepSeek drafts scored up to 0.579 against 0.515; on the held-out 127 the gain was gone. On Nemotron 30B-A3B, 11 of 12 drafts scored below the control on those 12 tasks (from 0.059 against 0.401). The binary was the same; the skill text was what hurt. Keep a Word skill short for small models.
 
@@ -88,7 +88,7 @@ The same archive at today's list prices:
 | Claude Sonnet 5.5 | $4,839 | $1.15 | $0.66 |
 | Claude Opus 5.5 | $9,679 | $2.29 | $1.32 |
 
-Cache reads are priced at the cache rate and cache writes are excluded, so the Claude rows are floors. 91% of the control's input was cache reads: the cache price decides the bill. Grading is a second bill on top, one LLM call per rubric pass per trial.
+Cache reads are priced at the cache rate and cache writes are excluded, so the Claude rows are floors. 91% of the control's input was cache reads; they are about 21% of its bill at Opus prices. Billed as ordinary input, the same task would list at about $11.33, five times more. Grading is a second bill on top, one LLM call per rubric pass per trial.
 
 What actually happened to the budget: runs on a flat Synthetic subscription paused at 4% and 0% credit. OpenRouter returned 402. A DevPass allowance ran out. A judge model (gpt-5.6-luna) was dropped after ten minutes on cost. The one study with a confirmed bill (Harvey LAB on 0.17, 88 trials, self-hosted MI355X) cost $100; its 1.48 B recorded input tokens would list at $6,175 on Opus 5.5.
 
@@ -122,13 +122,25 @@ One smoke trial on 0.15: 0.091. Cline did not read the instruction file on its o
 
 ### DeepSeek TUI, Qwen Code, MiniMax Code, Trae, Grok Build, Z Code
 
-Not benchmarked. Each can load an Agent Skills `SKILL.md`. A drop-in jubarte skill for each, with its install path, is prepared; see section 7.
+Not benchmarked. Each loads an Agent Skills `SKILL.md`. The drop-in skill is `skills/jubarte-documents/SKILL.md` in the jubarte repository (a 120-line cut for small models is prepared with the pull requests). Where to put it, as each project documents:
+
+| Harness | Skill location |
+|---|---|
+| Qwen Code | `~/.qwen/skills/<name>/SKILL.md` (personal) or `.qwen/skills/<name>/SKILL.md` (project); `QwenLM/qwen-code` `docs/users/features/skills.md` |
+| Trae | `~/.trae/skills/<name>/SKILL.md` or `.trae/skills/<name>/SKILL.md`; `trae-community/trae-skills` README |
+| Grok Build | `~/.grok/skills/` or a plugin's `skills/` directory; docs.x.ai, "Skills, plugins and marketplaces" |
+| Codex | `.agents/skills/` in the working directory and each parent up to the repository root; developers.openai.com/codex/skills |
+| DeepSeek TUI (Codewhale) | `~/.codewhale/skills/` by default, or `~/.agents/skills/`; `crates/skills/src/lib.rs` |
+| MiniMax Code | workspace `.minimax/skills/`, `.agents/skills/` or `.claude/skills/`; `packages/tui/CHANGELOG.md` and the bundled `skill-creator` skill |
+| Z Code | not checked |
+
+Qwen Code also converts Gemini CLI extensions, so `qwen extensions install https://github.com/jandira-tech/jubarte` should load jubarte's MCP server (not yet tested).
 
 ## 5. What the graders can and cannot see
 
 - **Harvey LAB reads accepted text.** Its extractor runs `pandoc --track-changes=accept`, so a redline and a clean rewrite look the same to the judge. One control-arm "redline" had 39 strikethrough formatting runs and no `w:ins` or `w:del`, and scored 0.900.
-- **RedlineBench reads the markup.** Its judge gets an annotated view with deletions, insertions and comment markers. An earlier version of this report said both graders read accepted text; that was wrong for RedlineBench. Since jubarte also tied there, the tie is not the grader hiding the tool's work.
-- **Judges are noisy.** 47 RedlineBench trials were graded twice by GLM-5.3-Flash; the mean per-trial standard deviation is 0.077. Harvey's judge moves about 0.02 between runs.
+- **RedlineBench reads the markup.** Its judge gets an annotated view with deletions, insertions and comment markers. An earlier version of this report said both graders read accepted text; that was wrong for RedlineBench. Since jubarte showed no score difference there either, the result is not the grader hiding the tool's work.
+- **Judges are noisy.** 47 RedlineBench trials were graded twice by GLM-5.3-Flash; the two grades differ by 0.108 on average (median 0.062). Harvey's judge moves about 0.02 between runs.
 - **The RedlineBench judge was one model.** GLM-5.3-Flash, not Crosby's panel, so these scores compare with each other and not with Crosby's leaderboard.
 
 ## 6. Where jubarte costs more, or loses

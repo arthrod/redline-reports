@@ -10,11 +10,11 @@ What I actually paid looked like none of them. The agent ran on a flat subscript
 
 Three things I did not expect:
 
-In the control arm, 91% of what the agent read was cache hits. The cache price decides most of the bill, and quotes rarely show it.
+In the control arm, 91% of what the agent read was cache hits, billed at a twentieth of the normal rate on Claude. Billed as fresh input, one task at Opus prices would list at $11.33 instead of $2.29.
 
 Grading is a second bill. A model scores every run against a rubric, and every regrade pays again.
 
-The tool moved the bill more than I thought a tool could. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, at the same score. The saving is turns the agent no longer spends writing XML.
+The tool moved the bill more than I thought a tool could. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, with no measurable score difference. The saving is input the agent no longer reads: 1.40 million tokens per task against 2.61 million, in 37 turns against 71.
 
 Disclosure: jubarte is mine, and these are my runs and my bills.
 
@@ -24,10 +24,10 @@ Links in comments. If you have priced an agent deployment, did the cache rate ap
 
 COMMENT:
 
-Cost tables and method: [link to reports/jubarte-0.14-redlinebench.md, section 6]
+Cost tables and method: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-0.14-redlinebench.md (section 6)
 Raw token counts per trial: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
 
-In plain English. A token is roughly three quarters of a word. Input tokens are what the model reads (the contract, the playbook, its own earlier steps), and output tokens are what it writes. A cache hit is text the model already read in this session; providers bill it at a fraction of the normal rate. An agent rereads the same contract dozens of times, which is why cache hits dominate.
+In plain English. A token is roughly three quarters of a word. Input tokens are what the model reads (the contract, the playbook, its own earlier steps), and output tokens are what it writes. A cache hit is text the model already read in this session; providers bill it at a fraction of the normal rate. An agent rereads the same contract dozens of times, which is why cache hits are most of what it reads. They are still a small part of the bill: about 21% of the control's cost at Opus prices, 10% at DeepSeek's.
 
 Nitty-gritty:
 - Prices per million tokens:
@@ -42,8 +42,8 @@ Nitty-gritty:
 
 VISUAL SUGGESTIONS:
 14x | SAME RUNS, DIFFERENT PRICE LIST | $702 at DeepSeek list, $9,679 at Claude Opus 5.5
-91% | OF WHAT THE AGENT READ WAS CACHED | the cache rate decides most of the bill
-$1.32 | PER CONTRACT AT OPUS PRICES | $2.29 with the benchmark's scripts, same score
+91% | OF WHAT THE AGENT READ WAS CACHED | billed as fresh input, one task would cost about 5x more at Opus prices
+$1.32 | PER CONTRACT AT OPUS PRICES | $2.29 with the benchmark's scripts, no measurable score difference
 
 OPEN QUESTIONS FOR ARTHUR:
 1. What did the Synthetic plan cost? The run logs record credit levels but not the plan. If you want "what I actually paid" to carry a number, give me the plan and months used.

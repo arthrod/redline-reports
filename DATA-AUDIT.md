@@ -6,7 +6,7 @@ Not reachable from this session: `~/temp/T/colab_bench`, `~/temp/T/1-blog-posts`
 
 ## Verdict
 
-The runs are preserved. The public description of them has seven errors, and two local folders hold unarchived material. Nothing found here changes a score. Fix the dataset cards before any post links to them.
+The runs in the Hugging Face datasets are preserved. One set is not confirmed: the 41 Codex trials are in none of the datasets checked, and their presumed local copy (`~/temp/T/colab_bench`) could not be inspected, so their preservation is unconfirmed until someone looks there. The public description of the runs has seven errors, and two local folders hold unarchived material. Nothing found here changes a score. Fix the dataset cards before any post links to them.
 
 ## Where everything is
 
@@ -57,7 +57,7 @@ The runs are preserved. The public description of them has seven errors, and two
 - **Harvey judges changed mid-study.** gpt-5.4 graded until 2026-11-03 19:40Z, gpt-6-luna after. Each pair shares a judge, and each trial's `local-verifier/judge.txt` names it. A 12-trial gpt-5.6-luna batch was regraded and kept separately.
 - **Harvey 0.17 missing slots.** Eight of 96 registered slots never started. They are in `design` with reward missing, not zero.
 - **RedlineBench control.** Ran once per task. One task (`redline-s1-t4-g11a`) has no GLM grade because GLM hit its output limit 8 times; it was graded by the 3-judge panel for both models.
-- **Judge repeatability.** 47 RedlineBench trials carry two GLM grades; the mean per-trial standard deviation between them is 0.077.
+- **Judge repeatability.** 47 RedlineBench trials carry two GLM grades; the two grades differ by 0.108 on average (median 0.062, largest 0.5), a mean per-trial standard deviation of 0.077. These 47 are the trials that happened to be regraded, not a random sample.
 
 ## Harbor Hub
 

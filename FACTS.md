@@ -33,7 +33,7 @@ Development set against held-out (DeepSeek, same control):
 
 Nemotron 30B-A3B: 11 of 12 drafts below the control on the 12 tasks (lowest 0.059 against 0.401).
 
-Judge repeatability: 47 trials graded twice by GLM-5.3-Flash, mean per-trial standard deviation 0.077.
+Judge repeatability: 47 trials graded twice by GLM-5.3-Flash. The two grades differ by 0.108 on average (median 0.062, largest 0.5); the mean per-trial standard deviation is 0.077. The 47 are the trials that happened to be regraded, not a random sample.
 
 ## Corrections (2026-11-22)
 
@@ -128,8 +128,12 @@ authentication on every trial.
    scored 0.160 against 0.202 for plain Claude Code on the same tasks, and wrote
    40-126k output tokens per trial, more than plain Claude Code.
 
-The accurate sentence: in every run since jubarte 0.14, with every model, mean time
-and mean tokens fell while the score stayed inside the noise.
+The accurate sentence: with DeepSeek-V4.1-Flash in Claude Code, in every 0.14 and 0.15
+arm on RedlineBench and in the Harvey LAB studies, mean time and mean tokens fell and
+no score difference was detected. It does not hold for every model or harness:
+Nemotron 30B scored below its 0.401 control with 11 of 12 skill drafts (0.059 to
+0.381) on the 12 development tasks, a gap far larger than judge noise, and Codex
+(item 3) wrote more output tokens and scored lower than plain Claude Code.
 
 ## What the grading cannot see
 

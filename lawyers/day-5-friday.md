@@ -1,8 +1,8 @@
-# Day 5 · Eight agents, one missing tool
+# Day 5 · Seven agents, one missing tool
 
 MAIN POST:
 
-I checked what eight AI coding agents ship for Word documents. None of the open ones gives the model a command that makes a tracked change. The model writes the markup itself.
+I checked what seven AI coding agents, plus MiniMax's skills catalog, ship for Word documents. None of the open ones gives the model a command that makes a tracked change. The model writes the markup itself.
 
 Here is what each one does today, when you ask it to redline a contract.
 
@@ -27,7 +27,7 @@ Links in comments. If you maintain one of these agents: would you run the missin
 COMMENT:
 
 jubarte: https://github.com/jandira-tech/jubarte
-The harness report, with every skill's source and what it calls: [link to harness/report.md]
+The harness report, with every skill's source and what it calls: https://github.com/arthrod/redline-reports/blob/main/harness/report.md
 The drop-in skills: [links to the pull requests, once open]
 
 The audit, by repository and commit:
@@ -43,12 +43,12 @@ The audit, by repository and commit:
 In plain English. A skill is a set of instructions and tools an agent loads when a task needs them. When the skill has no redline tool, the model writes the file format itself, which is where the extra time and tokens on Monday came from.
 
 VISUAL SUGGESTIONS:
-8 | AGENTS CHECKED FOR A WORD SKILL | none of the open ones has a command that makes a tracked change
+7 | AGENTS CHECKED FOR A WORD SKILL | none of the open ones has a command that makes a tracked change
 36 MB | JUBARTE, INSTALLED | about 850 MB for the tools Anthropic's docx skill installs
 Apache-2.0 | JUBARTE 0.19 | free to ship inside a commercial product
 
 OPEN QUESTIONS FOR ARTHUR:
 1. Post only after the pull requests are open, or reword "I drafted" to match what is live. The PR drafts are in `outreach/prs/` in your local folder, not in this public repo.
-2. You listed "mcode" and "minimax code" separately. I read mcode as MiniMax Code's CLI (`mcode`) and "minimax code" as MiniMax's skills catalog. Correct me if one of them is another product.
+2. You listed "mcode" and "minimax code" separately. I read both as MiniMax Code (its CLI is `mcode`) and count MiniMax's skills catalog as a source, not an agent, so the count is seven. If mcode is another product, it becomes eight once checked.
 3. Z Code: zcode.z.ai documents skills and plugins, but its built-in skills could not be fetched from here. Check its built-in list before posting the line.
 4. Claude Code is the ninth harness and the one every paired run used. It is in the comment and stays out of the headline count, because it was not on your list.

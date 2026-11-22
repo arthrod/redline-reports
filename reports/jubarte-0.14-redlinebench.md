@@ -1,4 +1,4 @@
-# jubarte 0.14 on RedlineBench: same score, about half the work
+# jubarte 0.14 on RedlineBench: no score difference, about half the work
 
 Report date: 2026-11-22. Scope: every RedlineBench run made with the jubarte 0.14.0 binary, against the benchmark's own Python document scripts, plus the runs needed to read them (the controls, and the one 0.15.0 job that the public dataset card currently uses as its headline).
 
@@ -26,7 +26,7 @@ The setup:
 | Price at Claude Opus 5.5 list | $2.29 | $1.32 | −43% |
 | Price at DeepSeek list (peak) | $0.137 | $0.081 | −41% |
 
-Reading: the score is a tie. The agent did the same job with about half the turns, half the time and half the output. Nothing here shows jubarte improving the legal quality of a redline.
+Reading: no score difference was detected; the interval runs from 0.026 below to 0.034 above the control. The agent did the same job with about half the turns, half the time and half the output. Nothing here shows jubarte improving the legal quality of a redline.
 
 Notes on the table:
 
@@ -76,23 +76,28 @@ On the held-out tasks alone:
 
 - ds-v12: +0.004 (−0.026 to +0.034), 127 tasks.
 - ds-v9: −0.024 (−0.056 to +0.007), 127 tasks.
-- study-v14: +0.020 (−0.007 to +0.049), 92 tasks.
+- study-v14: +0.002 (−0.025 to +0.028), 113 tasks (`jubarte-study-v14` and `v14-rest` together, minus the 12 development tasks; the earlier figure of +0.020 on 92 tasks counted `v14-rest` alone).
 
-Every interval includes zero. Every arm cut input tokens by 41% to 51% and agent time by 40% to 50%. The efficiency result repeats across three skill versions and two binaries; the score result is a tie each time.
+No arm showed a score difference whose interval excluded zero. No equivalence margin was set or tested, so the claim is "no difference detected", not "equal". Every arm cut input tokens by 41% to 51% and agent time by 40% to 50%. The efficiency result repeats across three skill versions and two binaries.
 
 The public dataset card's headline (0.494 vs 0.492 on 134 tasks) is the 0.15.0 row. This report's headline is the ds-v12 row, the best-documented 0.14.0 arm.
 
 ## 4. The development set overstated the gain
 
-The skill was tuned on 12 tasks. On those 12, against the same control:
+The skill was tuned on 12 tasks. All ten DeepSeek iterations with results, against the same control on those tasks (there is no v6 job; `ds-v4-b` reran half of v4, and v4 itself graded only 6):
 
-| DeepSeek iteration (0.14.0) | Control on the 12 | jubarte on the 12 |
-|---|---:|---:|
-| ds-v2 | 0.515 | 0.579 |
-| ds-v8 | 0.515 | 0.562 |
-| ds-v9 | 0.515 | 0.576 |
-| ds-v10 | 0.515 | 0.562 |
-| ds-v12 | 0.515 | 0.566 |
+| DeepSeek iteration (0.14.0) | Tasks graded | Control on the same tasks | jubarte |
+|---|---:|---:|---:|
+| ds-v2 | 12 | 0.515 | 0.579 |
+| ds-v3 | 12 | 0.515 | 0.513 |
+| ds-v4 | 6 | 0.583 | 0.580 |
+| ds-v5 | 12 | 0.515 | 0.527 |
+| ds-v7 | 12 | 0.515 | 0.528 |
+| ds-v8 | 12 | 0.515 | 0.562 |
+| ds-v9 | 12 | 0.515 | 0.576 |
+| ds-v10 | 12 | 0.515 | 0.562 |
+| ds-v11 | 12 | 0.515 | 0.548 |
+| ds-v12 | 12 | 0.515 | 0.566 |
 
 On the full set, ds-v9 lost 0.017 and ds-v12 gained 0.008. A +0.05 to +0.06 gain on 12 hand-picked tasks did not survive 139. Any claim built on a small development set, ours included, should be read with this in mind.
 
@@ -100,7 +105,7 @@ The small model went the other way. On Nemotron 30B-A3B, 11 of 12 skill iteratio
 
 ## 5. How the grade can move
 
-- **One judge, one grade per trial, mostly.** GLM-5.3-Flash graded every trial with the benchmark's rubric. 47 trials were graded twice; the two grades differ by a mean standard deviation of 0.077 per trial. Per-task differences smaller than that are judge noise. The 139-task mean averages much of it out, which is why the intervals above are about ±0.03.
+- **One judge, one grade per trial, mostly.** GLM-5.3-Flash graded every trial with the benchmark's rubric. 47 trials were graded twice; the two grades differ by 0.108 on average (median 0.062, largest 0.5). These 47 are the trials that happened to be regraded, not a random sample. Per-task differences of that size are judge noise. The 139-task mean averages much of it out, which is why the intervals above are about ±0.03.
 - **One control run per task.** The control ran once per task (`deepseek-full` 9 tasks, `deepseek-full-b` 131, with one task, `redline-s1-t4-g11a`, graded only by the 3-judge panel). Control run-to-run variance is not measured here.
 - **Not simultaneous.** The control ran Oct 27 to 28; the 0.14 arms ran Oct 28 to 30. Same model ID, same provider, same harness version. Provider-side changes in between cannot be ruled out.
 - **No frontier model as the agent.** DeepSeek-V4.1-Flash and Nemotron are cost choices. A frontier agent may use fewer turns on its own, which would shrink the efficiency gap.
@@ -124,7 +129,7 @@ Notes on the table:
 
 - Cache-write surcharges are not included, so the Claude rows are a floor.
 - Nemotron ran on a local GPU that reports no cache, so its tokens are priced as uncached input.
-- 91% of the control's input tokens were cache reads. At these rates the cache price, not the headline input price, decides most of the bill.
+- 91% of the control's input tokens were cache reads, billed at a twentieth of the input price on Claude and a fiftieth on DeepSeek. They are about 21% of the control's bill at Opus prices and 10% at DeepSeek's. The discount is what matters: billed as ordinary input, the same task would list at about $11.33 at Opus prices, five times the $2.29 above.
 
 What was actually paid differs from every row above:
 
@@ -134,7 +139,7 @@ What was actually paid differs from every row above:
 
 The judge is a second bill. Each RedlineBench trial is graded against a multi-criterion rubric by an LLM. Re-grading a run, which this study did several times, costs about as many judge calls again.
 
-For a buyer: the same 1,357 trials span a 14x price range depending only on which model's list price applies. Ask a vendor for tokens and turns per task, not per seat. A skill that halves turns halves the bill at any price.
+For a buyer: the same 1,357 trials span a 14x price range depending on which model's list price applies. Ask a vendor for tokens per task and its cache rate, not price per seat. Here, halving the turns cut the per-task bill by 41% at DeepSeek prices and 43% at Sonnet and Opus prices.
 
 ## 7. Later versions, for context only
 
@@ -142,7 +147,7 @@ These used newer binaries and a different benchmark. They are here to show the p
 
 | Study | Binary | Trials | Score, control vs jubarte | Tokens and time |
 |---|---|---:|---|---|
-| Harvey LAB redline tasks, Harbor Hub, Nov 1 to 4 | 0.16.0 + 39 commits (`e5e0838d9`) | 181 (90 pairs) | 0.936 vs 0.941 (judge noise about 0.02) | input 10.4 M vs 8.9 M, minutes 37.2 vs 32.4 |
+| Harvey LAB redline tasks, Harbor Hub, Nov 1 to 4 | 0.16.0 + 39 commits (`e5e0838d9`) | 180 (90 pairs) | 0.936 vs 0.941 (judge noise about 0.02) | input 10.4 M vs 8.9 M, minutes 37.2 vs 32.4 |
 | Harvey LAB editing tasks, MI355X, Nov 4 to 5 | 0.17.0 | 88 (44 pairs, 16 tasks) | −0.002 task-balanced (−0.026 to +0.022) | about 6% fewer tokens and minutes; the study's own write-up declines a causal efficiency claim |
 
 The Harvey savings are smaller than RedlineBench's. They also grow or reverse by task: jubarte cost more when the input already carried the counterparty's tracked changes, where agents probed existing-revision rules by trial and error (Harvey `FINDINGS.md`).
@@ -155,7 +160,7 @@ Raw data (public):
 
 Each grade sits at `runs/rejudge-synthetic/GLM-5.3-Flash/<job>/<trial>/grade.json` in the `files` table. The binary for each trial is in `trials.jubarte_sha256`: `f4c352db…` is 0.14.0 linux-aarch64, `469c7ff4…` is 0.15.0.
 
-The tables in this report come from `data/per_job.csv`, `data/deepseek_pairs.csv`, `data/costs.json` and `data/scale.json` beside this file, built by reading `result.json`, `grade.json` and `agent/trajectory.json` for every trial.
+The tables in this report come from `data/per_job.csv`, `data/deepseek_pairs.csv`, `data/costs.json` and `data/scale.json` at the root of this repository, built by reading `result.json`, `grade.json` and `agent/trajectory.json` for every trial.
 
 ## 9. Rights
 

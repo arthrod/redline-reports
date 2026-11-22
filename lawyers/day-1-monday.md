@@ -2,7 +2,7 @@
 
 MAIN POST:
 
-It took 716 agent runs, 158 hours of run time and 1.43 billion tokens to earn one sentence I can defend: same score, half the work.
+It took 716 agent runs, 158 hours of run time and 1.43 billion input tokens to earn one sentence I can defend: half the work, no measurable change in the score.
 
 The question was narrow. When an AI agent redlines a contract, does it do better legal work if it gets a real tracked-changes engine instead of the Python scripts the benchmark ships with?
 
@@ -10,12 +10,12 @@ The test was Crosby and micro1's RedlineBench: 140 negotiation tasks, four round
 
 On the 127 tasks I never used to tune anything:
 
-Score: 0.491 with their tools, 0.495 with mine. A tie.
+Score: 0.491 with their tools, 0.495 with mine. No measurable difference.
 Minutes per task: 18.5 against 9.2.
 Turns: 71 against 37.
 Output tokens: 44.5k against 20.8k.
 
-Disclosure: jubarte is mine, and I ran every trial. One model grades every file. Grading the same file twice moves a task's score by about 0.08, so only the 127-task average means anything.
+Disclosure: jubarte is mine, and I ran every trial. One model grades every file. Graded twice, the same file's score moves by 0.108 on average, so only the 127-task average means anything.
 
 Honest reading: the tool did not make the agent a better lawyer. The same lawyer finished in half the time, because it stopped writing Word's XML by hand.
 
@@ -25,7 +25,7 @@ Links in comments. If you evaluate legal agents: how many runs sit behind your l
 
 COMMENT:
 
-Report: [link to reports/jubarte-0.14-redlinebench.md]
+Report: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-0.14-redlinebench.md
 Every trial, file by file: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
 The 140 tasks as configured: https://huggingface.co/datasets/arthrod/redline-bench-jubarte-tasks
 jubarte: https://github.com/jandira-tech/jubarte
@@ -44,10 +44,10 @@ Nitty-gritty:
 
 VISUAL SUGGESTIONS:
 716 | RUNS ON JUBARTE 0.14 | to reach one clean comparison on 127 held-out contracts
-9.2 min | PER TASK WITH JUBARTE | 18.5 with the benchmark's own scripts, same score
-0.495 | SCORE, 127 HELD-OUT TASKS | 0.491 with the benchmark's scripts: a tie
+9.2 min | PER TASK WITH JUBARTE | 18.5 with the benchmark's own scripts, no measurable score difference
+0.495 | SCORE, 127 HELD-OUT TASKS | 0.491 with the benchmark's scripts, inside the noise
 
 OPEN QUESTIONS FOR ARTHUR:
 1. The old Day 1 led with 134 tasks (0.494 vs 0.492), which is the 0.15.0 run. This version leads with the 0.14.0 held-out set. Confirm you want 0.14 as the headline.
-2. The report link points to the new file on this branch. Merge before posting, or swap in the benchmarks.law URL if you publish it there.
+2. The report links point to `main` and resolve only after PR #1 merges. Merge before posting, or swap in the benchmarks.law URL if you publish it there.
 3. The old Monday opened with the strikethrough "redline". It is now Thursday's hook, where it fits the grader story. Say if you want it back on Monday.
