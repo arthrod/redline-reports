@@ -102,7 +102,7 @@ What we have: 41 trials with jubarte 0.15 through a LiteLLM proxy, hardest tasks
 
 These 41 trials are not yet in a public dataset; see `DATA-AUDIT.md`. Treat the numbers as unpublished until they are.
 
-What we can say without a control: Codex has no Word skill today, `codex mcp add jubarte -- uvx --from 'jubarte-docx[mcp]' jubarte-mcp --root .` adds one, and the token halving in section 2 came from the tool in two harnesses (Claude Code and pi) with the same model.
+What we can say without a control: Codex has no Word skill today, `codex mcp add jubarte -- uvx --from 'jubarte-docx[mcp]' jubarte-mcp --root .` adds one, and the token halving in section 2 was measured in Claude Code, against plain Claude Code as the control. The pi result compares a different harness with plain Claude Code, so it does not isolate the tool.
 
 The run we would like to do with you: plain Codex against Codex with jubarte, 140 tasks, a current GPT model. About two sweeps.
 

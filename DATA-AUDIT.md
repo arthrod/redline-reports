@@ -61,7 +61,7 @@ The runs in the Hugging Face datasets are preserved. One set is not confirmed: t
 
 ## Harbor Hub
 
-The Harvey runs are on Harbor Hub as 93 jobs; the IDs are in `scripts-and-logs/runs/hub-queue.tsv` of `harvey-redline-hub-ab-2026-11`. Hub copies carry no reward (verification was off; grading was local). Every Hub trial that was graded is also in the HF archive and in the public `harvey_lab/` table, so losing Hub retention would lose nothing scored. I could not list the Hub from here. To confirm: run `harbor hub job download <id>` on two IDs from that file.
+The Harvey runs are on Harbor Hub as 93 jobs; the IDs are in `scripts-and-logs/runs/hub-queue.tsv` of `harvey-redline-hub-ab-2026-11`. Hub copies carry no reward (verification was off; grading was local). The 180 graded trials are in the HF archive and the public `harvey_lab/` table. Whether every trial in the 93 Hub jobs is also in the archive has not been checked: I could not list the Hub from here. Before Hub retention lapses, download every job in that file (`harbor hub job download <id>`) and compare its trial IDs with the archive.
 
 ## Local folders still holding unarchived material
 

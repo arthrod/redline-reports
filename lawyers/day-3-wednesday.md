@@ -4,9 +4,9 @@ MAIN POST:
 
 The same 1,357 agent runs cost $702 or $9,679. The runs do not change. Only the price list does.
 
-That is the full RedlineBench archive from my jubarte 0.14 study: 140 contract negotiation tasks, run many times over. 3.29 billion tokens in, 46 million out. Priced at DeepSeek's list: $702. At Claude Sonnet 5.5: $4,839. At Claude Opus 5.5: $9,679.
+That is the full RedlineBench archive of my jubarte 0.14 study: 140 contract tasks, run many times. 3.29 billion tokens in, 46 million out. Priced at DeepSeek's list: $702. At Claude Sonnet 5.5: $4,839. At Claude Opus 5.5: $9,679.
 
-What I actually paid looked like none of them. The agent ran on a flat subscription with weekly credits. During the Harvey runs that followed, the queue stopped itself at 4% credit and again at 0%. One judge model was dropped after ten minutes as too expensive. A later study on rented hardware cost $100 for tokens that would list at $6,175.
+What I paid looked like none of them. The agent ran on a flat subscription with weekly credits. During the Harvey runs that followed, the queue stopped itself at 4% credit and again at 0%. One judge model was dropped after ten minutes: too expensive. A later study on rented hardware cost $100 for tokens that would list at $6,175.
 
 Three things I did not expect:
 
@@ -14,11 +14,11 @@ In the control arm, 91% of what the agent read was cache hits, billed at a twent
 
 Grading is a second bill. A model scores every run against a rubric, and every regrade pays again.
 
-The tool moved the bill more than I thought possible. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, with no score difference detected. The saving is work the agent no longer does: it read 1.40 million tokens, not 2.61 million, and wrote 20.8 thousand, not 44.5 thousand. At Opus prices, output was about half of it.
+The bill moved more than I expected. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, with no score difference detected. In these runs the jubarte arm read 1.40 million tokens, not 2.61 million, and wrote 20.8 thousand, not 44.5 thousand; output was about half the saving. The arms ran on different days, so a provider change is not ruled out.
 
 Disclosure: jubarte is mine, and these are my runs and my bills.
 
-For anyone buying legal AI: ask for tokens and turns per matter, and the cache rate, not only the price per seat.
+For anyone buying legal AI: ask for tokens and turns per matter and the cache rate, not just the price per seat.
 
 Links in comments. If you have priced an agent deployment, did the cache rate appear in the quote?
 
