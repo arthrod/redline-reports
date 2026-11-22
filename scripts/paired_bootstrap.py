@@ -17,7 +17,6 @@ upper bound stays below zero on every seed, and every other interval spans zero.
 """
 
 import csv
-import sys
 from collections import defaultdict
 from pathlib import Path
 
@@ -57,5 +56,7 @@ def main(path: Path) -> None:
               f"W/L/T {s['wins']}/{s['losses']}/{s['ties']}")
 
 
+DATA = Path(__file__).resolve().parent.parent / "data" / "task_pairs.csv"
+
 if __name__ == "__main__":
-    main(Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).parent.parent / "data" / "task_pairs.csv")
+    main(DATA)
