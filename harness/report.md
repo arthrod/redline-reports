@@ -44,7 +44,7 @@ A refusal exits 3, writes nothing, and names the cause (`ANCHOR_NOT_FOUND`, `AMB
 
 | Per task, 127 held-out tasks | Benchmark's scripts | jubarte 0.14 | Change |
 |---|---:|---:|---:|
-| Score | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.034) |
+| Score | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.033) |
 | Agent minutes | 18.5 | 9.2 | −50% |
 | Turns | 71 | 37 | −48% |
 | Input tokens | 2.61 M | 1.40 M | −46% |
@@ -56,12 +56,12 @@ Other full-length arms on the same control:
 
 | Arm (binary) | Tasks | Score difference | Input tokens per task | Minutes per task |
 |---|---:|---|---:|---:|
-| ds-v12, all 139 tasks (0.14.0) | 139 | +0.008 (−0.020 to +0.035) | 1.41 M vs 2.57 M | 9.3 vs 18.6 |
-| ds-v9, held-out (0.14.0) | 127 | −0.024 (−0.056 to +0.007) | 1.51 M vs 2.61 M | 11.1 vs 18.5 |
+| ds-v12, all 139 tasks (0.14.0) | 139 | +0.008 (−0.020 to +0.036) | 1.41 M vs 2.57 M | 9.3 vs 18.6 |
+| ds-v9, held-out (0.14.0) | 127 | −0.024 (−0.055 to +0.007) | 1.51 M vs 2.61 M | 11.1 vs 18.5 |
 | study-v14, held-out (0.14.0) | 113 | +0.002 (−0.025 to +0.028) | 1.31 M vs 2.66 M | 11.0 vs 18.6 |
-| study-v14b (0.15.0) | 134 | −0.000 (−0.025 to +0.024) | 1.28 M vs 2.60 M | 10.4 vs 18.6 |
+| study-v14b (0.15.0) | 134 | −0.000 (−0.025 to +0.025) | 1.28 M vs 2.60 M | 10.4 vs 18.6 |
 
-No full-length arm showed a score difference whose interval excluded zero (no equivalence margin was tested). One short arm did: `jubarte-study-v13`, 33 tasks, −0.068 (−0.120 to −0.019). The efficiency held in every arm, that one included.
+No full-length arm showed a score difference whose interval excluded zero (no equivalence margin was tested). One short arm did: `jubarte-study-v13`, 33 tasks, −0.068 (−0.121 to −0.018). The efficiency held in every arm, that one included.
 
 **The development set overstated the gain.** On the 12 tuning tasks, DeepSeek drafts scored up to 0.579 against 0.515; on the held-out 127 the gain was gone. On Nemotron 30B-A3B, 11 of 12 drafts scored below the control on those 12 tasks (from 0.059 against 0.401). The binary was the same; the skill text was what hurt. Keep a Word skill short for small models.
 

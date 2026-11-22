@@ -15,7 +15,7 @@ Minutes per task: 18.5 against 9.2.
 Turns: 71 against 37.
 Output tokens: 44.5k against 20.8k.
 
-Disclosure: jubarte is mine, and I ran every trial. One model grades every file compared; the one task it could not finish grading is left out. Graded twice, the same file's score moves by 0.108 on average, so only the 127-task average means anything.
+Disclosure: jubarte is mine, and I ran every trial. One model grades every file compared; the one task it could not finish grading is left out. On 47 files that happened to be graded twice, the score moved by 0.108 on average, so only the 127-task average means anything.
 
 Honest reading: the tool did not make the agent a better lawyer. With jubarte it took half the time and stopped writing Word's XML by hand. The arms ran on different days, so a provider change is not ruled out.
 
@@ -37,7 +37,7 @@ Nitty-gritty:
 - 0.14.0 linux-aarch64 binary, sha256 `f4c352db…`, in every trial of the arm.
 - Control: jobs `deepseek-full` and `deepseek-full-b`, one run per task. jubarte: `jubarte-ds-v12-rest`.
 - Judge: GLM-5.3-Flash with the benchmark's rubric, on every task compared. It hit its output limit on `redline-s1-t4-g11a`; that task went to a three-judge panel and is left out, which is why the full set is 139 tasks, not 140.
-- Difference +0.004, 95% bootstrap interval −0.026 to +0.034.
+- Difference +0.004, 95% bootstrap interval −0.026 to +0.033.
 - 48 tasks better, 40 worse, 39 equal.
 - The 716 runs cover 30 jobs from 26 to 30 October.
 - The arms were not interleaved: the control ran 27 to 28 October, the jubarte arm 28 to 30 October. Model, harness and grader were pinned, but a provider-side change between those days cannot be ruled out.

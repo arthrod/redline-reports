@@ -91,6 +91,36 @@ def test_published_figures_match_the_data(arm: str, tasks: int, diff: float, wlt
     assert (s["wins"], s["losses"], s["ties"]) == wlt
 
 
+PUBLISHED_BOUNDS = [
+    ("ds-v12-heldout", -0.026, 0.033),
+    ("ds-v9-heldout", -0.055, 0.007),
+    ("study-v14-heldout", -0.025, 0.028),
+    ("study-v13", -0.121, -0.018),
+    ("ds-v12-all", -0.020, 0.036),
+    ("study-v14b-015", -0.025, 0.025),
+]
+
+
+@pytest.mark.parametrize(("arm", "lo", "hi"), PUBLISHED_BOUNDS)
+def test_published_interval_bounds_match_the_data(arm: str, lo: float, hi: float) -> None:
+    s = pb.summarize(*pb.load(pb.DATA)[arm])
+    assert s["lo"] == pytest.approx(lo, abs=1e-9)
+    assert s["hi"] == pytest.approx(hi, abs=1e-9)
+
+
+@pytest.mark.parametrize("arm", [arm for arm, _, _ in PUBLISHED_BOUNDS])
+def test_bootstrap_bounds_agree_with_a_normal_approximation(arm: str) -> None:
+    # Independent check of the interval level: for a mean of 33 to 139 paired
+    # differences, a 95% percentile bootstrap sits within a few thousandths of
+    # mean +/- 1.96 standard errors. A 90% interval would miss by 0.004 or more.
+    control, jubarte = pb.load(pb.DATA)[arm]
+    s = pb.summarize(control, jubarte)
+    d = jubarte - control
+    se = float(d.std()) / np.sqrt(d.size)
+    assert s["lo"] == pytest.approx(float(d.mean()) - 1.96 * se, abs=0.0035)
+    assert s["hi"] == pytest.approx(float(d.mean()) + 1.96 * se, abs=0.0035)
+
+
 def test_study_v13_interval_excludes_zero_and_held_out_v12_spans_it() -> None:
     rows = pb.load(pb.DATA)
     assert pb.summarize(*rows["study-v13"])["hi"] < 0

@@ -1,7 +1,7 @@
 #!/usr/bin/env -S uv run --script
 # /// script
 # requires-python = ">=3.12"
-# dependencies = ["numpy"]
+# dependencies = ["numpy==2.5.5"]
 # ///
 """Recompute the paired score differences and 95% intervals in the reports.
 
@@ -10,10 +10,10 @@ benchmark's scripts and with jubarte, each the mean of that task's graded trials
 prints, per arm: tasks, means, difference, a task-level bootstrap interval (10,000
 draws, seed 20261122), and wins, losses and ties.
 
-The interval bounds are Monte Carlo estimates. Across 200 seeds on this file they
-move by up to about 0.003 (more for the 14-task arm), so a bound printed here can
-differ from the reports' figure in the third decimal. No sign changes: study-v13's
-upper bound stays below zero on every seed, and every other interval spans zero.
+The interval bounds are Monte Carlo estimates. The reports quote the bounds this
+script prints with the seed above. Across 200 seeds on this file they move by up to
+about 0.003 (more for the 14-task arm). No sign changes: study-v13's upper bound
+stays below zero on every seed, and every other interval spans zero.
 """
 
 import csv

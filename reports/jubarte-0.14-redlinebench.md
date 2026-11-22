@@ -16,7 +16,7 @@ The setup:
 
 | Per task, 127 held-out tasks | Control | jubarte 0.14 | Change |
 |---|---:|---:|---:|
-| Score (0 to 1) | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.034) |
+| Score (0 to 1) | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.033) |
 | Tasks better / worse / equal | | 48 / 40 / 39 | |
 | Input tokens | 2.61 M | 1.40 M | −46% |
 | of which not cached | 232 k | 163 k | −30% |
@@ -26,13 +26,13 @@ The setup:
 | Price at Claude Opus 5.5 list | $2.29 | $1.32 | −43% |
 | Price at DeepSeek list (peak) | $0.137 | $0.081 | −41% |
 
-Reading: no score difference was detected; the interval runs from 0.026 below to 0.034 above the control. The agent did the same job with about half the turns, half the time and half the output. Nothing here shows jubarte improving the legal quality of a redline.
+Reading: no score difference was detected; the interval runs from 0.026 below to 0.033 above the control. The agent did the same job with about half the turns, half the time and half the output. Nothing here shows jubarte improving the legal quality of a redline.
 
 Notes on the table:
 
 - The interval is a task bootstrap (10,000 draws, seed 20261122) of the per-task differences.
 - Prices apply today's list rates to the recorded tokens, with cache reads at the cache rate (section 6).
-- All 139 graded tasks, development set included: 0.493 vs 0.501 (+0.008, −0.020 to +0.035), with the same token and time ratios.
+- All 139 graded tasks, development set included: 0.493 vs 0.501 (+0.008, −0.020 to +0.036), with the same token and time ratios.
 - `FACTS.md` in `redline-reports` reports this run as 0.489 vs 0.493. The 0.002 gap is how the 47 trials that were graded twice are combined: this report averages both grades.
 
 ## 2. It was not one run
@@ -68,19 +68,19 @@ What the 716 were:
 | Arm (binary) | Paired tasks | Control | jubarte | Difference (95% CI) | Input / task | Minutes / task | Turns / task |
 |---|---:|---:|---:|---|---:|---:|---:|
 | ds-v9 (0.14.0) | 139 | 0.493 | 0.476 | −0.017 (−0.047 to +0.012) | 1.51 M vs 2.57 M | 11.2 vs 18.6 | 42 vs 70 |
-| ds-v12 (0.14.0) | 139 | 0.493 | 0.501 | +0.008 (−0.020 to +0.035) | 1.41 M vs 2.57 M | 9.3 vs 18.6 | 38 vs 70 |
+| ds-v12 (0.14.0) | 139 | 0.493 | 0.501 | +0.008 (−0.020 to +0.036) | 1.41 M vs 2.57 M | 9.3 vs 18.6 | 38 vs 70 |
 | study-v14 (0.14.0) | 125 | 0.474 | 0.477 | +0.003 (−0.021 to +0.027) | 1.34 M vs 2.62 M | 10.8 vs 18.6 | 38 vs 72 |
-| study-v14b (0.15.0) | 134 | 0.493 | 0.492 | −0.000 (−0.025 to +0.024) | 1.28 M vs 2.60 M | 10.4 vs 18.6 | 36 vs 71 |
+| study-v14b (0.15.0) | 134 | 0.493 | 0.492 | −0.000 (−0.025 to +0.025) | 1.28 M vs 2.60 M | 10.4 vs 18.6 | 36 vs 71 |
 
 On the held-out tasks alone:
 
-- ds-v12: +0.004 (−0.026 to +0.034), 127 tasks.
-- ds-v9: −0.024 (−0.056 to +0.007), 127 tasks.
+- ds-v12: +0.004 (−0.026 to +0.033), 127 tasks.
+- ds-v9: −0.024 (−0.055 to +0.007), 127 tasks.
 - study-v14: +0.002 (−0.025 to +0.028), 113 tasks (`jubarte-study-v14` and `v14-rest` together, minus the 12 development tasks; the earlier figure of +0.020 on 92 tasks counted `v14-rest` alone).
 
-Two short study arms are not in the table. `jubarte-study-v13` (0.14.0, 33 tasks, 12 of them development tasks) scored lower: 0.455 against 0.523, −0.068 (−0.120 to −0.019), 7 wins and 16 losses, while still cutting time (8.4 against 19.6 minutes) and input (1.09 M against 2.65 M). It is the one arm whose interval excludes zero. `jubarte-study-v15` (14 tasks) came in at −0.044 (−0.107 to +0.029).
+Two short study arms are not in the table. `jubarte-study-v13` (0.14.0, 33 tasks, 12 of them development tasks) scored lower: 0.455 against 0.523, −0.068 (−0.121 to −0.018), 7 wins and 16 losses, while still cutting time (8.4 against 19.6 minutes) and input (1.09 M against 2.65 M). It is the one arm whose interval excludes zero. `jubarte-study-v15` (14 tasks) came in at −0.044 (−0.110 to +0.029).
 
-Per-task scores for every arm in this section, the table rows included, are in `data/task_pairs.csv`; `uv run scripts/paired_bootstrap.py` recomputes each score, difference, interval and win/loss count above. The token, time and turn figures in sections 1 and 3 come from `data/deepseek_pairs.csv`, which has a row for each arm above, the held-out ones included. The uncached-input row in section 1 comes from `heldout127.uncached_in_k` in `data/costs.json`; the per-task fields at the top of that file cover all 139 graded tasks. The interval bounds are Monte Carlo estimates and move by up to about 0.003 with the seed; no conclusion changes.
+Per-task scores for every arm in this section, the table rows included, are in `data/task_pairs.csv`; `uv run scripts/paired_bootstrap.py` recomputes each score, difference, interval and win/loss count above. The token, time and turn figures in sections 1 and 3 come from `data/deepseek_pairs.csv`, which has a row for each arm above, the held-out ones included. The uncached-input row in section 1 comes from `heldout127.uncached_in_k` in `data/costs.json`; the per-task fields at the top of that file cover all 139 graded tasks. The intervals quoted here are the ones the script prints with its fixed seed; with another seed the bounds move by up to about 0.003, and no conclusion changes.
 
 No full-length arm showed a score difference whose interval excluded zero. No equivalence margin was set or tested, so the claim is "no difference detected", not "equal". Every arm cut input tokens by 41% to 51% and agent time by 40% to 50%. The efficiency result repeats across three skill versions and two binaries.
 
@@ -111,7 +111,7 @@ The small model went the other way. On Nemotron 30B-A3B, 11 of 12 skill iteratio
 
 ## 5. How the grade can move
 
-- **One judge, one grade per trial, mostly.** GLM-5.3-Flash graded every trial in the paired comparisons with the benchmark's rubric. 47 trials were graded twice; the two grades differ by 0.108 on average (median 0.062, largest 0.5). These 47 are the trials that happened to be regraded, not a random sample. Per-task differences of that size are judge noise. The 139-task mean averages much of it out, which is why the intervals above are about ±0.03.
+- **One judge, one grade per trial, mostly.** GLM-5.3-Flash graded every trial in the paired comparisons with the benchmark's rubric. 47 trials were graded twice; the two grades differ by 0.108 on average (median 0.062, largest 0.5). These 47 are the trials that happened to be regraded, not a random sample. A per-task difference of that size can come from the judge alone, so a single task says little. The bootstrap intervals above resample the recorded per-task differences, judge noise included; this report does not measure how much of their width comes from the judge.
 - **One control run per task.** The control ran once per task (`deepseek-full` 9 tasks, `deepseek-full-b` 131, with one task, `redline-s1-t4-g11a`, graded only by a 3-judge panel and therefore left out of every paired comparison). Control run-to-run variance is not measured here.
 - **Not simultaneous.** The control ran Oct 27 to 28; the 0.14 arms ran Oct 28 to 30. Same model ID, same provider, same harness version. Provider-side changes in between cannot be ruled out.
 - **No frontier model as the agent.** DeepSeek-V4.1-Flash and Nemotron are cost choices. A frontier agent may use fewer turns on its own, which would shrink the efficiency gap.

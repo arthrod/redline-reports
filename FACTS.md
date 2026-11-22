@@ -8,7 +8,7 @@ Source for every row: `reports/jubarte-0.14-redlinebench.md`, rebuilt from the `
 
 | Per task, 127 held-out tasks (`jubarte-ds-v12-rest` against `deepseek-full` + `deepseek-full-b`) | Scripts | jubarte 0.14 | Change |
 |---|---:|---:|---:|
-| Score | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.034); 48 better, 40 worse, 39 equal |
+| Score | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.033); 48 better, 40 worse, 39 equal |
 | Agent minutes | 18.5 | 9.2 | −50% |
 | Turns | 71 | 37 | −48% |
 | Input tokens | 2.61M | 1.40M | −46% |
@@ -130,7 +130,7 @@ authentication on every trial.
    comparison: with no plain-Codex control, it says nothing about whether jubarte helps
    or hurts Codex against Codex's own tools.
 4. One short 0.14 arm lost on score. `jubarte-study-v13` (33 tasks, 12 of them
-   development tasks) scored 0.455 against 0.523: −0.068 (−0.120 to −0.019), 7 wins
+   development tasks) scored 0.455 against 0.523: −0.068 (−0.121 to −0.018), 7 wins
    and 16 losses. Its time and input still fell (8.4 v 19.6 minutes, 1.09M v 2.65M).
 
 The accurate sentence: with DeepSeek-V4.1-Flash in Claude Code, in every 0.14 and 0.15

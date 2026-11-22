@@ -6,7 +6,7 @@ redline tasks in Harvey's Legal Agent Benchmark.
 
 The short version, for jubarte 0.14 on RedlineBench's 127 held-out tasks:
 
-- No score difference was detected: 0.491 with the benchmark's scripts, 0.495 with jubarte (difference +0.004, 95% interval −0.026 to +0.034).
+- No score difference was detected: 0.491 with the benchmark's scripts, 0.495 with jubarte (difference +0.004, 95% interval −0.026 to +0.033).
 - The work halved: 18.5 to 9.2 minutes, 71 to 37 turns, 44.5k to 20.8k output tokens.
 - One clean comparison took 716 runs on 0.14 alone. The whole 1,357-run archive lists at $702 to $9,679, depending on whose prices apply.
 - Later binaries on Harvey's tasks went the same direction with smaller savings (6% to 14%).
