@@ -2,11 +2,51 @@
 
 Every figure in the posts, the report and the artifacts is on this page.
 
+## jubarte 0.14 on RedlineBench: the numbers this week's posts use (added 2026-11-22)
+
+Source for every row: `reports/jubarte-0.14-redlinebench.md`, rebuilt from the `result.json`, `grade.json` and `agent/trajectory.json` of every trial in `redline-bench-deepseek-trajectories/redlinebench/`. Binary `f4c352db…` (0.14.0) in every jubarte trial below.
+
+| Per task, 127 held-out tasks (`jubarte-ds-v12-rest` against `deepseek-full` + `deepseek-full-b`) | Scripts | jubarte 0.14 | Change |
+|---|---:|---:|---:|
+| Score | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.034); 48 better, 40 worse, 39 equal |
+| Agent minutes | 18.5 | 9.2 | −50% |
+| Turns | 71 | 37 | −48% |
+| Input tokens | 2.61M | 1.40M | −46% |
+| Output tokens | 44.5k | 20.8k | −53% |
+| At Claude Opus 5.5 list | $2.29 | $1.32 | −43% |
+
+The "held-out 127" row further down (0.489 vs 0.493) is this same run; it took one grade per trial where 47 trials had two. This page now averages both.
+
+| Scale | 0.14 arms | Whole RedlineBench archive |
+|---|---:|---:|
+| Runs with a result | 716 (30 jobs) | 1,357 (49 jobs) |
+| Run time, summed | 157.8 h | 414.5 h |
+| Input / output tokens | 1.43B / 21.1M | 3.29B / 46.2M |
+| Agent turns | 35,496 | 78,524 |
+| Runs per task | 2 to 27, median 3 | 4 to 42, median 7.5 |
+| At DeepSeek list / Sonnet 5.5 / Opus 5.5 | | $702 / $4,839 / $9,679 |
+
+Development set against held-out (DeepSeek, same control):
+
+- The best drafts scored up to 0.579 against 0.515 on the 12 tuning tasks.
+- On the 127 held-out tasks, ds-v12 scored +0.004 and ds-v9 scored −0.024.
+
+Nemotron 30B-A3B: 11 of 12 drafts below the control on the 12 tasks (lowest 0.059 against 0.401).
+
+Judge repeatability: 47 trials graded twice by GLM-5.3-Flash, mean per-trial standard deviation 0.077.
+
+## Corrections (2026-11-22)
+
+- RedlineBench's judge reads the markup (an annotated view with deletions, insertions and comment markers). Only Harvey LAB's extractor reads accepted text. The harness report said both read accepted text; it no longer does.
+- The 134-task row (0.494 vs 0.492) is jubarte **0.15.0** (`jubarte-study-v14b-015`, binary `469c7ff4…`), not 0.14.
+- The Harvey A/B has 180 trials (90 pairs). The public table has 181 rows because a folder named `analysis` was read in as a trial.
+- The 41 Codex trials and the 134 pi trials are not in the public dataset yet (see `DATA-AUDIT.md`).
+
 ## What was run
 
 | Benchmark | Owner | Tasks | Agent harness | Model | jubarte | Judge |
 |---|---|---|---|---|---|---|
-| RedlineBench | Crosby + micro1 | 140 (3 scenarios × 4 turns) | Claude Code | DeepSeek-V4.1-Flash | 0.14.0 / 0.15.0 | GLM-5.3-Flash, one judge |
+| RedlineBench | Crosby + micro1 | 140 (3 scenarios × 4 turns) | Claude Code | DeepSeek-V4.1-Flash | 0.14.0 (all jobs except `jubarte-study-v14b-015`, which is 0.15.0) | GLM-5.3-Flash, one judge |
 | RedlineBench | same | 134 common | pi | DeepSeek-V4.1-Flash | 0.15.0 | same |
 | RedlineBench | same | 41 (hardest first) | Codex | DeepSeek-V4.1-Flash | 0.15.0 | same |
 | RedlineBench | same | 69 + 33 | Claude Code | Claude Haiku 5.5 | 0.12.0 | Crosby's panel |
@@ -21,13 +61,13 @@ scripts, and Harvey LAB's docx skill with its `redline.py`.
 
 | Run | Tasks | Benchmark's own tools | jubarte | Difference |
 |---|---|---|---|---|
-| RedlineBench, DeepSeek, Claude Code, 0.15.0 skill | 134 | 0.494 | 0.492 | −0.002 |
-| RedlineBench, DeepSeek, Claude Code, held-out set | 127 | 0.489 | 0.493 | +0.004 |
+| RedlineBench, DeepSeek, Claude Code, 0.15.0 binary | 134 | 0.494 | 0.492 | −0.002 |
+| RedlineBench, DeepSeek, Claude Code, held-out set, 0.14.0 | 127 | 0.489 (0.491 averaging double grades) | 0.493 (0.495) | +0.004 |
 | RedlineBench, DeepSeek, pi, 0.15.0 skill | 134 | 0.494 (Claude Code plain) | 0.486 | −0.008 |
 | RedlineBench, Haiku 5.5, first 69 | 69 | 0.394 | 0.427 | +0.033 (35 wins, 24 losses, 10 ties) |
 | RedlineBench, Haiku 5.5, second block | 33 | 0.430 | 0.412 | −0.018 (12 wins, 8 losses, 13 ties) |
 | RedlineBench, GLM-5.3-flash | 40 | 0.350 | 0.364 | +0.014 (15 / 10 / 15) |
-| RedlineBench, Nemotron 3.5 Lightning | 12 | 0.401 | 0.425 | +0.024 |
+| RedlineBench, Nemotron 3.5 Lightning | 12 | 0.401 | 0.425 | +0.024, the best of 12 drafts; the other 11 scored 0.059 to 0.381 |
 | Harvey LAB redline tasks, DeepSeek | 90 pairs | 0.936 | 0.941 | +0.006, standard error 0.005 (33 / 24 / 33) |
 
 Per-task noise on RedlineBench is about ±0.04, and Harvey's judge moves about 0.02

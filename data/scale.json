@@ -1,0 +1,102 @@
+[
+ {
+  "name": "jubarte 0.14 arms",
+  "trials": 716,
+  "jobs": 30,
+  "tasks": 140,
+  "first": "2026-10-26 12:33:22.846995+00:00",
+  "last": "2026-10-30 15:46:34.979632+00:00",
+  "trial_hours": 157.8,
+  "in_M": 1429.4,
+  "cache_M": 677.2,
+  "out_M": 21.1,
+  "turns": 35496,
+  "tool_calls": 38811,
+  "graded": 688,
+  "cc_usd": 4493.0,
+  "models": [
+   "hf:deepseek-ai/DeepSeek-V4.1-Flash-1017",
+   "nemotron-3.5-lightning-30b-a3b"
+  ]
+ },
+ {
+  "name": "jubarte 0.15 arms",
+  "trials": 147,
+  "jobs": 3,
+  "tasks": 135,
+  "first": "2026-10-30 21:12:51.659259+00:00",
+  "last": "2026-10-31 02:05:44.406648+00:00",
+  "trial_hours": 25.8,
+  "in_M": 177.1,
+  "cache_M": 146.6,
+  "out_M": 2.87,
+  "turns": 4967,
+  "tool_calls": 5462,
+  "graded": 134,
+  "cc_usd": 322.0,
+  "models": [
+   "hf:deepseek-ai/DeepSeek-V4.1-Flash-1017"
+  ]
+ },
+ {
+  "name": "DeepSeek control",
+  "trials": 178,
+  "jobs": 3,
+  "tasks": 140,
+  "first": "2026-10-27 21:16:10.884738+00:00",
+  "last": "2026-10-28 05:13:09.310342+00:00",
+  "trial_hours": 45.5,
+  "in_M": 367.6,
+  "cache_M": 334.3,
+  "out_M": 6.41,
+  "turns": 10100,
+  "tool_calls": 10107,
+  "graded": 139,
+  "cc_usd": 511.0,
+  "models": [
+   "hf:deepseek-ai/DeepSeek-V4.1-Flash-1017"
+  ]
+ },
+ {
+  "name": "Nemotron control",
+  "trials": 170,
+  "jobs": 4,
+  "tasks": 140,
+  "first": "2026-10-25 07:52:11.799564+00:00",
+  "last": "2026-10-26 12:32:17.381454+00:00",
+  "trial_hours": 86.5,
+  "in_M": 794.2,
+  "cache_M": 0.0,
+  "out_M": 12.53,
+  "turns": 18049,
+  "tool_calls": 18275,
+  "graded": 140,
+  "cc_usd": 3061.0,
+  "models": [
+   "nemotron-3.5-lightning-30b-a3b"
+  ]
+ },
+ {
+  "name": "all RedlineBench archive",
+  "trials": 1357,
+  "jobs": 49,
+  "tasks": 140,
+  "first": "2026-10-25 05:25:15.088946+00:00",
+  "last": "2026-10-31 02:05:44.406648+00:00",
+  "trial_hours": 414.5,
+  "in_M": 3289.0,
+  "cache_M": 1158.1,
+  "out_M": 46.17,
+  "turns": 78524,
+  "tool_calls": 82572,
+  "graded": 1212,
+  "cc_usd": 9590.0,
+  "models": [
+   "hf:deepseek-ai/DeepSeek-V4.1-Flash-1017",
+   "k2-horizon-mova-36b-a4b",
+   "muse-glimmer-30b",
+   "nemotron-3.5-lightning-30b-a3b",
+   "qwen3.8-27b"
+  ]
+ }
+]

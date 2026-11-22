@@ -1,65 +1,50 @@
-# Day 3 · The disappointment
+# Day 3 · $702 or $9,679 for the same runs
 
-We built a better pen and expected better drafting. That is not what happened.
+MAIN POST:
 
-| Test | Tasks | Their tools | jubarte |
-|---|---|---|---|
-| Harvey redline tasks, DeepSeek | 90 pairs | 0.936 | 0.941 |
-| Harvey editing tasks, DeepSeek, later version | 44 pairs | 0.925 | 0.923 |
-| RedlineBench, DeepSeek | 134 | 0.494 | 0.492 |
-| RedlineBench, Claude Haiku 5.5, first set | 69 | 0.394 | 0.427 |
-| RedlineBench, Claude Haiku 5.5, second set | 33 | 0.430 | 0.412 |
-| RedlineBench, GLM-5.3-flash | 40 | 0.350 | 0.364 |
-| RedlineBench, Nemotron 3.5 | 12 | 0.401 | 0.425 |
+The same 1,357 agent runs cost $702 or $9,679. The runs do not change. Only the price list does.
 
-Four small wins and three small losses. Only one of them, Haiku's first set, is larger
-than the noise in the measurement. The fair reading is a tie. It took us a few days
-to say that sentence without adding "but".
+That is the full RedlineBench archive from my jubarte 0.14 study: 140 contract negotiation tasks, run many times over. 3.29 billion tokens in, 46 million out. Priced at DeepSeek's list: $702. At Claude Sonnet 5.5: $4,839. At Claude Opus 5.5: $9,679.
 
-Looking at where the points went was more useful than the totals.
+What I actually paid looked like none of them. The agent ran on a flat subscription with weekly credits. During the Harvey runs that followed, the queue stopped itself at 4% credit and again at 0%. One judge model was dropped after ten minutes as too expensive. A later study on rented hardware cost $100 for tokens that would list at $6,175.
 
-## Where jubarte lost
+Three things I did not expect:
 
-**First drafts came out unreadable.** On turn 1, marking up a clean template,
-jubarte scored 0.258 against 0.280. When the agent rewrote a paragraph, the tool
-compared old and new one word at a time and marked each difference. A paragraph that
-a lawyer would strike and replace came out as 254 little insertions and deletions
-per document, against 73 for the other arm. Half of the insertions were nine
-characters or shorter. You have seen this redline. It is the one where "are" is struck and
-"apply to" inserted, then "provided" struck and "with" inserted, and by the third
-line you give up and ask for a clean copy. The judge gave up too.
+In the control arm, 91% of what the agent read was cache hits. The cache price decides most of the bill, and quotes rarely show it.
 
-**Agents struck too much.** This one is about lawyering, not software. On the
-response turns, jubarte lets an agent reject the other side's insertion with one
-short command. Agents used it. They won 47 rubric items that say "rejects X" and
-lost 12. But they lost 62 items that say "accepts X" and won 9. By turn 4, when a
-deal should be closing, they were still re-opening settled points.
+Grading is a second bill. A model scores every run against a rubric, and every regrade pays again.
 
-A junior with a red pen marks more than a junior without one. The tool made
-rejection cheap, and the agent's judgment about when to concede did not improve to
-match. A playbook that says what to concede matters more than any tool.
+The tool moved the bill more than I thought a tool could. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, at the same score. The saving is turns the agent no longer spends writing XML.
 
-## Where jubarte won
+Disclosure: jubarte is mine, and these are my runs and my bills.
 
-**It kept the other side's markup.** On a securities-lending first turn, the control
-arm accepted the counterparty's changes and re-issued only its own. All 182
-insertions carried one name. A reader could no longer see what the other side had
-proposed. jubarte's file kept 191 changes under their name and added 89 under ours.
-On Harvey's ISDA first turn, editing in place kept a party-identification preamble
-that the rebuilt file lost. Those were real points, and they are the difference
-between a turn of a negotiation and a new document.
+For anyone buying legal AI: ask for tokens and turns per matter, and the cache rate, not only the price per seat.
 
-**It did what the memo asked.** When each edit is one short instruction, agents
-carried out every item in the issues memo. When each edit means writing a script,
-they ran out of patience or budget and skipped some.
+Links in comments. If you have priced an agent deployment, did the cache rate appear in the quote?
 
-**It failed less.** In the first ten Harvey pairs the control arm hit 38 hard tool
-failures and jubarte hit 5. Across those ten tasks the control arm spent about 190
-of its 335 minutes rebuilding a redline engine from scratch.
+COMMENT:
 
-## What I take from it
+Cost tables and method: [link to reports/jubarte-0.14-redlinebench.md, section 6]
+Raw token counts per trial: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
 
-The score measures legal judgment, and a redlining tool does not supply judgment.
-The same model with the same brief makes the same calls. What the tool changes is
-what the work costs and what state the file is in when you open it. That is
-tomorrow's post, and it turned out to be the better story.
+In plain English. A token is roughly three quarters of a word. Input tokens are what the model reads (the contract, the playbook, its own earlier steps), and output tokens are what it writes. A cache hit is text the model already read in this session; providers bill it at a fraction of the normal rate. An agent rereads the same contract dozens of times, which is why cache hits dominate.
+
+Nitty-gritty:
+- Prices per million tokens:
+  - DeepSeek V4.1 Flash, first-party peak: $0.30 in, $0.006 cached, $1.20 out.
+  - Sonnet 5.5: $2, $0.10, $10.
+  - Opus 5.5: $4, $0.20, $20.
+- Cache-write surcharges are excluded, so the Claude figures are a floor.
+- Nemotron ran on a local GPU that reports no cache, so its tokens are priced as uncached.
+- Claude Code's own estimate in the run files: $9,590 for the archive.
+- Per task, 127 held-out: control $2.29 and jubarte $1.32 at Opus prices; $0.137 and $0.081 at DeepSeek's.
+- The $100 is the Harvey LAB study on jubarte 0.17, self-hosted, 88 trials, 1.48 billion recorded input tokens.
+
+VISUAL SUGGESTIONS:
+14x | SAME RUNS, DIFFERENT PRICE LIST | $702 at DeepSeek list, $9,679 at Claude Opus 5.5
+91% | OF WHAT THE AGENT READ WAS CACHED | the cache rate decides most of the bill
+$1.32 | PER CONTRACT AT OPUS PRICES | $2.29 with the benchmark's scripts, same score
+
+OPEN QUESTIONS FOR ARTHUR:
+1. What did the Synthetic plan cost? The run logs record credit levels but not the plan. If you want "what I actually paid" to carry a number, give me the plan and months used.
+2. The $100 is your figure, recorded in the 0.17 dataset card. Confirm it covers the whole node rental and not only part of it.
