@@ -40,6 +40,7 @@ Nitty-gritty:
 - Difference +0.004, 95% bootstrap interval −0.026 to +0.034.
 - 48 tasks better, 40 worse, 39 equal.
 - The 716 runs cover 30 jobs from 26 to 30 October.
+- The arms were not interleaved: the control ran 27 to 28 October, the jubarte arm 28 to 30 October. Model, harness and grader were pinned, but a provider-side change between those days cannot be ruled out.
 - Later versions on Harvey's benchmark went the same direction with smaller savings. They are in the report and stay out of this post on purpose.
 
 VISUAL SUGGESTIONS:

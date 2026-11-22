@@ -51,4 +51,4 @@ OPEN QUESTIONS FOR ARTHUR:
 1. Post only after the pull requests are open, or reword "I drafted" to match what is live. The PR drafts are in `outreach/prs/` in your local folder, not in this public repo.
 2. You listed "mcode" and "minimax code" separately. I read both as MiniMax Code (its CLI is `mcode`) and count MiniMax's skills catalog as a source, not an agent, so the count is seven. If mcode is another product, it becomes eight once checked.
 3. Z Code: zcode.z.ai documents skills and plugins, but its built-in skills could not be fetched from here. Check its built-in list before posting the line.
-4. Claude Code is the ninth harness and the one every paired run used. It is in the comment and stays out of the headline count, because it was not on your list.
+4. Claude Code is the eighth harness and the one every paired run used. It is in the comment and stays out of the headline count, because it was not on your list.
