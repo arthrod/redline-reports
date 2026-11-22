@@ -32,7 +32,7 @@ Links in comments. If you evaluate legal agents: does your headline number come 
 COMMENT:
 
 Report: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-six-cohorts.md
-Every trial, file by file: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
+Every trial, file by file: https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts
 jubarte: https://github.com/jandira-tech/jubarte
 RedlineBench is by Crosby and micro1: https://huggingface.co/datasets/crosbylegal/RedlineBench
 

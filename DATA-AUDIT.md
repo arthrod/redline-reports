@@ -2,15 +2,17 @@
 
 Date: 2026-11-22.
 
-Scope: the trials behind `reports/jubarte-six-cohorts.md` and `harness/report.md`, and nothing else. For each cohort, this records where its trials are stored, what the public tables get wrong, and what is not public yet.
+Scope: the trials behind `reports/jubarte-six-cohorts.md` and `harness/report.md`, and nothing else. For each cohort, this records where its trials are stored and what the public tables get wrong.
 
 ## Verdict
 
-Five of the six cohorts are public, trial by trial, in `arthrod/redline-bench-deepseek-trajectories`. The sixth, Muse Spark 1.3, is half public: its control arm's trajectories and token totals are in `arthrod/redline-bench-jubarte-trajectories` (`data/redline_bench_extra_trials.parquet`, 140 of 158 trials with a trajectory). Its jubarte arm, including the session logs behind Appendix A, is only in a private local archive, so that arm has no public source until it is published.
+All six cohorts are public, trial by trial, in [`arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts), which holds these cohorts and nothing else. It was cut from the sources in the table below. The Muse Spark 1.3 jubarte arm, including the session logs behind Appendix A, was public for the first time there; before, it was only in a private local archive.
 
 The public tables contain errors that affect how these cohorts read (below). None of them changes a score in the report, because `data/cohort_trials.csv` was rebuilt from the trial files themselves.
 
 ## Where each cohort is stored
+
+Sources the six-cohort dataset was cut from:
 
 | Cohort | Dataset and folder | jubarte jobs | Control job |
 |---|---|---|---|
@@ -19,7 +21,7 @@ The public tables contain errors that affect how these cohorts read (below). Non
 | 0.15.0 DeepSeek | same, `redlinebench/` | `jubarte-study-v14b-015`, `jubarte-study-v14b-015-retry` | `deepseek-full-b` |
 | 0.16 Harvey | same, `harvey_lab/` | `harvey-hub-ab`, lab arm | same job, base arm |
 | 0.17 Harvey | same, `harvey_lab_017/` | lab arm | base arm |
-| Muse Spark 1.3 | jubarte arm: private local archive only. Control: `redline-bench-jubarte-trajectories`, `data/redline_bench_extra_trials.parquet` | `muse-1-3-contributor-total` | `muse-1-3-contributor-total-ooriginal` |
+| Muse Spark 1.3 | jubarte arm: private local archive. Control: `redline-bench-jubarte-trajectories`, `data/redline_bench_extra_trials.parquet` | `muse-1-3-contributor-total` | `muse-1-3-contributor-total-ooriginal` |
 
 How to tell the builds apart:
 

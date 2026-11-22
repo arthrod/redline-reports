@@ -1,7 +1,7 @@
 # Redline reports
 
 [![ci](https://github.com/arthrod/redline-reports/actions/workflows/ci.yml/badge.svg)](https://github.com/arthrod/redline-reports/actions/workflows/ci.yml)
-[![data: CC-BY-4.0](https://img.shields.io/badge/data-CC--BY--4.0-blue)](https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories)
+[![data: CC-BY-4.0](https://img.shields.io/badge/data-CC--BY--4.0-blue)](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts)
 
 What happened when AI agents redlined contracts with [jubarte](https://github.com/jandira-tech/jubarte) instead of the tools two legal benchmarks ship with: Crosby's RedlineBench and the redline tasks in Harvey's Legal Agent Benchmark (LAB). The repository covers six cohorts of runs: jubarte 0.14.0 with DeepSeek and with Nemotron, 0.15.0 with DeepSeek, 0.16 and 0.17 on Harvey LAB, and Muse Spark 1.3.
 
@@ -17,7 +17,7 @@ The short version:
 | [`harness/report.md`](harness/report.md) | What Claude Code asks of models that are not Claude: adaptive thinking, the 6,897-token ceiling, usage numbers that do not add up, unsigned thinking, and how a tool cut thinking |
 | [`lawyers/`](lawyers) | Five short posts for lawyers who follow the technology, Monday to Friday |
 | [`FACTS.md`](FACTS.md) | Every number used above, with its source, and where the claims stop |
-| [`DATA-AUDIT.md`](DATA-AUDIT.md) | Where each cohort's trials are stored, what the public tables get wrong, and what is not public yet |
+| [`DATA-AUDIT.md`](DATA-AUDIT.md) | Where each cohort's trials are stored, and what the public tables get wrong |
 | [`artifacts/`](artifacts) | Four single-file pages that run jubarte in the browser |
 | [`data/`](data) | `cohort_trials.csv` (one row per trial), `trial_metrics.csv` (the same trials plus API calls, inference time and split tokens), `metrics_by_cohort.csv` and `metrics_by_run.csv` (report Appendix A), `harness_responses.parquet` (one row per model response), `harness_requests.csv` |
 
@@ -57,7 +57,7 @@ The last three fetch the jubarte 0.19.0 WebAssembly build from cdn.jsdelivr.net.
 
 ## Data
 
-Every trial in five of the six cohorts is public at <https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories>. The Muse Spark 1.3 trials are not public yet (`DATA-AUDIT.md`).
+Every trial in the six cohorts, and nothing else, is public at <https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts>: one row per trial in `data/trials.parquet`, and every file of every trial (session logs, deliverables, grades) under `files/`.
 
 ## Licence
 

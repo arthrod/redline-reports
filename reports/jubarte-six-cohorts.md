@@ -13,6 +13,8 @@ Scope: six groups of runs, called cohorts here, and nothing else. In each cohort
 | 0.17 Harvey | Harvey LAB editing tasks, 16 tasks | DeepSeek Flash 1017 in Claude Code, served on a self-hosted MI355X | 0.17.x |
 | Muse Spark 1.3 | RedlineBench, 140 tasks | Muse Spark 1.3 Contributor | not recorded |
 
+Data: every trial in the six cohorts, and nothing else, is in one public dataset: [`arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts).
+
 Disclosure: Arthur Souza Rodrigues writes jubarte (Jandira Technologies) and ran every trial here. RedlineBench is by Crosby Legal and micro1, and the Legal Agent Benchmark (LAB) is by Harvey. No one at Crosby, micro1, Harvey, DeepSeek, NVIDIA or Synthetic reviewed this report.
 
 ## 1. The answer, in one table
@@ -235,12 +237,12 @@ Data:
 - `data/cohort_trials.csv`: one row per trial in the six cohorts and their controls. It records cohort, arm, job, task, the pairing key, the judge, the single-judge score, minutes and tokens.
 - `data/harness_responses.parquet` and `data/harness_requests.csv`: per-response figures for section 6, from the Claude Code session logs.
 - `data/trial_metrics.csv`: `cohort_trials.csv` plus, per trial, API calls, inference minutes and tokens split into uncached, cache read and cache write. It is built by `tools/extract_trial_metrics.py` from the session logs and trajectories. `data/metrics_by_cohort.csv` and `data/metrics_by_run.csv` hold the Appendix A means and medians. `data/openrouter_models_2026-11-22.json` is the OpenRouter price snapshot.
-- Raw trials, public: `hf://datasets/arthrod/redline-bench-deepseek-trajectories`:
-  - `redlinebench/` holds the DeepSeek and Nemotron cohorts and their controls.
-  - `harvey_lab/` holds 0.16 Harvey.
-  - `harvey_lab_017/` holds 0.17 Harvey.
+- Raw trials, public, six cohorts only: [`hf://datasets/arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts):
+  - `data/trials.parquet` is `data/trial_metrics.csv`, one row per trial.
+  - `files/redlinebench.parquet` holds every file of the DeepSeek and Nemotron trials and their controls, session logs included.
+  - `files/harvey_016.parquet` holds 0.16 Harvey; `files/harvey_017_*.parquet` hold 0.17 Harvey.
+  - `files/muse_jubarte.parquet` and `files/muse_control_trials.parquet` hold Muse Spark 1.3.
 - The 140 task definitions: `hf://datasets/arthrod/redline-bench-jubarte-tasks`.
-- Muse Spark 1.3: the control arm's trajectories and token totals are public in `hf://datasets/arthrod/redline-bench-jubarte-trajectories` (`data/redline_bench_extra_trials.parquet`). The jubarte arm's trials and session logs are in a private local archive and are not yet public (see `DATA-AUDIT.md`).
 
 Scores are single-judge:
 

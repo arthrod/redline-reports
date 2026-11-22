@@ -24,7 +24,7 @@ Links in comments. Have you seen a legal AI vendor report results on matters it 
 COMMENT:
 
 Report, section 3: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-six-cohorts.md
-Every draft's runs: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories (jobs `jubarte-ds-v2` to `jubarte-ds-v12`, `jubarte-v1` to `jubarte-v11`)
+Every draft's runs: https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts (jobs `jubarte-ds-v2` to `jubarte-ds-v12`, `jubarte-v1` to `jubarte-v11`)
 
 In plain English. A development set is the material you look at while you build. A held-out set is material you lock away until the end. When the first scores better than the second, you tuned to the first. Every lawyer has seen the same effect in a brief written around three favorable cases.
 

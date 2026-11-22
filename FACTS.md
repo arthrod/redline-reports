@@ -161,8 +161,7 @@ Per trial, means, benchmark's tools → jubarte. Medians and per-run figures are
 
 ## Sources
 
-- Trials: <https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories>. The folders are `redlinebench/`, `harvey_lab/` and `harvey_lab_017/`.
 - Task definitions: <https://huggingface.co/datasets/arthrod/redline-bench-jubarte-tasks>.
-- Muse Spark 1.3 trials: private archive, not yet public (`DATA-AUDIT.md`).
+- Trials, all six cohorts and nothing else: <https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts>.
 - RedlineBench: Crosby Legal and micro1, <https://huggingface.co/datasets/crosbylegal/RedlineBench>.
 - Harvey LAB: <https://github.com/harveyai/harvey-labs>.

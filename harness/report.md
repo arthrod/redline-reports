@@ -4,6 +4,8 @@ An investigation of 63,274 model responses. They come from the three RedlineBenc
 
 For harness maintainers, inference providers, and anyone who prices or benchmarks agents from usage numbers.
 
+Data: [`arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts) holds every trial, session logs included.
+
 Disclosure: Arthur Souza Rodrigues writes jubarte, the Word tool under test in the cohorts, and ran every trial. No one at Anthropic, DeepSeek, NVIDIA or Synthetic reviewed this article.
 
 **In short.**
@@ -181,7 +183,7 @@ For anyone who benchmarks or prices agents:
 ## 8. Limits
 
 - Two backends, one harness version (Claude Code 2.1.310), one benchmark.
-- The Muse Spark 1.3 and Harvey cohorts are not covered. Muse's session logs are not public, and the Harvey runs were not extracted for this article.
+- The Muse Spark 1.3 and Harvey cohorts are not covered. Muse's control arm has no session logs (trajectories only), so it cannot be compared response by response, and the Harvey runs were not extracted for this article.
 - The 2.4× output scale is inferred from character counts, not from the provider's tokenizer.
 - "Stopped at the limit" is the `stop_reason` the provider returned. Whether DeepSeek truncates at 16,384 real tokens is an inference.
 
@@ -192,4 +194,4 @@ uv run python scripts/harness.py
 uv run pytest tests/test_harness.py   # pins the ceiling, the zero thinking_tokens, the unsigned blocks and the double count
 ```
 
-Raw session logs are in `hf://datasets/arthrod/redline-bench-deepseek-trajectories` (`redlinebench/`, path `agent/sessions/projects/-app/*.jsonl` inside each trial), for jobs `jubarte-ds-*`, `jubarte-study-*`, `jubarte-v1` to `jubarte-v11`, `deepseek-full-b` and `nemotron-full-5090`.
+Raw session logs are in [`hf://datasets/arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts) (`files/redlinebench.parquet`, `path_in_trial` matching `agent/sessions/projects/-app/*.jsonl`), for jobs `jubarte-ds-*`, `jubarte-study-*`, `jubarte-v1` to `jubarte-v11`, `deepseek-full-b` and `nemotron-full-5090`.
