@@ -33,7 +33,7 @@ Updated 2026-11-23: `FACTS.md` now also uses `redline-bench-jubarte-six-cohorts`
 
 - Almost every published number rests on one public dataset, `redline-bench-deepseek-trajectories`, and on one part of it: the per-trial results, grades and trajectories. The bulky parts (documents, steps, most per-trial files) went unused.
 - The two private datasets were used only to check that runs exist (the audit). No score, token or time figure in the posts comes from them. The pi figure (134 trials, 0.486) is the exception: those runs are only in the private local archive. See `DATA-AUDIT.md`.
-- `redline-bench-jubarte-trajectories` is used only for the older Haiku and GLM comparisons on jubarte 0.12.0.
+- `redline-bench-jubarte-trajectories` is used for the older Haiku and GLM comparisons on jubarte 0.12.0 and, since 2026-11-23, for the Muse Spark 1.3 relaunch figures in `FACTS.md` (`muse_oct18_relaunch`). `redline-bench-jubarte-six-cohorts` supplies the Muse Spark 1.3 paired comparison.
 
 ## How the estimate was made
 

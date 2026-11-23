@@ -12,7 +12,7 @@ The runs in the Hugging Face datasets are preserved. One set is not confirmed: t
 
 | Dataset | Visibility | What it holds | Trials |
 |---|---|---|---:|
-| `redline-bench-deepseek-trajectories` | public | `redlinebench/`: RedlineBench runs Oct 25 to 31 (jubarte 0.14.0 and 0.15.0, controls, open-model smokes). `harvey_lab/`: Harvey Hub A/B (0.16.0+). `harvey_lab_017/`: Harvey 0.17 study. `redlinebench_muse_glimmer_trials` (added 2026-11-23): the 76 finished Muse Glimmer 30B trials | 1,357 + 180 + 88 |
+| `redline-bench-deepseek-trajectories` | public | `redlinebench/`: RedlineBench runs Oct 25 to 31 (jubarte 0.14.0 and 0.15.0, controls, open-model smokes). `harvey_lab/`: Harvey Hub A/B (0.16.0+). `harvey_lab_017/`: Harvey 0.17 study. `redlinebench_muse_glimmer_trials` (added 2026-11-23): the 76 finished Muse Glimmer 30B trials, already among the 1,357 (their `result.json` files were there; only their rows in the trials table were missing) | 1,357 + 180 + 88 |
 | `redline-bench-jubarte-tasks` | public | the 140 RedlineBench task definitions | 140 tasks |
 | `redline-bench-jubarte-trajectories` | public | the older Claude Haiku runs on jubarte 0.11 and 0.12 (`main` 785, `extra` 289, `incomplete` 69); `muse_oct18_relaunch` (added 2026-11-23): 150 Muse Spark 1.3 trials from the 18 October jubarte relaunch | 1,143 + 150 |
 | `redline-bench-jubarte-six-cohorts` | public | one `trials` table across six cohorts (DeepSeek 0.14.0 and 0.15.0, Nemotron 0.14.0, Harvey 0.16 and 0.17, Muse Spark 1.3) plus file tables. Mostly subsets of the datasets above; the Muse Spark 1.3 arms (140 jubarte, 158 control) are public only here | 1,847 rows |
