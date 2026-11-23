@@ -58,12 +58,12 @@ The `judge` and `n_grades` columns say which judge was used and how many of its 
 
 ## Accounted for, and how
 
-- **Task `redline-s1-t4-g11a`.** GLM-5.3-Flash ran out of output on it, so only a panel graded it. It is left out of every paired comparison. That is why the DeepSeek cohorts pair 130 and 125 tasks.
+- **Task `redline-s1-t4-g11a`.** GLM-5.3-Flash ran out of output on it, so only a panel graded it. It is left out of every paired comparison. That task and the nine the `deepseek-full-b` control never ran (`redline-s1-t1-g01a` to `g01e`, `redline-s1-t2-g01a` to `g01c`, `redline-s1-t2-g02b`) are why 0.14.0 DeepSeek pairs 130 tasks, not 140.
 - **Nine RedlineBench tasks have no `deepseek-full-b` control.** They are left out of the DeepSeek pairings. Two of them are among the 12 tuning tasks.
 - **Harvey 0.16's judge changed mid-study.** gpt-5.4 graded 106 trials and gpt-6-luna graded 74. Each trial's `local-verifier/judge.txt` names its judge.
 - **Harvey 0.16 pairs that died on credit.** Three pairs failed when the provider's credit ran out and are excluded from the 90. Counting them as losses would charge a billing event to the tool.
 - **Harvey 0.17 trials that never started.** Four jubarte and four control trials have no grade. They are recorded as missing, not as zero.
-- **Muse ordering.** The jubarte arm ran Oct 16 to 17, before the control (Oct 17 to 18). The build is unrecorded.
+- **Muse ordering.** The jubarte arm ran Oct 16 21:02 to Oct 17 02:50 UTC, before the control (Oct 17 02:36 to 12:46). The build is unrecorded.
 
 ## Per-trial metrics (report, Appendix A)
 

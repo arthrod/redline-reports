@@ -10,7 +10,7 @@ Scope: six groups of runs, called cohorts here, and nothing else. In each cohort
 | 0.14.0 Nemotron | RedlineBench, 12 tasks | Nemotron 3.5 Lightning 30B-A3B in Claude Code 2.1.310, one RTX 5090 | 0.14.0 |
 | 0.15.0 DeepSeek | RedlineBench, 135 tasks | DeepSeek-V4.1-Flash-1017 in Claude Code 2.1.310 | 0.15.0 |
 | 0.16 Harvey | Harvey LAB redline tasks, 90 A/B pairs | DeepSeek-V4.1-Flash in Claude Code, on Harbor Hub | 0.16.x |
-| 0.17 Harvey | Harvey LAB editing tasks, 16 tasks | DeepSeek Flash 1017 in Claude Code, served on a self-hosted MI355X | 0.17.x |
+| 0.17 Harvey | Harvey LAB editing tasks, 17 tasks | DeepSeek Flash 1017 in Claude Code, served on a self-hosted MI355X | 0.17.x |
 | Muse Spark 1.3 | RedlineBench, 140 tasks | Muse Spark 1.3 Contributor | not recorded |
 
 Data: every trial in the six cohorts, and nothing else, is in one public dataset: [`arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts).
@@ -25,7 +25,7 @@ Each row pairs a task's jubarte trials with the same task's control trials and a
 |---|---:|---:|---:|---|---|---|---|---|
 | 0.14.0 DeepSeek | 130 | 0.503 | 0.497 | −0.007 (−0.030 to +0.016) | 57 / 56 / 17 | 18.3 → 10.3 (−44%) | 44.2k → 21.5k (−51%) | 2.54M → 1.39M (−45%) |
 | 0.14.0 Nemotron | 12 | 0.401 | 0.308 | **−0.093 (−0.170 to −0.018)** | 4 / 7 / 1 | 30.8 → 24.1 (−22%) | 64.4k → 67.4k (+5%) | 4.05M → 4.80M (+19%) |
-| 0.15.0 DeepSeek | 125 | 0.503 | 0.501 | −0.003 (−0.028 to +0.024) | 36 / 43 / 46 | 18.4 → 10.1 (−45%) | 44.4k → 20.2k (−54%) | 2.57M → 1.24M (−52%) |
+| 0.15.0 DeepSeek | 125 | 0.503 | 0.501 | −0.003 (−0.028 to +0.024) | 31 / 39 / 55 | 18.4 → 10.1 (−45%) | 44.4k → 20.2k (−54%) | 2.57M → 1.24M (−52%) |
 | 0.16 Harvey | 90 pairs | 0.936 | 0.941 | +0.006 (−0.004 to +0.017) | 33 / 24 / 33 | 37.2 → 32.4 (−13%) | 53.3k → 46.5k (−13%) | 10.45M → 8.95M (−14%) |
 | 0.17 Harvey | 16 | 0.925 | 0.923 | −0.002 (−0.026 to +0.022) | 8 / 8 / 0 | 28.4 → 26.6 (−6%) | 143.5k → 133.1k (−7%) | 17.20M → 16.16M (−6%) |
 | Muse Spark 1.3 | 140 | 0.297 | 0.316 | +0.019 (−0.033 to +0.071) | 57 / 60 / 23 | 48.8 → 36.1 (−26%) | 226.3k → 180.7k (−20%) | 3.98M → 2.93M (−26%) |
@@ -40,7 +40,8 @@ Method:
 
 - A task's score in each arm is the mean of its graded trials.
 - The interval is a bootstrap over tasks (10,000 draws, seed 20261122).
-- Tasks without a graded trial in both arms are left out. That is why the DeepSeek rows have 130 and 125 tasks, not 140.
+- A task counts as equal when the two arms' means differ by less than 10⁻¹², which is floating-point noise.
+- Tasks without a graded trial in both arms are left out. That is why the DeepSeek rows have 130 and 125 tasks, not 140, and 0.17 Harvey has 16 of its 17.
 - Input tokens are Harbor's totals. For the DeepSeek provider these count uncached input twice; the prices in section 6 correct for it.
 - `uv run python scripts/cohorts.py` recomputes every number in this report from `data/cohort_trials.csv`, except the per-response figures in section 6, which come from `scripts/harness.py`.
 
@@ -53,7 +54,7 @@ Method:
 | 0.15.0 DeepSeek | 147 trials in 2 jobs (`study-v14b-015` and a 6-trial retry) | `deepseek-full-b` | GLM-5.3-Flash | jubarte Oct 30 21:21 to Oct 31 02:05 |
 | 0.16 Harvey | 90 trials, `harvey-hub-ab` | 90 trials, paired A/B | Harvey's LAB judge: gpt-5.4 for 106 trials, then gpt-6-luna for 74 | Nov 1 to Nov 4 |
 | 0.17 Harvey | 48 trials, up to 3 repeats per task | 48 trials | Harvey's LAB judge, gpt-6-luna | Nov 4 23:33 to Nov 5 02:56 |
-| Muse Spark 1.3 | 140 trials, `muse-1-3-contributor-total` | `muse-1-3-contributor-total-ooriginal` | gpt-6.1-sol panel | jubarte Oct 16 21:02 to Oct 17 02:50; control Oct 17 to 18 |
+| Muse Spark 1.3 | 140 trials, `muse-1-3-contributor-total` | `muse-1-3-contributor-total-ooriginal` | gpt-6.1-sol panel | jubarte Oct 16 21:02 to Oct 17 02:50; control Oct 17 02:36 to 12:46 |
 
 Three design facts matter for every row:
 
@@ -113,9 +114,9 @@ The judge changed during the run: gpt-5.4 graded 106 trials and gpt-6-luna grade
 
 LAB's scores sit near the ceiling (median 0.962 in the jubarte arm). There is little room for any tool to move them.
 
-### 0.17 Harvey: 16 tasks, no material saving
+### 0.17 Harvey: 17 tasks, no material saving
 
-LAB editing tasks on a self-hosted MI355X, up to three repeats per task per arm: −0.002 (−0.026 to +0.022), with about 6% less time and tokens. Four jubarte trials never started and one failed to execute, so 44 of 48 were graded. At 16 tasks, a saving of a few percent cannot be told apart from run-to-run variation.
+LAB editing tasks on a self-hosted MI355X, 48 trials per arm over 17 tasks (two to four per task): −0.002 (−0.026 to +0.022) on the 16 tasks graded in both arms, with about 6% less time and tokens. Four trials in each arm never started, so 44 of 48 were graded in each; one graded jubarte trial is flagged as a failed execution. At 16 tasks, a saving of a few percent cannot be told apart from run-to-run variation.
 
 ### Muse Spark 1.3: no difference detected, and two caveats
 
@@ -124,7 +125,7 @@ On all 140 RedlineBench tasks: +0.019 (−0.033 to +0.071), with 26% less time a
 Two caveats, both stated plainly:
 
 - **The jubarte build was not recorded.** The trials carry no binary hash.
-- **The jubarte arm ran first**, on Oct 16 to 17, before the control on Oct 17 to 18.
+- **The jubarte arm ran first**, Oct 16 21:02 to Oct 17 02:50 UTC, before the control, Oct 17 02:36 to 12:46.
 
 Timeouts weigh on both arms. The jubarte arm hit the agent timeout in 33 of 140 trials, and 29 of those scored zero. The control hit it in 78 of 158 trials. Timed-out trials were still graded on whatever the agent had saved.
 
@@ -159,7 +160,7 @@ Every jubarte trial, by outcome:
 | Scored above 0.66 | 147 | 26 | 38 | 89 | 44 | 18 |
 | Median score | 0.487 | 0.179 | 0.514 | 0.962 | 0.948 | 0.315 |
 
-The three "finished, not graded" trials are on `redline-s1-t4-g11a`. On that task the single judge ran out of output and only a panel graded it, so it is left out of every comparison.
+The three "finished, not graded" trials are on `redline-s1-t4-g11a`. No trial on that task, in either arm, has a GLM-5.3-Flash grade, so it drops out of every comparison.
 
 Nemotron's median of 0.179 against a mean of 0.307 says most of its trials were poor and a few were good. Of Muse's 41 zeros, 29 are timeouts.
 
@@ -198,25 +199,25 @@ What was actually paid for the DeepSeek cohorts was a flat Synthetic subscriptio
 
 ### All six cohorts, both arms
 
-Appendix A has every metric as mean and median, by cohort and by run. The headline per trial (means):
+The headline, on the same tasks as section 1: each task's mean over its graded trials, averaged over the paired tasks. Benchmark's tools → jubarte.
 
-| Cohort | API calls | Agent minutes | Inference minutes | Output tokens | Est. cost, OpenRouter | Est. cost, Opus list |
-|---|---:|---:|---:|---:|---:|---:|
-| 0.14.0 DeepSeek | 70 → 39 | 18.5 → 10.7 | 17.4 → 9.4 | 44.5k → 21.8k | $0.051 → $0.033 | $1.81 → $1.11 |
-| 0.14.0 Nemotron | 101 → 99 | 30.6 → 24.1 | 28.8 → 20.6 | 72.3k → 65.7k | $0.329 → $0.341 | $19.41 → $20.07 |
-| 0.15.0 DeepSeek | 70 → 36 | 18.5 → 10.0 | 17.4 → 8.8 | 44.5k → 20.4k | $0.051 → $0.032 | $1.81 → $1.05 |
-| 0.16 Harvey | 158 → 133 | 37.2 → 32.4 | 34.0 → 28.1 | 53.3k → 46.5k | $0.132 → $0.120 | $4.87 → $4.35 |
-| 0.17 Harvey | 168 → 163 | 28.5 → 26.9 | n/a | 144.0k → 134.7k | $2.68 → $2.55 | $71.95 → $68.39 |
-| Muse Spark 1.3 | 47 → 34 | 48.8 → 36.1 | n/a → 35.0 | 226.3k → 181.0k | $0.076 → $0.064 | $6.22 → $5.04 |
+| Cohort | Tasks | API calls | Agent minutes | Inference minutes | Output tokens | Est. cost, OpenRouter | Est. cost, Opus list |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| 0.14.0 DeepSeek | 130 | 70 → 38 | 18.3 → 10.3 | 17.3 → 9.2 | 44.3k → 21.5k | $0.051 → $0.032 | $1.80 → $1.08 |
+| 0.14.0 Nemotron | 12 | 95 → 98 | 30.8 → 24.1 | 28.6 → 20.6 | 63.4k → 65.7k | $0.292 → $0.341 | $17.23 → $20.03 |
+| 0.15.0 DeepSeek | 125 | 70 → 35 | 18.4 → 10.1 | 17.3 → 8.8 | 44.4k → 20.2k | $0.051 → $0.031 | $1.81 → $1.04 |
+| 0.16 Harvey | 90 | 158 → 133 | 37.2 → 32.4 | 34.0 → 28.1 | 53.3k → 46.5k | $0.132 → $0.120 | $4.87 → $4.35 |
+| 0.17 Harvey | 16 | 168 → 159 | 28.4 → 26.6 | n/a | 143.5k → 133.1k | $2.67 → $2.50 | $71.68 → $67.31 |
+| Muse Spark 1.3 | 140 | 47 → 34 | 48.8 → 36.1 | n/a → 35.0 | 226.3k → 181.0k | $0.076 → $0.064 | $6.22 → $5.04 |
 
-Benchmark's tools → jubarte. OpenRouter prices at the base rate; DeepSeek's weekday peak doubles them. Nemotron's and 0.17 Harvey's costs are inflated because their servers reported no caching (Appendix A).
+`scripts/metrics.py` prints this table; the unformatted values are in `data/metrics_paired_by_cohort.csv`. OpenRouter prices are at the base rate; DeepSeek's weekday peak doubles them. Nemotron's and 0.17 Harvey's costs are inflated because their servers reported no caching. Appendix A has every metric per trial, as mean and median, by cohort and by run. Per trial, the two Nemotron arms cover different tasks (140 against 12), so compare arms in this table, not there.
 
 What the logs show:
 
-- **Time is inference.** Where session logs exist, waiting on the model was 86% to 97% of agent working time. Tools, file reads and Word conversion took the rest: about 1 to 4.4 minutes per trial. With jubarte that remainder grew slightly in every cohort (DeepSeek 1.1 to 1.3 or 1.4 minutes, Nemotron 2.0 to 3.5, 0.16 Harvey 3.2 to 4.4). So jubarte's own commands cost a little time; the savings came from the model side.
-- **For DeepSeek, the saving follows the call count.** Calls fell 43% (0.14.0) and 49% (0.15.0), and inference time fell about as much, at a steady 14 to 15 seconds per call. In 0.17 Harvey, calls fell 3% and time 6%.
-- **Nemotron is the exception.** Its calls barely moved (−3%), but its time fell 21%, because the median call got faster: 16.0 to 11.2 seconds. Its jubarte arm pools 12-task tuning runs, a different task mix from the 140-task control, so this is a lead, not a measured effect.
-- **Muse is slow per call.** The median Muse response took 57 seconds, against about 13 to 16 seconds for DeepSeek and Nemotron. Muse made fewer calls than any other model, and still timed out the most.
+- **Time is inference.** Where session logs exist, waiting on the model was 85% to 97% of agent working time. The rest (tools, file reads and Word conversion) did not shrink with jubarte: 1.08 minutes in both arms of 0.14.0 DeepSeek, and up in the other three cohorts with logs in both arms (0.15.0 DeepSeek 1.10 to 1.35, Nemotron 2.22 to 3.51, 0.16 Harvey 3.17 to 4.39). The savings came from the model side.
+- **For DeepSeek, the saving follows the call count.** Calls fell 45% (0.14.0) and 50% (0.15.0), and inference time fell about as much, at a steady 14 to 15 seconds of model time per call. In 0.17 Harvey, calls fell 5% and time 6%.
+- **Nemotron is the exception.** On its 12 tasks, calls rose 4% and the OpenRouter estimate 17%, yet time fell 22%, because model time per call fell from 18.1 to 12.5 seconds. Its jubarte arm pools eleven different drafts against one control run, so this is a lead, not a measured effect.
+- **Muse is slow per call.** In its jubarte arm a call took 62 seconds of model time (its control has no session logs), against 12 to 18 seconds for the other models. Muse made fewer calls than any other model, in both arms, and still timed out the most.
 
 The harness article (`harness/report.md`) covers why output and thinking behave as they do here, including a fixed output ceiling on DeepSeek responses and a provider report that counts uncached input twice.
 
@@ -236,7 +237,7 @@ Data:
 
 - `data/cohort_trials.csv`: one row per trial in the six cohorts and their controls. It records cohort, arm, job, task, the pairing key, the judge, the single-judge score, minutes and tokens.
 - `data/harness_responses.parquet` and `data/harness_requests.csv`: per-response figures for section 6, from the Claude Code session logs.
-- `data/trial_metrics.csv`: `cohort_trials.csv` plus, per trial, API calls, inference minutes and tokens split into uncached, cache read and cache write. It is built by `tools/extract_trial_metrics.py` from the session logs and trajectories. `data/metrics_by_cohort.csv` and `data/metrics_by_run.csv` hold the Appendix A means and medians. `data/openrouter_models_2026-11-22.json` is the OpenRouter price snapshot.
+- `data/trial_metrics.csv`: `cohort_trials.csv` plus, per trial, API calls, inference minutes and tokens split into uncached, cache read and cache write. It is built by `tools/extract_trial_metrics.py` from the session logs and trajectories. `data/metrics_by_cohort.csv` and `data/metrics_by_run.csv` hold the Appendix A means and medians; `data/metrics_paired_by_cohort.csv` holds the section 6 headline. `data/openrouter_models_2026-11-22.json` is the OpenRouter price snapshot.
 - Raw trials, public, six cohorts only: [`hf://datasets/arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts):
   - `data/trials.parquet` is `data/trial_metrics.csv`, one row per trial.
   - `files/redlinebench.parquet` holds every file of the DeepSeek and Nemotron trials and their controls, session logs included.
@@ -255,7 +256,7 @@ Commands:
 ```sh
 uv run python scripts/cohorts.py   # sections 1 to 5
 uv run python scripts/harness.py   # section 6 and harness/report.md
-uv run python scripts/metrics.py   # Appendix A
+uv run python scripts/metrics.py   # section 6 headline and Appendix A
 uv run pytest                      # pins the published figures
 ```
 

@@ -66,7 +66,7 @@ def test_every_cohort_uses_one_judge_per_arm(data: pl.DataFrame) -> None:
 PAIRED = {
     "0.14.0 DeepSeek": (130, 0.503, 0.497, "-0.007", "57/56/17"),
     "0.14.0 Nemotron": (12, 0.401, 0.308, "-0.093", "4/7/1"),
-    "0.15.0 DeepSeek": (125, 0.503, 0.501, "-0.003", "36/43/46"),
+    "0.15.0 DeepSeek": (125, 0.503, 0.501, "-0.003", "31/39/55"),
     "0.16 Harvey": (90, 0.936, 0.941, "+0.006", "33/24/33"),
     "0.17 Harvey": (16, 0.925, 0.923, "-0.002", "8/8/0"),
     "Muse Spark 1.3": (140, 0.297, 0.316, "+0.019", "57/60/23"),
@@ -84,6 +84,27 @@ def test_paired_table_matches_the_report(data: pl.DataFrame) -> None:
             change,
             wlt,
         ), cohort
+
+
+def test_rounding_noise_counts_as_tied() -> None:
+    # Task means built from different numbers of trials can differ by ~1e-17 when the scores are
+    # equal. Those tasks are ties, not wins or losses.
+    third = 1 / 3
+    rows = [
+        {"cohort": "0.15.0 DeepSeek", "arm": "control", "pair_key": "a", "score": 0.1 + 0.2, "minutes": 1.0},
+        {"cohort": "0.15.0 DeepSeek", "arm": "jubarte", "pair_key": "a", "score": 0.3, "minutes": 1.0},
+        {"cohort": "0.15.0 DeepSeek", "arm": "control", "pair_key": "b", "score": third, "minutes": 1.0},
+        {"cohort": "0.15.0 DeepSeek", "arm": "jubarte", "pair_key": "b", "score": 0.5, "minutes": 1.0},
+        {"cohort": "0.15.0 DeepSeek", "arm": "control", "pair_key": "c", "score": 0.5, "minutes": 1.0},
+        {"cohort": "0.15.0 DeepSeek", "arm": "jubarte", "pair_key": "c", "score": third, "minutes": 1.0},
+    ]
+    d = pl.DataFrame(rows).with_columns(
+        pl.lit(1.0).alias("input_tokens"),
+        pl.lit(1.0).alias("output_tokens"),
+        pl.lit(1.0).alias("cache_read_tokens"),
+    )
+    assert (0.1 + 0.2) - 0.3 != 0  # the noise this test is about
+    assert cohorts.won_lost_tied(cohorts.pair_frame(d, "0.15.0 DeepSeek")) == "1/1/1"
 
 
 def test_only_nemotron_interval_excludes_zero(data: pl.DataFrame) -> None:

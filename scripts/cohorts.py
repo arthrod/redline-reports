@@ -7,7 +7,8 @@ Input: data/cohort_trials.csv, one row per trial in the six cohorts and their co
 Pairing: per task (per A/B pair for the 0.16 Harvey cohort), the mean score of every graded
 jubarte trial against the mean of every graded control trial on the same task. The interval
 is a bootstrap over tasks: 10,000 draws, seed 20261122. Each cohort is graded by one judge in
-both arms (see the `judge` column).
+both arms (see the `judge` column). A task is tied when the two means differ by less than
+1e-12, so floating-point noise is not counted as a win or a loss.
 
 Token columns are Harbor's `agent_result` totals. For the DeepSeek provider these count uncached
 input twice (once as input, once as cache write); scripts/harness.py prices from the session logs
@@ -28,6 +29,8 @@ DATA = ROOT / "data" / "cohort_trials.csv"
 ORDER = ["0.14.0 DeepSeek", "0.14.0 Nemotron", "0.15.0 DeepSeek", "0.16 Harvey", "0.17 Harvey", "Muse Spark 1.3"]
 REDLINEBENCH_ROUNDS = ["0.14.0 DeepSeek", "0.15.0 DeepSeek", "Muse Spark 1.3"]
 SEED = 20261122
+# Task means averaged from different numbers of trials can differ by ~1e-17 when equal.
+TIE = 1e-12
 
 
 def configure() -> None:
@@ -79,6 +82,18 @@ def arm(d: pl.DataFrame, cohort: str, name: str) -> pl.DataFrame:
     return d.filter((pl.col("cohort") == cohort) & (pl.col("arm") == name))
 
 
+def pair_frame(d: pl.DataFrame, cohort: str) -> pl.DataFrame:
+    """One cohort's paired tasks: jubarte against its control."""
+    return pair(arm(d, cohort, "jubarte"), arm(d, cohort, "control"))
+
+
+def won_lost_tied(p: pl.DataFrame) -> str:
+    """Tasks where jubarte scored higher / lower / the same, ignoring floating-point noise."""
+    dd = (p["s"] - p["s_c"]).to_numpy()
+    won, lost = int((dd > TIE).sum()), int((dd < -TIE).sum())
+    return f"{won}/{lost}/{len(dd) - won - lost}"
+
+
 def pct(a: float, b: float) -> str:
     return f"{(b - a) / a * 100:+.0f}%"
 
@@ -122,8 +137,7 @@ def overview(d: pl.DataFrame) -> pl.DataFrame:
 def paired(d: pl.DataFrame) -> pl.DataFrame:
     rows = []
     for c in ORDER:
-        p = pair(arm(d, c, "jubarte"), arm(d, c, "control"))
-        dd = (p["s"] - p["s_c"]).to_numpy()
+        p = pair_frame(d, c)
         mc, mj = num(p["m_c"].mean()), num(p["m"].mean())
         oc, oj = num(p["o_c"].mean()), num(p["o"].mean())
         ic, ij = num(p["i_c"].mean()), num(p["i"].mean())
@@ -131,7 +145,7 @@ def paired(d: pl.DataFrame) -> pl.DataFrame:
             {
                 "cohort": c,
                 **diff_row(p),
-                "won_lost_tied": f"{(dd > 0).sum()}/{(dd < 0).sum()}/{(dd == 0).sum()}",
+                "won_lost_tied": won_lost_tied(p),
                 "minutes": f"{mc:.1f} -> {mj:.1f} ({pct(mc, mj)})",
                 "output": f"{oc / 1e3:.1f}k -> {oj / 1e3:.1f}k ({pct(oc, oj)})",
                 "input": f"{ic / 1e6:.2f}M -> {ij / 1e6:.2f}M ({pct(ic, ij)})",

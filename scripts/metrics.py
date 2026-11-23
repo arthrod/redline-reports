@@ -47,6 +47,19 @@ TABLES: dict[str, list[tuple[str, str, int]]] = {
 }
 
 
+# Section 6 headline: same basis as the score table in section 1.
+PAIRED_FIELDS: list[tuple[str, str, int]] = [
+    ("api_calls", "API calls", 0),
+    ("minutes", "Agent minutes", 1),
+    ("inference_min", "Inference minutes", 1),
+    ("in_uncached", "Input, uncached", 0),
+    ("cache_read", "Input, cache read", 0),
+    ("out", "Output tokens", 0),
+    ("cost_openrouter", "Est. cost, OpenRouter", 3),
+    ("cost_opus", "Est. cost, Opus 5.5 list", 2),
+]
+
+
 def load(path: str = DATA) -> pl.DataFrame:
     """Trial rows with the cost estimates added.
 
@@ -141,6 +154,46 @@ def coverage(d: pl.DataFrame) -> pl.DataFrame:
     )
 
 
+def paired_means(d: pl.DataFrame) -> pl.DataFrame:
+    """Per cohort and arm: each task's mean over its graded trials, averaged over the paired tasks.
+
+    The same tasks as the score table (section 1): a task counts when both arms have a graded
+    trial. Means per trial over all trials compare different task sets when the arms cover
+    different tasks (the Nemotron control ran 140 tasks, its jubarte arm 12).
+    """
+    cols = [c for c, _, _ in PAIRED_FIELDS]
+    tasks = (
+        d.filter(pl.col("score").is_not_null())
+        .group_by("cohort", "arm", "pair_key")
+        .agg([pl.col(c).mean() for c in cols])
+    )
+    both = tasks.group_by("cohort", "pair_key").agg(pl.col("arm").n_unique().alias("arms")).filter(pl.col("arms") == 2)
+    return (
+        tasks.join(both.select("cohort", "pair_key"), on=["cohort", "pair_key"])
+        .group_by("cohort", "arm")
+        .agg(pl.len().alias("tasks"), *[pl.col(c).mean() for c in cols])
+        .sort("cohort", "arm")
+    )
+
+
+def paired_table(d: pl.DataFrame) -> pl.DataFrame:
+    """paired_means as one row per cohort, each cell "benchmark's tools -> jubarte"."""
+    m = paired_means(d)
+    rows = []
+    for c in COHORTS:
+        r = {
+            a: m.filter((pl.col("cohort") == c) & (pl.col("arm") == a)).row(0, named=True)
+            for a in ("control", "jubarte")
+        }
+        row: dict[str, str] = {"Cohort": c, "Tasks": str(r["control"]["tasks"])}
+        for col, label, digits in PAIRED_FIELDS:
+            row[label] = " -> ".join(
+                "n/a" if r[a][col] is None else f"{r[a][col]:,.{digits}f}" for a in ("control", "jubarte")
+            )
+        rows.append(row)
+    return pl.DataFrame(rows)
+
+
 def numeric(d: pl.DataFrame, by: list[str]) -> pl.DataFrame:
     """Unformatted mean and median of every field, for data/ exports."""
     cols = [c for fields in TABLES.values() for c, _, _ in fields]
@@ -156,6 +209,10 @@ def main() -> None:
     d = load()
     numeric(d, ["cohort"]).write_csv("data/metrics_by_cohort.csv")
     numeric(d, ["cohort", "job"]).write_csv("data/metrics_by_run.csv")
+    paired_means(d).write_csv("data/metrics_paired_by_cohort.csv")
+    print("## Paired by task, as in section 1 (section 6 headline)\n")
+    print(paired_table(d))
+    print()
     print("## Coverage\n")
     print(coverage(d))
     for title, fields in TABLES.items():

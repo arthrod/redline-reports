@@ -123,6 +123,44 @@ def test_published_aggregates(
     assert row[label].to_list() == [expected]
 
 
+def test_paired_means_use_only_tasks_graded_in_both_arms(tmp_path: Path) -> None:
+    rows = [
+        # task a: two control trials, one jubarte trial -> task means 15 and 6 calls
+        {**ROW, "pair_key": "a", "api_calls": 10},
+        {**ROW, "pair_key": "a", "api_calls": 20},
+        {**ROW, "pair_key": "a", "arm": "jubarte", "api_calls": 6},
+        # task b: graded in both arms -> 30 and 10 calls
+        {**ROW, "pair_key": "b", "api_calls": 30},
+        {**ROW, "pair_key": "b", "arm": "jubarte", "api_calls": 10},
+        # task c: control only, left out
+        {**ROW, "pair_key": "c", "api_calls": 1000},
+        # task d: jubarte trial not graded, left out
+        {**ROW, "pair_key": "d", "api_calls": 1000},
+        {**ROW, "pair_key": "d", "arm": "jubarte", "score": None, "api_calls": 1000},
+    ]
+    t = metrics.paired_means(frame(tmp_path, rows))
+    got = {r["arm"]: (r["tasks"], r["api_calls"]) for r in t.iter_rows(named=True)}
+    assert got == {"control": (2, 22.5), "jubarte": (2, 8.0)}
+
+
+@pytest.mark.parametrize(
+    ("cohort", "label", "expected"),
+    [
+        ("0.14.0 DeepSeek", "API calls", "70 -> 38"),
+        ("0.15.0 DeepSeek", "API calls", "70 -> 35"),
+        ("0.14.0 Nemotron", "API calls", "95 -> 98"),
+        ("0.14.0 Nemotron", "Output tokens", "63,405 -> 65,667"),
+        ("0.14.0 Nemotron", "Est. cost, OpenRouter", "0.292 -> 0.341"),
+        ("0.17 Harvey", "Tasks", "16"),
+        ("0.17 Harvey", "Inference minutes", "n/a -> n/a"),
+        ("Muse Spark 1.3", "Inference minutes", "n/a -> 35.0"),
+    ],
+)
+def test_published_paired_means(real: pl.DataFrame, cohort: str, label: str, expected: str) -> None:
+    t = metrics.paired_table(real)
+    assert t.filter(pl.col("Cohort") == cohort)[label].to_list() == [expected]
+
+
 def test_trajectory_cohorts_have_no_inference_time(real: pl.DataFrame) -> None:
     t = metrics.aggregated(real, [("inference_min", "Inference minutes", 1)])
     na = t.filter(pl.col("Inference minutes") == "n/a")
