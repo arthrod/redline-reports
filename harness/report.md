@@ -73,11 +73,18 @@ The 0.17 study is the smallest saving of any DeepSeek run. Its trials ran sixtee
 time on one rented node, and its own write-up says the scheduling prevents a causal
 efficiency claim. Read it as the same direction, not as a measured 6%.
 
-**Other models.** Muse Spark 1.3 (52 valid trials, mean 0.385), Muse Glimmer 30B (44
-graded, 0.269) and Qwen 3.8 27B (21 graded, 0.106) were run on RedlineBench with the
-benchmark's own scripts only. They have no jubarte arm, so they say how hard the
-benchmark is for small models and nothing about jubarte. A jubarte arm for Muse failed
-at authentication on every trial.
+**Other models.** Muse Glimmer 30B (44 graded, 0.269) and Qwen 3.8 27B (21 graded,
+0.106) were run on RedlineBench with the benchmark's own scripts only. They have no
+jubarte arm, so they say how hard the benchmark is for small models and nothing about
+jubarte.
+
+Updated 2026-11-23: this paragraph used to say the same of Muse Spark 1.3, and that its
+jubarte arm failed at authentication on every trial. Muse has a jubarte arm. Its run
+with the benchmark's scripts (52 valid trials, mean 0.385 as first graded) is the
+control for 140 jubarte trials run on 16–17 October; regraded by the gpt-6.1-sol panel,
+the two score 0.297 and 0.316. Only the first of two jubarte launches on 18 October
+failed at authentication. The relaunch ran all 140 tasks, but two judge panels graded
+it. FACTS.md has the numbers.
 
 **The exception.** Haiku 5.5 on jubarte 0.12.0 took 26 minutes per attempt against 24
 and cost $0.98 per scored task against $0.91. Cached input fell 14%; output did not
