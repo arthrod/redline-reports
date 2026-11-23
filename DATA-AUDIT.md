@@ -77,6 +77,6 @@ The `judge` and `n_grades` columns say which judge was used and how many of its 
 
 ## To do before the posts link to the data
 
-1. Publish the Muse Spark 1.3 jubarte trials (`muse-1-3-contributor-total`, with session logs) to the public dataset, or mark the Muse jubarte arm in the report as unpublished.
+1. Done: the Muse Spark 1.3 jubarte trials (`muse-1-3-contributor-total`, 140 trials, each with its session log) are public as `files/muse_jubarte.parquet` in `arthrod/redline-bench-jubarte-six-cohorts`.
 2. Apply fixes 1 to 6 to the dataset cards.
 3. Download the Harvey 0.16 Harbor Hub jobs before Hub retention lapses. Their IDs are in `scripts-and-logs/runs/hub-queue.tsv` of the private `harvey-redline-hub-ab-2026-11` dataset. Then compare their trial IDs with `harvey_lab/`.

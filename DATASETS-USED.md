@@ -11,4 +11,4 @@ Date: 2026-11-22. Scope: the six cohorts in `reports/jubarte-six-cohorts.md` and
 | `redline-bench-jubarte-tasks` | public | the 140 task definitions | task ids and negotiation rounds |
 | private local archive | private | the Muse Spark 1.3 jubarte job | the Muse Spark 1.3 jubarte arm; now public in the six-cohort dataset |
 
-Every score, time and token figure is in `data/cohort_trials.csv` (one row per trial). Every per-response figure is in `data/harness_responses.parquet`. The scripts in `scripts/` read only those files.
+Every score, time and token figure in sections 1 to 5 is in `data/cohort_trials.csv` (one row per trial), read by `scripts/cohorts.py`. Every per-response figure is in `data/harness_responses.parquet` and `data/harness_requests.csv`, read by `scripts/harness.py`. API calls, inference minutes and the split of input tokens are in `data/trial_metrics.csv`, read by `scripts/metrics.py` for section 6's headline and Appendix A; `tools/extract_trial_metrics.py` builds that file from the datasets below. The scripts in `scripts/` read only those files.

@@ -34,16 +34,16 @@ How to read it:
 
 - **Score.** In five cohorts no difference was detected: every interval includes zero. No equivalence margin was set, so this means "no difference detected", not "equal". In the sixth, Nemotron, jubarte scored lower, and its interval excludes zero.
 - **Work.** In those same five cohorts the agent finished sooner and used fewer tokens. The saving was largest with DeepSeek on RedlineBench, where time and output roughly halved, and smallest on Harvey's tasks (6% to 14%).
-- **Comparing cohorts.** Each cohort has its own judge, the same in both of its arms (section 2). Scores compare within a row, not across rows: Harvey's 0.94 and RedlineBench's 0.50 come from different rubrics and different judges.
+- **Comparing cohorts.** Each cohort has its own judge, the same in both of its arms (section 2), except 0.16 Harvey, whose judge changed from gpt-5.4 to gpt-6-luna during the run (section 3). Scores compare within a row, not across rows: Harvey's 0.94 and RedlineBench's 0.50 come from different rubrics and different judges.
 
 Method:
 
-- A task's score in each arm is the mean of its graded trials.
+- A task's score in each arm is the mean of its graded trials. Its minutes and tokens are averaged over the same graded trials, so an attempt that was never graded (it never started, or the grader failed) counts in neither the score nor the cost. Appendix A counts every trial.
 - The interval is a bootstrap over tasks (10,000 draws, seed 20261122).
 - A task counts as equal when the two arms' means differ by less than 10⁻¹², which is floating-point noise.
 - Tasks without a graded trial in both arms are left out. That is why the DeepSeek rows have 130 and 125 tasks, not 140, and 0.17 Harvey has 16 of its 17.
 - Input tokens are Harbor's totals. For the DeepSeek provider these count uncached input twice; the prices in section 6 correct for it.
-- `uv run python scripts/cohorts.py` recomputes every number in this report from `data/cohort_trials.csv`, except the per-response figures in section 6, which come from `scripts/harness.py`.
+- `uv run python scripts/cohorts.py` recomputes sections 1 to 5 from `data/cohort_trials.csv`. Section 6's per-response tables come from `scripts/harness.py` (`data/harness_responses.parquet`, `data/harness_requests.csv`); its headline table and Appendix A come from `scripts/metrics.py` (`data/trial_metrics.csv`). Section 8 lists every input.
 
 ## 2. What each cohort is
 
@@ -53,7 +53,7 @@ Method:
 | 0.14.0 Nemotron | 144 trials in 11 jobs, 12 tasks each | `nemotron-full-5090`, 140 tasks | GLM-5.3-Flash | control Oct 26 02:59 to 12:32; jubarte Oct 26 12:33 to Oct 27 00:10 |
 | 0.15.0 DeepSeek | 147 trials in 2 jobs (`study-v14b-015` and a 6-trial retry) | `deepseek-full-b` | GLM-5.3-Flash | jubarte Oct 30 21:21 to Oct 31 02:05 |
 | 0.16 Harvey | 90 trials, `harvey-hub-ab` | 90 trials, paired A/B | Harvey's LAB judge: gpt-5.4 for 106 trials, then gpt-6-luna for 74 | Nov 1 to Nov 4 |
-| 0.17 Harvey | 48 trials, up to 3 repeats per task | 48 trials | Harvey's LAB judge, gpt-6-luna | Nov 4 23:33 to Nov 5 02:56 |
+| 0.17 Harvey | 48 trials over 17 tasks, two to four per task | 48 trials, the same tasks and counts | Harvey's LAB judge, gpt-6-luna | Nov 4 23:33 to Nov 5 02:56 |
 | Muse Spark 1.3 | 140 trials, `muse-1-3-contributor-total` | `muse-1-3-contributor-total-ooriginal` | gpt-6.1-sol panel | jubarte Oct 16 21:02 to Oct 17 02:50; control Oct 17 02:36 to 12:46 |
 
 Three design facts matter for every row:
@@ -125,7 +125,7 @@ On all 140 RedlineBench tasks: +0.019 (−0.033 to +0.071), with 26% less time a
 Two caveats, both stated plainly:
 
 - **The jubarte build was not recorded.** The trials carry no binary hash.
-- **The jubarte arm ran first**, Oct 16 21:02 to Oct 17 02:50 UTC, before the control, Oct 17 02:36 to 12:46.
+- **The jubarte arm ran first.** It ran Oct 16 21:02 to Oct 17 02:50 UTC. The control started at 02:36, near the end of the jubarte arm, and ran to 12:46, so the arms overlap by 14 minutes.
 
 Timeouts weigh on both arms. The jubarte arm hit the agent timeout in 33 of 140 trials, and 29 of those scored zero. The control hit it in 78 of 158 trials. Timed-out trials were still graded on whatever the agent had saved.
 
@@ -219,13 +219,13 @@ What the logs show:
 - **Nemotron is the exception.** On its 12 tasks, calls rose 4% and the OpenRouter estimate 17%, yet time fell 22%, because model time per call fell from 18.1 to 12.5 seconds. Its jubarte arm pools eleven different drafts against one control run, so this is a lead, not a measured effect.
 - **Muse is slow per call.** In its jubarte arm a call took 62 seconds of model time (its control has no session logs), against 12 to 18 seconds for the other models. Muse made fewer calls than any other model, in both arms, and still timed out the most.
 
-The harness article (`harness/report.md`) covers why output and thinking behave as they do here, including a fixed output ceiling on DeepSeek responses and a provider report that counts uncached input twice.
+A separate harness article, "What Claude Code asks of models that are not Claude", covers why output and thinking behave as they do here, including a fixed output ceiling on DeepSeek responses and a provider report that counts uncached input twice.
 
 ## 7. Limits
 
 - **Not interleaved.** See section 2. A provider-side change between arms cannot be ruled out.
 - **One control run per task**, so control variance is not measured.
-- **Judges differ by cohort.** Each is used in both arms of its cohort, but a GLM-5.3-Flash score and a gpt-6.1-sol score are not on the same scale. None of the RedlineBench judges is Crosby's own panel, so these scores do not compare with Crosby's leaderboard.
+- **Judges differ by cohort.** Each is used in both arms of its cohort (0.16 Harvey's changed model during the run), but a GLM-5.3-Flash score and a gpt-6.1-sol score are not on the same scale. None of the RedlineBench judges is Crosby's own panel, so these scores do not compare with Crosby's leaderboard.
 - **The judge is noisy.** Harvey's judge moves about 0.02 between runs. A single task's difference says little; only the cohort average carries weight.
 - **The DeepSeek cohort includes its tuning tasks.** Section 3 separates them; the cohort-level figure does not.
 - **No frontier model as the agent.** A frontier model may take fewer turns on its own, which could shrink the time saving.
@@ -255,7 +255,7 @@ Commands:
 
 ```sh
 uv run python scripts/cohorts.py   # sections 1 to 5
-uv run python scripts/harness.py   # section 6 and harness/report.md
+uv run python scripts/harness.py   # section 6 per-response tables, and the harness article's
 uv run python scripts/metrics.py   # section 6 headline and Appendix A
 uv run pytest                      # pins the published figures
 ```
