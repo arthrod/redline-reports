@@ -21,6 +21,7 @@ def test_every_request_asked_for_adaptive_thinking(frames: tuple[pl.DataFrame, p
 def test_deepseek_stops_at_6897_and_nemotron_at_16384(frames: tuple[pl.DataFrame, pl.DataFrame]) -> None:
     _, m = frames
     c = {r["arm"]: (r["min_reported"], r["max_reported"]) for r in harness.capped(m).iter_rows(named=True)}
+    assert set(c) == set(harness.ORDER)
     for a, v in c.items():
         assert v == ((6897, 6897) if "DeepSeek" in a else (16384, 16384)), a
     big = dict(harness.largest_uncapped(m).iter_rows())

@@ -110,7 +110,10 @@ def test_rounding_noise_counts_as_tied() -> None:
 def test_only_nemotron_interval_excludes_zero(data: pl.DataFrame) -> None:
     for r in cohorts.paired(data).iter_rows(named=True):
         lo, hi = (float(x) for x in r["ci95"].split(" to "))
-        assert (hi < 0) == (r["cohort"] == "0.14.0 Nemotron"), r["cohort"]
+        if r["cohort"] == "0.14.0 Nemotron":
+            assert hi < 0, r["cohort"]
+        else:
+            assert lo <= 0 <= hi, r["cohort"]
 
 
 def test_main_prints_every_section(capsys: pytest.CaptureFixture[str]) -> None:
