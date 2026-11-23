@@ -26,7 +26,7 @@ Updated 2026-11-23: `FACTS.md` now also uses `redline-bench-jubarte-six-cohorts`
 | `harvey_lab_trials` | 181 | 181 | every row, including the `analysis` row flagged as bogus |
 | `harvey_lab_files` | 8,561 | about 700 | judge, reward and trajectory files |
 | `harvey_lab_017_trials` and `_design` | 185 | 185 | every row (the 88 observed and 8 missing slots) |
-| `harvey_lab_017_steps` | 14,924 | 0 | step-level data was not used. If the 0.17 token totals came from it, add 14,924 rows and the share rises to about 35% |
+| `harvey_lab_017_steps` | 14,924 | 0 | not used. The 0.17 token totals come from the trials table: its 88 `S0` rows hold 1,482,533,214 input tokens, the report's 1.48 B. Summed over all 89 rows, the trials table and the steps give the same 1,496,858,846 input tokens |
 | `harvey_lab_017_documents` and `_tasks` | 1,943 | 0 | not used |
 
 ## What this means
