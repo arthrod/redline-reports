@@ -148,7 +148,7 @@ Qwen Code also converts Gemini CLI extensions, so `qwen extensions install https
 - **Documents that already carry the other side's tracked changes.** On Harvey LAB (jubarte 0.16) several such pairs cost more. In one, 8.9 M tokens against 3.2 M and 22.6 minutes against 13.6. Agents learned the existing-revision rules by experiment.
 - **First-turn rewrites.** On RedlineBench turn 1, 0.258 against 0.280. A paragraph rewrite was marked word by word: 254 spans per trial against 73.
 - **Over-striking.** With a one-flag strike, agents rejected more. "Rejects" rubric items: 47 won, 12 lost. "Accepts" items: 9 won, 62 lost.
-- **Small models.** On Nemotron 30B the skill lowered the score in 11 of 12 drafts.
+- **Small models.** On Nemotron 30B, 11 of 12 drafts scored below the control, which used the benchmark's own scripts.
 - **Atomic plans.** A 30 to 100 operation plan is refused whole for one bad anchor. `--skip-failed` exists; agents rarely found it.
 - **Version.** Runs used 0.14.0 to 0.17.0. 0.19.0 has not been benchmarked.
 - **Models.** No frontier model was the agent.
