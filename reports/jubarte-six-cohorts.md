@@ -58,7 +58,7 @@ Method:
 
 Three design facts matter for every row:
 
-- **The arms were not interleaved.** In each RedlineBench cohort, the jubarte arm ran after the control (Muse is the exception: its jubarte arm ran first). Model, harness and grader were pinned, but a change at the model provider between those days cannot be ruled out. The time and token differences are observed differences between arms run hours or days apart, not controlled causal estimates.
+- **The arms were not interleaved.** In each RedlineBench cohort, the jubarte arm ran after the control (Muse is the exception: its jubarte arm started first, and the arms overlap by 14 minutes). Model, harness and grader were pinned, but a change at the model provider between those days cannot be ruled out. The time and token differences are observed differences between arms run hours or days apart, not controlled causal estimates.
 - **The control ran once per task.** Control run-to-run variance is not measured here.
 - **A zero is sometimes a gate, not a judgment.** On RedlineBench, a deliverable with no tracked changes scores 0 without reaching the judge. That applies equally to both arms.
 
@@ -125,7 +125,7 @@ On all 140 RedlineBench tasks: +0.019 (−0.033 to +0.071), with 26% less time a
 Two caveats, both stated plainly:
 
 - **The jubarte build was not recorded.** The trials carry no binary hash.
-- **The jubarte arm ran first.** It ran Oct 16 21:02 to Oct 17 02:50 UTC. The control started at 02:36, near the end of the jubarte arm, and ran to 12:46, so the arms overlap by 14 minutes.
+- **The jubarte arm started first.** It ran Oct 16 21:02 to Oct 17 02:50 UTC. The control started at 02:36, near the end of the jubarte arm, and ran to 12:46, so the arms overlap by 14 minutes.
 
 Timeouts weigh on both arms. The jubarte arm hit the agent timeout in 33 of 140 trials, and 29 of those scored zero. The control hit it in 78 of 158 trials. Timed-out trials were still graded on whatever the agent had saved.
 

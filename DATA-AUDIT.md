@@ -63,7 +63,7 @@ The `judge` and `n_grades` columns say which judge was used and how many of its 
 - **Harvey 0.16's judge changed mid-study.** gpt-5.4 graded 106 trials and gpt-6-luna graded 74. Each trial's `local-verifier/judge.txt` names its judge.
 - **Harvey 0.16 pairs that died on credit.** Three pairs failed when the provider's credit ran out and are excluded from the 90. Counting them as losses would charge a billing event to the tool.
 - **Harvey 0.17 trials that never started.** Four jubarte and four control trials have no grade. They are recorded as missing, not as zero.
-- **Muse ordering.** The jubarte arm ran first, Oct 16 21:02 to Oct 17 02:50 UTC. The control started at 02:36, near the end of the jubarte arm, and ran to 12:46, so the arms overlap by 14 minutes. The build is unrecorded.
+- **Muse ordering.** The jubarte arm started first. It ran Oct 16 21:02 to Oct 17 02:50 UTC. The control started at 02:36, near the end of the jubarte arm, and ran to 12:46, so the arms overlap by 14 minutes. The build is unrecorded.
 
 ## Per-trial metrics (report, Appendix A)
 
