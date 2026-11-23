@@ -15,7 +15,7 @@ Source for every row: `reports/jubarte-0.14-redlinebench.md`, rebuilt from the `
 | Output tokens | 44.5k | 20.8k | −53% |
 | At Claude Opus 5.5 list | $2.29 | $1.32 | −43% |
 
-The "held-out 127" row further down (0.489 vs 0.493) is this same run; it took one grade per trial where 47 trials had two. This page now averages both.
+The "held-out 127" row further down (0.489 vs 0.493) is this same run; it took one grade per trial where a trial had two. This page now averages both.
 
 | Scale | 0.14 arms | Whole RedlineBench archive |
 |---|---:|---:|

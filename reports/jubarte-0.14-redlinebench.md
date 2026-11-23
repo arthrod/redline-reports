@@ -33,7 +33,7 @@ Notes on the table:
 - The interval is a task bootstrap (10,000 draws, seed 20261122) of the per-task differences.
 - Prices apply today's list rates to the recorded tokens, with cache reads at the cache rate (section 6).
 - All 139 graded tasks, development set included: 0.493 vs 0.501 (+0.008, −0.020 to +0.036), with the same token and time ratios.
-- `FACTS.md` in `redline-reports` reports this run as 0.489 vs 0.493. The 0.002 gap is how the 47 trials that were graded twice are combined: this report averages both grades.
+- `FACTS.md` in `redline-reports` reports this run as 0.489 vs 0.493. The 0.002 gap is how this run's trials that were graded twice are combined: this report averages both grades.
 
 ## 2. It was not one run
 
