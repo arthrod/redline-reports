@@ -72,10 +72,28 @@ Its own card says the design prevents a causal efficiency claim. It is the only 
 on 0.17 and it is not yet used in the posts, the report or the artifact.
 
 Other models in the archives were run with the benchmark's own tools only, so they
-add no jubarte comparison: Muse Spark 1.3 Contributor (52 valid, mean 0.385), Muse
-Glimmer 30B (44 graded, 0.269), Qwen 3.8 27B (21 graded, 0.106), and DeepSeek at low
-effort (33 valid, 0.405). A jubarte arm for Muse on 18 October failed at
-authentication on every trial.
+add no jubarte comparison: Muse Glimmer 30B (44 graded, 0.269; public since 2026-11-23
+as `redlinebench_muse_glimmer_trials` in the DeepSeek dataset), Qwen 3.8 27B (21
+graded, 0.106), and DeepSeek at low effort (33 valid, 0.405).
+
+Updated 2026-11-23: an earlier version of this file listed Muse Spark 1.3 Contributor
+here and said its jubarte arm failed at authentication on every trial. Both were
+wrong. Its run with the benchmark's tools (158 trials, 52 valid, mean 0.385 as first
+graded) is the control of a paired comparison, and Muse was launched with jubarte
+three times:
+
+- 16–17 October: 140 trials, the jubarte arm of that comparison. Regraded by the
+  gpt-6.1-sol panel, the arms score 0.316 (jubarte) and 0.297 (control), +0.019 over
+  140 paired tasks. Data:
+  https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts
+- 18 October, first launch: 30 trials. Every one failed at authentication (20) or was
+  cancelled (10).
+- 18 October, relaunch: 150 trials over the same 140 tasks, 10 of them cancelled
+  backups. 100 have a reward, mean 0.292, but two judge panels gave them (48
+  gpt-6.1-sol, 26 Claude Haiku 5.5) and 26 are zeros recorded without a judge, so that
+  mean compares with nothing. On the 74 tasks with a gpt-6.1-sol grade or such a zero
+  it averages 0.221, against 0.238 for the 16–17 October arm and 0.268 for the control
+  on the same tasks. Data: `muse_oct18_relaunch` in the jubarte dataset.
 
 ## Where the claim "always fewer tokens and less time" does not hold
 
