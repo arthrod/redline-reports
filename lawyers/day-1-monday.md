@@ -17,7 +17,7 @@ Output tokens: 44.5k against 20.8k.
 
 Disclosure: jubarte is mine, and I ran every trial. One model grades every file compared; the one task it could not finish grading is left out. On 47 files that happened to be graded twice, the score moved by 0.108 on average, so only the 127-task average means anything.
 
-Honest reading: the tool did not make the agent a better lawyer. With jubarte it took half the time and stopped writing Word's XML by hand. The arms ran on different days, so a provider change is not ruled out.
+Honest reading: nothing here shows the tool made the agent a better lawyer. With jubarte it took half the time and stopped writing Word's XML by hand. The arms ran on different days, so a provider change is not ruled out.
 
 Why 716 runs for one comparison? It took a dozen drafts of the agent's instructions, a control arm, and reruns after a full disk, a killed process and a Docker image deleted mid-run. Tomorrow: what those drafts taught me about every vendor demo.
 
