@@ -12,16 +12,17 @@ The runs in the Hugging Face datasets are preserved. One set is not confirmed: t
 
 | Dataset | Visibility | What it holds | Trials |
 |---|---|---|---:|
-| `redline-bench-deepseek-trajectories` | public | `redlinebench/`: RedlineBench runs Oct 25 to 31 (jubarte 0.14.0 and 0.15.0, controls, open-model smokes). `harvey_lab/`: Harvey Hub A/B (0.16.0+). `harvey_lab_017/`: Harvey 0.17 study | 1,357 + 180 + 88 |
+| `redline-bench-deepseek-trajectories` | public | `redlinebench/`: RedlineBench runs Oct 25 to 31 (jubarte 0.14.0 and 0.15.0, controls, open-model smokes). `harvey_lab/`: Harvey Hub A/B (0.16.0+). `harvey_lab_017/`: Harvey 0.17 study. `redlinebench_muse_glimmer_trials` (added 2026-11-23): the 76 finished Muse Glimmer 30B trials | 1,357 + 180 + 88 |
 | `redline-bench-jubarte-tasks` | public | the 140 RedlineBench task definitions | 140 tasks |
-| `redline-bench-jubarte-trajectories` | public | the older Claude Haiku runs on jubarte 0.11 and 0.12 (`main` 785, `extra` 289, `incomplete` 69) | 1,143 |
+| `redline-bench-jubarte-trajectories` | public | the older Claude Haiku runs on jubarte 0.11 and 0.12 (`main` 785, `extra` 289, `incomplete` 69); `muse_oct18_relaunch` (added 2026-11-23): 150 Muse Spark 1.3 trials from the 18 October jubarte relaunch | 1,143 + 150 |
+| `redline-bench-jubarte-six-cohorts` | public | one `trials` table across six cohorts (DeepSeek 0.14.0 and 0.15.0, Nemotron 0.14.0, Harvey 0.16 and 0.17, Muse Spark 1.3) plus file tables. Mostly subsets of the datasets above; the Muse Spark 1.3 arms (140 jubarte, 158 control) are public only here | 1,847 rows |
 | `redline-bench-local-archive` | private | root `data/` (repo working tree, Oct 26), `colab_bench-2026-10-27` to `10-31` and `10-30-regrade`, `jubarte-study-2026-10-30`, `jubarte-study-v14b-2026-10-31`, `redline-bench-tree-2026-11-02` | 1,066 + colab folders + 611 |
 | `harvey-redline-hub-ab-2026-11` | private | Harvey Hub grades, analysis (FINDINGS, reviews, 180 prosecution reports, 47 arbiter reports), scripts, logs, `hub-queue.tsv` with the 93 Hub job IDs, and the whole working folder as `archive/harvey-redline-full.tar.zst` (about 9.4 GB raw) | 180 |
 | `jubarte-skill-ab-2026-11-04` | private | Harvey 0.17 MI355X study: 96 registered slots, 88 observed, steps, documents, proxy logs | 88 |
 | `T-jubarte-loop-releases` | private | release workspaces 0.14.0 to 0.17.0 | n/a |
 | `T-logs-archive` | private | 8,158 `.log` and `.console` files (about 8.0 GB raw) | n/a |
 
-How these were checked: each dataset was read through the Hugging Face API from this session, with private ones through the owner's token. On 2026-11-22 the five datasets named in the PR review (`redline-bench-deepseek-trajectories`, `harvey-redline-hub-ab-2026-11`, `redline-bench-local-archive`, `redline-bench-jubarte-trajectories`, `redline-bench-jubarte-tasks`) were listed again and match the folders above. A path search for `codex` in the first three returned no file.
+How these were checked: each dataset was read through the Hugging Face API from this session, with private ones through the owner's token. On 2026-11-22 the five datasets named in the PR review (`redline-bench-deepseek-trajectories`, `harvey-redline-hub-ab-2026-11`, `redline-bench-local-archive`, `redline-bench-jubarte-trajectories`, `redline-bench-jubarte-tasks`) were listed again and match the folders above. A path search for `codex` in the first three returned no file. On 2026-11-23 `redline-bench-jubarte-six-cohorts` and the two new Muse tables were read as well, and the Muse figures in `FACTS.md` were recomputed from them.
 
 ## The one gap that could mean lost data
 

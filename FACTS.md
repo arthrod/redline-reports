@@ -122,7 +122,7 @@ wrong. Its run with the benchmark's tools (158 trials, 52 valid, mean 0.385 as f
 graded) is the control of a paired comparison, and Muse was launched with jubarte
 three times:
 
-- 16–17 October: 140 trials, the jubarte arm of that comparison. Regraded by the
+- 16 to 17 October: 140 trials, the jubarte arm of that comparison. Regraded by the
   gpt-6.1-sol panel, the arms score 0.316 (jubarte) and 0.297 (control), +0.019 over
   140 paired tasks. Data:
   https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts
@@ -132,8 +132,8 @@ three times:
   backups. 100 have a reward, mean 0.292, but two judge panels gave them (48
   gpt-6.1-sol, 26 Claude Haiku 5.5) and 26 are zeros recorded without a judge, so that
   mean compares with nothing. On the 74 tasks with a gpt-6.1-sol grade or such a zero
-  it averages 0.221, against 0.238 for the 16–17 October arm and 0.268 for the control
-  on the same tasks. Data: `muse_oct18_relaunch` in the jubarte dataset.
+  it averages 0.221, against 0.238 for the 16 to 17 October arm and 0.268 for the control
+  on the same tasks. Data: the `muse_oct18_relaunch` config of `redline-bench-jubarte-trajectories`.
 
 ## Where the claim "always fewer tokens and less time" does not hold
 

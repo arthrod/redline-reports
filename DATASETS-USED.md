@@ -13,6 +13,8 @@ A row counts as **used** if anything in it fed a number, a table or a claim. A r
 | `harvey-redline-hub-ab-2026-11` | private | 5,753 | barely: the audit cites `hub-queue.tsv` and the excluded-pair notes | under 50 | under 1% |
 | **Total** | | **134,582** | | **about 10,000 to 11,000** | **about 8%** |
 
+Updated 2026-11-23: `FACTS.md` now also uses `redline-bench-jubarte-six-cohorts` (the Muse Spark 1.3 paired comparison, 298 trials) and the `muse_oct18_relaunch` config of `redline-bench-jubarte-trajectories` (150 trials). The table above predates both and has not been recomputed.
+
 ## How the main source breaks down
 
 `redline-bench-deepseek-trajectories`, by viewer config:
