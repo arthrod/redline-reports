@@ -1,4 +1,10 @@
-"""Recompute every table in harness/report.md.
+"""Per-response tables from the Claude Code session logs of the DeepSeek and Nemotron cohorts.
+
+They cover the request Claude Code sent, thinking, the output cap, how the provider counted tokens,
+caching and price per trial. Section 6 of reports/jubarte-six-cohorts.md uses the per-trial response,
+caching and price tables; the harness article "What Claude Code asks of models that are not Claude"
+uses all of them. The time, call and cost tables of section 6 and Appendix A come from
+scripts/metrics.py instead.
 
     uv run python scripts/harness.py
 
@@ -30,6 +36,7 @@ THINKS = pl.col("n_thinking") > 0
 
 
 def load() -> tuple[pl.DataFrame, pl.DataFrame]:
+    """Request parameters, and one row per response with visible_chars (text plus tool input) and family."""
     r = pl.read_csv(REQUESTS)
     m = pl.read_parquet(RESPONSES).with_columns(
         (pl.col("text_chars") + pl.col("tool_chars")).alias("visible_chars"),
@@ -42,14 +49,17 @@ def load() -> tuple[pl.DataFrame, pl.DataFrame]:
 
 
 def ordered(df: pl.DataFrame) -> pl.DataFrame:
+    """Rows in report order: the two DeepSeek jubarte arms, their control, then Nemotron."""
     return df.sort(pl.col("arm").replace_strict(ORDER, list(range(len(ORDER)))))
 
 
 def requests(r: pl.DataFrame) -> pl.DataFrame:
+    """The request parameters Claude Code sent, per arm."""
     return ordered(r.select("arm", "model", "thinking", "effort", "max_tokens", "ctx", "requests", "trials"))
 
 
 def thinking(m: pl.DataFrame) -> pl.DataFrame:
+    """How often responses carried thinking, how long it ran, and how many blocks were unsigned or redacted."""
     return ordered(
         m.group_by("arm").agg(
             pl.len().alias("responses"),
@@ -66,6 +76,7 @@ def thinking(m: pl.DataFrame) -> pl.DataFrame:
 
 
 def length_bands(m: pl.DataFrame) -> pl.DataFrame:
+    """Share of each family's responses in each band of thinking length, in characters."""
     band = (
         pl.when(pl.col("thinking_chars") == 0)
         .then(pl.lit("1 none"))
@@ -89,6 +100,7 @@ def length_bands(m: pl.DataFrame) -> pl.DataFrame:
 
 
 def by_position(m: pl.DataFrame) -> pl.DataFrame:
+    """Thinking by the response's position in the conversation."""
     pos = (
         pl.when(pl.col("turn") == 0)
         .then(pl.lit("1 first response"))
@@ -114,6 +126,7 @@ def by_position(m: pl.DataFrame) -> pl.DataFrame:
 
 
 def trials(m: pl.DataFrame) -> pl.DataFrame:
+    """Per-trial sums of the response rows. A trial with no response row does not appear."""
     return m.group_by("arm", "trial").agg(
         pl.len().alias("responses"),
         pl.col("n_tool").sum().alias("tool_calls"),
@@ -128,6 +141,11 @@ def trials(m: pl.DataFrame) -> pl.DataFrame:
 
 
 def per_trial(m: pl.DataFrame) -> pl.DataFrame:
+    """Means per trial, by arm.
+
+    thinking_share pools the arm's characters (all thinking over all thinking plus visible); it is not
+    the mean of each trial's share.
+    """
     return ordered(
         trials(m)
         .group_by("arm")
@@ -146,6 +164,7 @@ def per_trial(m: pl.DataFrame) -> pl.DataFrame:
 
 
 def capped(m: pl.DataFrame) -> pl.DataFrame:
+    """Responses that stopped at max_tokens: how many, their reported size, and their share of trials and of output."""
     per = (
         trials(m)
         .group_by("arm")
@@ -170,10 +189,12 @@ def capped(m: pl.DataFrame) -> pl.DataFrame:
 
 
 def largest_uncapped(m: pl.DataFrame) -> pl.DataFrame:
+    """The largest reported output of a response that did not stop at max_tokens, per family."""
     return m.filter(~CAPPED).group_by("family").agg(pl.col("out").max().alias("largest_uncapped_output"))
 
 
 def chars_per_token(m: pl.DataFrame) -> pl.DataFrame:
+    """Visible characters per reported output token, on long responses with no thinking and no cap."""
     x = m.filter(~THINKS & ~CAPPED & (pl.col("visible_chars") > 2000))
     return (
         x.group_by("family")
@@ -205,6 +226,7 @@ def token_fit(m: pl.DataFrame) -> pl.DataFrame:
 
 
 def cache(m: pl.DataFrame) -> pl.DataFrame:
+    """Mean input per trial, split into cache reads and uncached input; cached_share pools the arm."""
     return ordered(
         trials(m)
         .with_columns((pl.col("inp") + pl.col("cache_read")).alias("total"))
