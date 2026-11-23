@@ -2,6 +2,7 @@
 
 import json
 import sys
+from datetime import UTC, datetime
 from typing import Any
 
 import extract_trial_metrics as x
@@ -20,6 +21,18 @@ def line(kind: str, at: str, **kw: Any) -> str:
 def reply(at: str, mid: str, out: int, model: str = "m") -> str:
     usage = {"input_tokens": 10, "cache_read_input_tokens": 100, "cache_creation_input_tokens": 5, "output_tokens": out}
     return line("assistant", at, message={"id": mid, "model": model, "usage": usage})
+
+
+def test_timestamps_read_the_z_suffix_as_utc_and_blank_as_missing() -> None:
+    assert x.ts("2026-10-17T00:00:30Z") == datetime(2026, 10, 17, 0, 0, 30, tzinfo=UTC)
+    assert x.ts(None) is None
+    assert x.ts("") is None
+
+
+def test_log_goes_to_stderr_not_stdout(capsys: pytest.CaptureFixture[str]) -> None:
+    x.log("muse control", 158)
+    out = capsys.readouterr()
+    assert (out.out, out.err) == ("", "muse control 158\n")
 
 
 def test_session_log_counts_responses_tokens_and_inference_time() -> None:
