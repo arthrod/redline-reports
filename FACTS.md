@@ -4,7 +4,7 @@ Every figure in the posts, the report and the artifacts is on this page.
 
 ## jubarte 0.14 on RedlineBench: the numbers this week's posts use (added 2026-11-22)
 
-Source for every row: `reports/jubarte-0.14-redlinebench.md`, rebuilt from the `result.json`, `grade.json` and `agent/trajectory.json` of every trial in `redline-bench-deepseek-trajectories/redlinebench/`. Binary `f4c352db…` (0.14.0) in every jubarte trial below.
+Source for every row: `reports/jubarte-0.14-redlinebench.md`, rebuilt from the `result.json`, `grade.json` and `agent/trajectory.json` of every trial in `redline-bench-deepseek-trajectories/redlinebench/`. Binary `f4c352db…` (0.14.0) in every jubarte trial of the per-task table and the 0.14-arms column below. The whole-archive column also counts the controls and runs on other versions, including the 0.15.0 arm `jubarte-study-v14b-015`.
 
 | Per task, 127 held-out tasks (`jubarte-ds-v12-rest` against `deepseek-full` + `deepseek-full-b`) | Scripts | jubarte 0.14 | Change |
 |---|---:|---:|---:|

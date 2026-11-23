@@ -63,7 +63,7 @@ Other full-length arms on the same control:
 
 No full-length arm showed a score difference whose interval excluded zero (no equivalence margin was tested). One short arm did: `jubarte-study-v13`, 33 tasks, −0.068 (−0.121 to −0.018). The efficiency held in every arm, that one included.
 
-**The development set overstated the gain.** On the 12 tuning tasks, DeepSeek drafts scored up to 0.579 against 0.515; on the held-out 127 the gain was gone. On Nemotron 30B-A3B, 11 of 12 drafts scored below the control on those 12 tasks (from 0.059 against 0.401). The binary was the same; the skill text was what hurt. Keep a Word skill short for small models.
+**The development set overstated the gain.** On the 12 tuning tasks, DeepSeek drafts scored up to 0.579 against 0.515; on the held-out 127 the gain was gone. On Nemotron 30B-A3B, 11 of 12 drafts scored below the control on those 12 tasks (from 0.059 against 0.401). The binary was the same in every draft and one draft (v9, 0.425) beat the control, so the spread among drafts came from the skill text. The control used the benchmark's own scripts, so the gap to it also reflects a different tool path. My read: keep a Word skill short for small models.
 
 ## 3. What it took, and what it cost
 
