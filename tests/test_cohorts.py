@@ -121,3 +121,22 @@ def test_main_prints_every_section(capsys: pytest.CaptureFixture[str]) -> None:
     out = capsys.readouterr().out
     for title, _ in cohorts.SECTIONS:
         assert f"## {title}" in out
+
+
+def test_report_outcome_table_matches_status(data: pl.DataFrame) -> None:
+    """Section 5's outcome rows in the report are status(), cell for cell."""
+    rows = {
+        "Graded": "1 graded",
+        "Finished, not graded": "2 finished, not graded",
+        "Agent failed, not graded": "3 agent failed, not graded",
+        "Never started": "4 never started",
+    }
+    report = (cohorts.ROOT / "reports" / "jubarte-six-cohorts.md").read_text().splitlines()
+    header = next(line for line in report if line.startswith("| | 0.14.0 DeepSeek"))
+    names = [c.strip() for c in header.strip("|").split("|")][1:]
+    s = {r["status"]: r for r in cohorts.status(data).iter_rows(named=True)}
+    for line in report:
+        cells = [c.strip() for c in line.strip("|").split("|")]
+        if cells[0] in rows:
+            got = {n: int(c.split()[0]) for n, c in zip(names, cells[1:], strict=True)}
+            assert got == {n: s[rows[cells[0]]][n] for n in names}, cells[0]

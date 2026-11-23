@@ -152,7 +152,7 @@ Every jubarte trial, by outcome:
 |---|---:|---:|---:|---:|---:|---:|
 | Trials | 560 | 144 | 147 | 90 | 48 | 140 |
 | Graded | 546 | 131 | 134 | 90 | 44 | 140 |
-| Agent failed, not graded | 12 (cancelled) | 13 (runtime errors) | 12 (6 cancelled, 3 non-zero exit, 3 runtime errors) | 0 | 1 (execution failed) | 0 |
+| Agent failed, not graded | 12 (cancelled) | 13 (runtime errors) | 12 (6 cancelled, 3 non-zero exit, 3 runtime errors) | 0 | 0 | 0 |
 | Finished, not graded | 2 | 0 | 1 | 0 | 0 | 0 |
 | Never started | 0 | 0 | 0 | 0 | 4 | 0 |
 | Hit the agent timeout, still graded | 0 | 12 | 0 | 1 | 0 | 33 |
