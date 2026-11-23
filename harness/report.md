@@ -54,7 +54,7 @@ A refusal exits 3, writes nothing, and names the cause (`ANCHOR_NOT_FOUND`, `AMB
 
 Other full-length arms on the same control:
 
-| Arm (binary) | Tasks | Score difference | Input tokens per task | Minutes per task |
+| Arm (binary) | Tasks | Score difference | Input tokens per task, jubarte vs control | Minutes per task, jubarte vs control |
 |---|---:|---|---:|---:|
 | ds-v12, all 139 tasks (0.14.0) | 139 | +0.008 (−0.020 to +0.036) | 1.41 M vs 2.57 M | 9.3 vs 18.6 |
 | ds-v9, held-out (0.14.0) | 127 | −0.024 (−0.055 to +0.007) | 1.51 M vs 2.61 M | 11.1 vs 18.5 |

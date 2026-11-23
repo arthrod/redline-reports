@@ -65,7 +65,7 @@ What the 716 were:
 
 ## 3. Three full-length 0.14 arms, one 0.15 arm
 
-| Arm (binary) | Paired tasks | Control | jubarte | Difference (95% CI) | Input / task | Minutes / task | Turns / task |
+| Arm (binary) | Paired tasks | Control | jubarte | Difference (95% CI) | Input / task, jubarte vs control | Minutes / task, jubarte vs control | Turns / task, jubarte vs control |
 |---|---:|---:|---:|---|---:|---:|---:|
 | ds-v9 (0.14.0) | 139 | 0.493 | 0.476 | −0.017 (−0.047 to +0.012) | 1.51 M vs 2.57 M | 11.2 vs 18.6 | 42 vs 70 |
 | ds-v12 (0.14.0) | 139 | 0.493 | 0.501 | +0.008 (−0.020 to +0.036) | 1.41 M vs 2.57 M | 9.3 vs 18.6 | 38 vs 70 |
