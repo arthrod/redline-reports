@@ -74,10 +74,12 @@ def from_session(key: tuple[str, str], texts: list[str]) -> Row | None:
             if m.get("model") == "<synthetic>":
                 continue
             mid = m.get("id") or o.get("uuid")
-            r = msgs.setdefault(mid, dict(start=prev_other, end=t, usage={}))
+            r = msgs.setdefault(mid, dict(start=prev_other, end=t, usage={}, usage_at=None))
+            if r["start"] is None:  # a copy that opens on the response itself has no start; another copy may
+                r["start"] = prev_other
             r["end"] = max(r["end"], t)
-            if m.get("usage"):
-                r["usage"] = m["usage"]
+            if m.get("usage") and (r["usage_at"] is None or t >= r["usage_at"]):  # newest usage, in any file order
+                r["usage"], r["usage_at"] = m["usage"], t
     if not msgs:
         return None
     tok = dict(in_uncached=0, cache_read=0, cache_write=0, out=0)

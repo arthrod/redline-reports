@@ -62,6 +62,27 @@ def test_a_response_logged_in_two_files_counts_once() -> None:
     assert (r["api_calls"], r["out"]) == (2, 10)
 
 
+def test_the_newest_usage_wins_whatever_order_the_files_are_read_in() -> None:
+    """A response streamed to 00:40 (7 output tokens) must not take the 00:30 partial count (3)
+    from an older overlapping file read after it."""
+    full = "\n".join([line("user", "00:00"), reply("00:40", "a", 7)])
+    older = "\n".join([line("user", "00:00"), reply("00:30", "a", 3)])
+    for texts in ([full, older], [older, full]):
+        r = x.from_session(KEY, texts)
+        assert r is not None
+        assert r["out"] == 7
+
+
+def test_a_complete_copy_fills_the_start_a_partial_copy_lacks() -> None:
+    """The first file opens on the response itself; the second also has the prompt at 00:00."""
+    partial = reply("00:30", "a", 5)
+    complete = "\n".join([line("user", "00:00"), reply("00:30", "a", 5)])
+    for texts in ([partial, complete], [complete, partial]):
+        r = x.from_session(KEY, texts)
+        assert r is not None
+        assert r["inference_min"] == pytest.approx(30 / 60)
+
+
 def test_session_without_responses_gives_no_row() -> None:
     assert x.from_session(KEY, [line("user", "00:00")]) is None
 
