@@ -57,7 +57,7 @@ Runs per task on 0.14 ranged from 2 to 27 (median 3); across the whole archive, 
 
 What the 716 were:
 
-- 12 skill iterations on Nemotron 3.5 Lightning 30B-A3B (`jubarte-v1` to `jubarte-v12-boxdown`), 12 tasks each, on an RTX 5090.
+- 12 skill iterations on Nemotron 3.5 Lightning 30B-A3B (`jubarte-v1` to `jubarte-v12-boxdown`), 12 tasks each, on an RTX 5090. In 10 of `jubarte-v12-boxdown`'s 12 trials the agent exited within seconds with no output, so the comparisons below use the other 11.
 - 10 iterations on DeepSeek-V4.1-Flash (`jubarte-ds-v2` to `jubarte-ds-v12`), 12 tasks each.
 - Two of those carried to the other 128 tasks (`ds-v9-rest`, `ds-v12-rest`).
 - A study pass (`jubarte-study-v13`, `v14`, `v14-rest`, `v15`).
@@ -107,7 +107,7 @@ The skill was tuned on 12 tasks. All ten DeepSeek iterations with results, again
 
 On the full set, ds-v9 lost 0.017 and ds-v12 gained 0.008. A +0.05 to +0.06 gain on 12 hand-picked tasks did not survive 139. Any claim built on a small development set, ours included, should be read with this in mind.
 
-The small model went the other way. On Nemotron 30B-A3B, 11 of 12 skill iterations scored below the plain control on the same 12 tasks (0.059 to 0.381, against 0.401). Two of them, v2 and v3, have a grade on 11 of the 12; against the control on those same 11 they are still below (0.381 vs 0.398, 0.351 vs 0.406). Only v9 beat it (0.425). The 0.14.0 binary was the same throughout; the instructions were what changed. With a small model, a document skill that adds options can cost more than it saves.
+The small model went the other way. On Nemotron 30B-A3B, 10 of 11 skill iterations scored below the plain control on the same 12 tasks (0.059 to 0.368, against 0.401). One trial of v3 has no grade, so its 0.351 covers 11 tasks; on those 11 the control scored 0.406. Only v9 beat it (0.425). The 0.14.0 binary was the same throughout; the instructions were what changed. With a small model, a document skill that adds options can cost more than it saves.
 
 ## 5. How the grade can move
 

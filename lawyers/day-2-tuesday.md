@@ -8,7 +8,7 @@ I tuned the agent's instructions for jubarte 0.14 the way most teams tune anythi
 
 Then two of the top drafts ran on the 127 tasks they had never seen. One gained 0.004. The other lost 0.024. Neither difference can be told apart from zero.
 
-A small model went the other way entirely. On Nemotron 30B, 11 of 12 drafts scored below the plain scripts on the same twelve tasks, the first one at 0.059 against 0.401. The binary never changed. My instructions did, and for a small model every added option was one more way to get lost.
+A small model went the other way entirely. On Nemotron 30B, 10 of 11 drafts scored below the plain scripts on the same twelve tasks, the first one at 0.059 against 0.401. The binary never changed. My instructions did, and for a small model every added option was one more way to get lost.
 
 Why a lawyer should care: a vendor demo is a twelve-task development set. Someone chose the matters, tuned the prompts on them, and showed you the number. The question that separates a result from a demo is short: what did you not tune on?
 
@@ -27,14 +27,14 @@ Nitty-gritty:
 - DeepSeek drafts on the 12 tasks: v2 0.579, v9 0.576, v12 0.566, v8 and v10 0.562; control 0.515.
 - Held-out 127: v12 0.495 vs 0.491 (−0.026 to +0.033); v9 0.467 vs 0.491 (−0.055 to +0.007). Task bootstrap, 10,000 draws.
 - One short study arm lost outright: `jubarte-study-v13`, 33 tasks, 0.455 vs 0.523 (−0.121 to −0.018).
-- Nemotron 3.5 Lightning 30B-A3B on one RTX 5090, 12 drafts, control 0.401. Only v9 beat it (0.425).
+- Nemotron 3.5 Lightning 30B-A3B on one RTX 5090, 11 drafts, control 0.401. Only v9 beat it (0.425). A twelfth run (`jubarte-v12-boxdown`) is left out: in 10 of its 12 trials the agent exited within seconds with no output.
 - Same 0.14.0 binary (`f4c352db…`) in all 22 drafts.
 - Judge: GLM-5.3-Flash for every grade above.
 
 VISUAL SUGGESTIONS:
 +0.064 | TWELVE TASKS I TUNED ON | best draft 0.579 against 0.515 for the benchmark's scripts
 +0.004 | 127 TASKS I DID NOT | the same approach, no difference detected
-11 of 12 | DRAFTS THAT LOST ON A SMALL MODEL | Nemotron 30B, same binary, different instructions
+10 of 11 | DRAFTS THAT LOST ON A SMALL MODEL | Nemotron 30B, same binary, different instructions
 
 OPEN QUESTIONS FOR ARTHUR:
 1. "Ten drafts on DeepSeek" counts the ten DeepSeek jobs with results (v2, v3, v4, v5, v7, v8, v9, v10, v11, v12). There is no v6 job; `ds-v4-b` is a rerun of v4. Confirm the count reads right to you.
