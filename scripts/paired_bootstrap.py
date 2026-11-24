@@ -12,8 +12,8 @@ draws, seed 20261122), and wins, losses and ties.
 
 The interval bounds are Monte Carlo estimates. The reports quote the bounds this
 script prints with the seed above. Across 200 seeds on this file they move by up to
-about 0.003 (more for the 14-task arm). No sign changes: study-v13's upper bound
-stays below zero on every seed, and every other interval spans zero.
+about 0.002 (0.005 for the 9-task study-v15 arm). No sign changes: study-v13's upper
+bound stays below zero on every seed, and every other interval spans zero.
 """
 
 import csv

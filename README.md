@@ -4,17 +4,19 @@ What happened when AI agents redlined contracts with [jubarte](https://github.co
 instead of the tools two legal benchmarks ship with: Crosby's RedlineBench and the
 redline tasks in Harvey's Legal Agent Benchmark.
 
-The short version, for jubarte 0.14 on RedlineBench's 127 held-out tasks:
+The short version, for jubarte 0.14 on 120 RedlineBench tasks never used for tuning, against the `deepseek-full-b` control:
 
-- No score difference was detected: 0.491 with the benchmark's scripts, 0.495 with jubarte (difference +0.004, 95% interval −0.026 to +0.033).
-- The work halved: 18.5 to 9.2 minutes, 71 to 37 turns, 44.5k to 20.8k output tokens.
+- No score difference was detected: 0.500 with the benchmark's scripts, 0.502 with jubarte (difference +0.002, 95% interval −0.029 to +0.032).
+- The work halved: 18.3 to 9.1 minutes, 70 to 37 turns, 44.0k to 20.7k output tokens.
 - One clean comparison took 716 runs on 0.14 alone. The whole 1,357-run archive lists at $702 to $9,679, depending on whose prices apply.
 - Later binaries on Harvey's tasks went the same direction with smaller savings (6% to 14%).
 
 | | |
 |---|---|
 | [`reports/jubarte-0.14-redlinebench.md`](reports/jubarte-0.14-redlinebench.md) | The 0.14 study: design, scale, held-out results, the development-set trap, cost at three price lists |
-| [`DATA-AUDIT.md`](DATA-AUDIT.md) | Where every run is stored, what the public cards get wrong, and what is not archived yet |
+| [`reports/jubarte-six-cohorts.md`](reports/jubarte-six-cohorts.md) | Six cohorts side by side (DeepSeek on 0.14.0 and 0.15.0, Nemotron on 0.14.0, Harvey LAB on 0.16 and 0.17, Muse Spark 1.3), each against its own control |
+| [`DATA-AUDIT.md`](DATA-AUDIT.md) | Where every run is stored, what the public cards got wrong, and what is in no trial table yet; one section per report |
+| [`DATASETS-USED.md`](DATASETS-USED.md) | Which datasets each report read; one section per report |
 | [`harness/report.md`](harness/report.md) | For the teams behind agent harnesses and their document skills: every run, the losses, the licence change to Apache-2.0, how to ship it |
 | [`lawyers/`](lawyers) | Five short posts for lawyers who follow the technology, Monday to Friday |
 | [`artifacts/`](artifacts) | Four single-file pages that run jubarte in the browser. Download one and open it, or paste it into Claude as an artifact |

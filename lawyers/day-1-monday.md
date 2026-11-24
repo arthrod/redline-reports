@@ -8,14 +8,14 @@ The question was narrow. When an AI agent redlines a contract, does it do better
 
 The test was Crosby and micro1's RedlineBench: 140 negotiation tasks, four rounds of markup each. DeepSeek-V4.1-Flash ran inside Claude Code. One arm used the benchmark's own scripts. The other used jubarte 0.14, the Word engine I write. Model, brief, contracts and grader stayed the same.
 
-On the 127 tasks I never used to tune anything:
+On 120 tasks I never used to tune anything:
 
-Score: 0.491 with their tools, 0.495 with mine. No difference detected.
-Minutes per task: 18.5 against 9.2.
-Turns: 71 against 37.
-Output tokens: 44.5k against 20.8k.
+Score: 0.500 with their tools, 0.502 with mine. No difference detected.
+Minutes per task: 18.3 against 9.1.
+Turns: 70 against 37.
+Output tokens: 44.0k against 20.7k.
 
-Disclosure: jubarte is mine, and I ran every trial. One model grades every file compared; the one task it could not finish grading is left out. On 47 files that happened to be graded twice, the score moved by 0.108 on average, so only the 127-task average means anything.
+Disclosure: jubarte is mine, and I ran every trial. One model grades every file compared; the one task it could not finish grading is left out. On 47 files that happened to be graded twice, the score moved by 0.108 on average, so only the 120-task average means anything.
 
 Honest reading: nothing here shows the tool made the agent a better lawyer. With jubarte it took half the time and stopped writing Word's XML by hand. The arms ran on different days, so a provider change is not ruled out.
 
@@ -31,24 +31,25 @@ The 140 tasks as configured: https://huggingface.co/datasets/arthrod/redline-ben
 jubarte: https://github.com/jandira-tech/jubarte
 RedlineBench is by Crosby and micro1: https://huggingface.co/datasets/crosbylegal/RedlineBench
 
-In plain English. Score: lawyers wrote a rubric for each task (accept this cure period, reject that uncapped indemnity), and a judge model ticks it, 0 to 1. A turn is one step the agent takes: read a file, run a command, write an edit. Tokens are what the model reads and writes, and what you are billed for. "Never used to tune" means I wrote the agent's instructions while watching 12 tasks and kept the other 127 out of sight; those 127 are the fair test.
+In plain English. Score: lawyers wrote a rubric for each task (accept this cure period, reject that uncapped indemnity), and a judge model ticks it, 0 to 1. A turn is one step the agent takes: read a file, run a command, write an edit. Tokens are what the model reads and writes, and what you are billed for. "Never used to tune" means I wrote the agent's instructions while watching 12 tasks and kept the other 128 out of sight; the 120 of those that the control also ran are the fair test.
 
 Nitty-gritty:
 - 0.14.0 linux-aarch64 binary, sha256 `f4c352db…`, in every trial of the arm.
-- Control: jobs `deepseek-full` and `deepseek-full-b`, one run per task. jubarte: `jubarte-ds-v12-rest`.
-- Judge: GLM-5.3-Flash with the benchmark's rubric, on every task compared. It hit its output limit on `redline-s1-t4-g11a`; that task went to a three-judge panel and is left out, which is why the full set is 139 tasks, not 140.
-- Difference +0.004, 95% bootstrap interval −0.026 to +0.033.
-- 48 tasks better, 40 worse, 39 equal.
+- Control: job `deepseek-full-b`, one run per task. It never ran 9 of the 140 tasks, so they are left out. jubarte: `jubarte-ds-v12-rest`.
+- Judge: GLM-5.3-Flash with the benchmark's rubric, on every task compared. It hit its output limit on `redline-s1-t4-g11a`; that task went to a three-judge panel and is left out too, which is why the full set is 130 tasks, not 140.
+- Difference +0.002, 95% bootstrap interval −0.029 to +0.032.
+- 45 tasks better, 37 worse, 38 equal.
 - The 716 runs cover 30 jobs from 26 to 30 October.
 - The arms were not interleaved: the control ran 27 to 28 October, the jubarte arm 28 to 30 October. Model, harness and grader were pinned, but a provider-side change between those days cannot be ruled out.
 - Later versions on Harvey's benchmark went the same direction with smaller savings. They are in the report and stay out of this post on purpose.
 
 VISUAL SUGGESTIONS:
-716 | RUNS ON JUBARTE 0.14 | to reach one clean comparison on 127 held-out contracts
-9.2 min | PER TASK WITH JUBARTE | 18.5 with the benchmark's own scripts, no score difference detected
-0.495 | SCORE, 127 HELD-OUT TASKS | 0.491 with the benchmark's scripts, no difference detected
+716 | RUNS ON JUBARTE 0.14 | to reach one clean comparison on 120 held-out contracts
+9.1 min | PER TASK WITH JUBARTE | 18.3 with the benchmark's own scripts, no score difference detected
+0.502 | SCORE, 120 HELD-OUT TASKS | 0.500 with the benchmark's scripts, no difference detected
 
 OPEN QUESTIONS FOR ARTHUR:
 1. The old Day 1 led with 134 tasks (0.494 vs 0.492), which is the 0.15.0 run. This version leads with the 0.14.0 held-out set. Confirm you want 0.14 as the headline.
 2. The report links point to `main` and resolve only after PR #1 merges. Merge before posting, or swap in the benchmarks.law URL if you publish it there.
 3. The old Monday opened with the strikethrough "redline". It is now Thursday's hook, where it fits the grader story. Say if you want it back on Monday.
+4. Since 2026-11-24 every figure uses one control job, `deepseek-full-b`, as the six-cohort report does. The held-out set is 120 tasks, not 127, and the score reads 0.500 vs 0.502, not 0.491 vs 0.495.

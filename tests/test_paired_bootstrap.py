@@ -75,12 +75,15 @@ def test_main_prints_one_line_per_arm(tmp_path: Path, capsys: pytest.CaptureFixt
 @pytest.mark.parametrize(
     ("arm", "tasks", "diff", "wlt"),
     [
-        ("ds-v12-heldout", 127, 0.004, (48, 40, 39)),
-        ("ds-v9-heldout", 127, -0.024, (45, 51, 31)),
-        ("study-v14-heldout", 113, 0.002, (35, 35, 43)),
-        ("study-v13", 33, -0.068, (7, 16, 10)),
-        ("ds-v12-all", 139, 0.008, (55, 42, 42)),
-        ("study-v14b-015", 134, -0.000, (35, 44, 55)),
+        ("ds-v12-heldout", 120, 0.002, (45, 37, 38)),
+        ("ds-v9-heldout", 120, -0.024, (43, 47, 30)),
+        ("study-v14-heldout", 106, -0.002, (31, 32, 43)),
+        ("study-v13", 27, -0.090, (4, 13, 10)),
+        ("ds-v12-all", 130, 0.004, (50, 39, 41)),
+        ("ds-v9-all", 130, -0.018, (49, 49, 32)),
+        ("study-v14-all", 116, 0.000, (34, 34, 48)),
+        ("study-v14b-015", 125, -0.003, (31, 39, 55)),
+        ("study-v15", 9, -0.061, (1, 7, 1)),
     ],
 )
 def test_published_figures_match_the_data(arm: str, tasks: int, diff: float, wlt: tuple[int, int, int]) -> None:
@@ -92,12 +95,14 @@ def test_published_figures_match_the_data(arm: str, tasks: int, diff: float, wlt
 
 
 PUBLISHED_BOUNDS = [
-    ("ds-v12-heldout", -0.026, 0.033),
-    ("ds-v9-heldout", -0.055, 0.007),
-    ("study-v14-heldout", -0.025, 0.028),
-    ("study-v13", -0.121, -0.018),
-    ("ds-v12-all", -0.020, 0.036),
-    ("study-v14b-015", -0.025, 0.025),
+    ("ds-v12-heldout", -0.029, 0.032),
+    ("ds-v9-heldout", -0.058, 0.008),
+    ("study-v14-heldout", -0.028, 0.025),
+    ("study-v13", -0.149, -0.035),
+    ("ds-v12-all", -0.025, 0.032),
+    ("ds-v9-all", -0.050, 0.012),
+    ("study-v14-all", -0.025, 0.026),
+    ("study-v14b-015", -0.028, 0.023),
 ]
 
 
@@ -110,7 +115,7 @@ def test_published_interval_bounds_match_the_data(arm: str, lo: float, hi: float
 
 @pytest.mark.parametrize("arm", [arm for arm, _, _ in PUBLISHED_BOUNDS])
 def test_bootstrap_bounds_agree_with_a_normal_approximation(arm: str) -> None:
-    # Independent check of the interval level: for a mean of 33 to 139 paired
+    # Independent check of the interval level: for a mean of 27 to 130 paired
     # differences, a 95% percentile bootstrap sits within a few thousandths of
     # mean +/- 1.96 standard errors. A 90% interval would miss by 0.004 or more.
     control, jubarte = pb.load(pb.DATA)[arm]
@@ -130,4 +135,17 @@ def test_study_v13_interval_excludes_zero_and_held_out_v12_spans_it() -> None:
 
 def test_script_runs_as_main(capsys: pytest.CaptureFixture[str]) -> None:
     runpy.run_path(str(REPO / "scripts" / "paired_bootstrap.py"), run_name="__main__")
-    assert "ds-v12-heldout: 127 tasks" in capsys.readouterr().out
+    assert "ds-v12-heldout: 120 tasks" in capsys.readouterr().out
+
+
+NO_FULL_B_CONTROL = {
+    "redline-s1-t1-g01a", "redline-s1-t1-g01b", "redline-s1-t1-g01c", "redline-s1-t1-g01d", "redline-s1-t1-g01e",
+    "redline-s1-t2-g01a", "redline-s1-t2-g01b", "redline-s1-t2-g01c", "redline-s1-t2-g02b",
+}
+
+
+def test_no_arm_pairs_a_task_the_deepseek_full_b_control_never_ran() -> None:
+    with pb.DATA.open(newline="") as fh:
+        tasks = {r["task"] for r in csv.DictReader(fh)}
+    assert tasks.isdisjoint(NO_FULL_B_CONTROL)
+    assert "redline-s1-t4-g11a" not in tasks  # graded only by the panel

@@ -6,8 +6,8 @@ Disclosure: Arthur Souza Rodrigues writes jubarte and ran every trial below.
 
 **In one paragraph.**
 - We replaced RedlineBench's own Word tooling with jubarte 0.14 and re-ran the tasks with the same model, brief and grader.
-- On the 127 tasks never used to tune the skill, no score difference was detected: 0.491 vs 0.495.
-- Agent time halved (18.5 to 9.2 minutes), turns fell from 71 to 37, and output tokens from 44.5k to 20.8k.
+- On 120 tasks never used to tune the skill, no score difference was detected: 0.500 vs 0.502.
+- Agent time halved (18.3 to 9.1 minutes), turns fell from 70 to 37, and output tokens from 44.0k to 20.7k.
 - Getting one clean comparison took 716 runs on 0.14 alone. The whole archive (1,357 runs) would list at $702 on DeepSeek's prices and $9,679 on Claude Opus 5.5.
 - Later binaries on Harvey's benchmark went the same direction, with smaller savings.
 - jubarte 0.19.0 is Apache-2.0, so it can ship inside a proprietary skill or container.
@@ -42,28 +42,30 @@ A refusal exits 3, writes nothing, and names the cause (`ANCHOR_NOT_FOUND`, `AMB
 
 ## 2. The 0.14 result (RedlineBench, Claude Code, DeepSeek-V4.1-Flash)
 
-| Per task, 127 held-out tasks | Benchmark's scripts | jubarte 0.14 | Change |
+| Per task, 120 held-out tasks | Benchmark's scripts | jubarte 0.14 | Change |
 |---|---:|---:|---:|
-| Score | 0.491 | 0.495 | +0.004 (95% CI −0.026 to +0.033) |
-| Agent minutes | 18.5 | 9.2 | −50% |
-| Turns | 71 | 37 | −48% |
-| Input tokens | 2.61 M | 1.40 M | −46% |
-| Uncached input | 232 k | 163 k | −30% |
-| Output tokens | 44.5 k | 20.8 k | −53% |
-| At Claude Opus 5.5 list | $2.29 | $1.32 | −43% |
+| Score | 0.500 | 0.502 | +0.002 (95% CI −0.029 to +0.032) |
+| Agent minutes | 18.3 | 9.1 | −50% |
+| Turns | 70 | 37 | −47% |
+| Input tokens | 2.58 M | 1.39 M | −46% |
+| Uncached input | 228 k | 158 k | −31% |
+| Output tokens | 44.0 k | 20.7 k | −53% |
+| At Claude Opus 5.5 list | $2.26 | $1.29 | −43% |
+
+The control is one job, `deepseek-full-b`. It never ran 9 of the 140 tasks and one more has only a panel grade, so the full set is 130 tasks and the held-out set 120.
 
 Other full-length arms on the same control:
 
 | Arm (binary) | Tasks | Score difference | Input tokens per task, jubarte vs control | Minutes per task, jubarte vs control |
 |---|---:|---|---:|---:|
-| ds-v12, all 139 tasks (0.14.0) | 139 | +0.008 (−0.020 to +0.036) | 1.41 M vs 2.57 M | 9.3 vs 18.6 |
-| ds-v9, held-out (0.14.0) | 127 | −0.024 (−0.055 to +0.007) | 1.51 M vs 2.61 M | 11.1 vs 18.5 |
-| study-v14, held-out (0.14.0) | 113 | +0.002 (−0.025 to +0.028) | 1.31 M vs 2.66 M | 11.0 vs 18.6 |
-| study-v14b (0.15.0) | 134 | −0.000 (−0.025 to +0.025) | 1.28 M vs 2.60 M | 10.4 vs 18.6 |
+| ds-v12, all 130 tasks (0.14.0) | 130 | +0.004 (−0.025 to +0.032) | 1.39 M vs 2.54 M | 9.2 vs 18.3 |
+| ds-v9, held-out (0.14.0) | 120 | −0.024 (−0.058 to +0.008) | 1.50 M vs 2.58 M | 11.0 vs 18.3 |
+| study-v14, held-out (0.14.0) | 106 | −0.002 (−0.028 to +0.025) | 1.28 M vs 2.63 M | 10.9 vs 18.4 |
+| study-v14b (0.15.0) | 125 | −0.003 (−0.028 to +0.023) | 1.24 M vs 2.57 M | 10.1 vs 18.4 |
 
-No full-length arm showed a score difference whose interval excluded zero (no equivalence margin was tested). One short arm did: `jubarte-study-v13`, 33 tasks, −0.068 (−0.121 to −0.018). The efficiency held in every arm, that one included.
+No full-length arm showed a score difference whose interval excluded zero (no equivalence margin was tested). One short arm did: `jubarte-study-v13`, 27 tasks, −0.090 (−0.149 to −0.035). The efficiency held in every arm, that one included.
 
-**The development set overstated the gain.** On the 12 tuning tasks, DeepSeek drafts scored up to 0.579 against 0.515; on the held-out 127 the gain was gone. On Nemotron 30B-A3B, 10 of 11 drafts scored below the control on those 12 tasks (from 0.059 against 0.401; one v3 trial has no grade, so v3's mean covers 11). The binary was the same in every draft and one draft (v9, 0.425) beat the control. The skill text is what changed by design, but each draft ran once per task and a regrade moves a trial's score by 0.108 on average, so part of the spread among drafts may be run and grading variation. The control used the benchmark's own scripts, so the gap to it also reflects a different tool path. My read: keep a Word skill short for small models.
+**The development set overstated the gain.** On the 10 tuning tasks the control ran (of 12), DeepSeek drafts scored up to 0.618 against 0.552; on the 120 held-out tasks the gain was gone. On Nemotron 30B-A3B, 10 of 11 drafts scored below the control on all 12 tuning tasks (from 0.059 against 0.401; one v3 trial has no grade, so v3's mean covers 11). The binary was the same in every draft and one draft (v9, 0.425) beat the control. The skill text is what changed by design, but each draft ran once per task and a regrade moves a trial's score by 0.108 on average, so part of the spread among drafts may be run and grading variation. The control used the benchmark's own scripts, so the gap to it also reflects a different tool path. My read: keep a Word skill short for small models.
 
 ## 3. What it took, and what it cost
 
@@ -84,15 +86,15 @@ The same archive at today's list prices:
 
 | Price list | Archive | Per task, control | Per task, jubarte 0.14 |
 |---|---:|---:|---:|
-| DeepSeek V4.1 Flash, first-party peak | $702 | $0.137 | $0.081 |
-| Claude Sonnet 5.5 | $4,839 | $1.15 | $0.66 |
-| Claude Opus 5.5 | $9,679 | $2.29 | $1.32 |
+| DeepSeek V4.1 Flash, first-party peak | $702 | $0.135 | $0.079 |
+| Claude Sonnet 5.5 | $4,839 | $1.13 | $0.64 |
+| Claude Opus 5.5 | $9,679 | $2.26 | $1.29 |
 
-Cache reads are priced at the cache rate and cache writes are excluded, so the Claude rows are floors. 91% of the control's input was cache reads; they are about 21% of its bill at Opus prices. Billed as ordinary input, the same task would list at about $11.33, five times more. Grading is a second bill on top, one LLM call per rubric pass per trial.
+Cache reads are priced at the cache rate and cache writes are excluded, so the Claude rows are floors. 91% of the control's input was cache reads; they are about 21% of its bill at Opus prices. Billed as ordinary input, the same task would list at about $11.20, five times more. Grading is a second bill on top, one LLM call per rubric pass per trial.
 
 What actually happened to the budget: runs on a flat Synthetic subscription paused at 4% and 0% credit. OpenRouter returned 402. A DevPass allowance ran out. A judge model (gpt-5.6-luna) was dropped after ten minutes on cost. The one study with a confirmed bill (Harvey LAB on 0.17, 88 trials, self-hosted MI355X) cost $100; its 1.48 B recorded input tokens would list at $6,175 on Opus 5.5.
 
-For a harness team: one 140-task sweep with a frontier model at list price is about $321 with the benchmark's scripts and $184 with jubarte. The missing controls below are each one or two sweeps.
+For a harness team: one 140-task sweep with a frontier model at list price is about $317 with the benchmark's scripts and $181 with jubarte. The missing controls below are each one or two sweeps.
 
 ## 4. By harness
 
@@ -100,7 +102,7 @@ For a harness team: one 140-task sweep with a frontier model at list price is ab
 
 What we have: 41 trials with jubarte 0.15 through a LiteLLM proxy, hardest tasks first, and no plain-Codex control. Mean 0.160, against 0.202 for plain Claude Code and 0.199 for pi with jubarte on the same tasks. After a "continue" nudge (18 trials): mean 0.259, no gate failures, against 0.285 for plain Claude Code. Codex wrote 40k to 126k output tokens per trial, more than plain Claude Code.
 
-These 41 trials are not yet in a public dataset; see `DATA-AUDIT.md`. Treat the numbers as unpublished until they are.
+These 41 trials are in `redline-bench-tree-2026-11-02` of the private local archive (`DATA-AUDIT.md`, section 2). They can be read through its public copy in the six-cohorts dataset since Nov. 23, but they are in no documented trial table. The plain Claude Code figures beside them were not re-derived on the `deepseek-full-b` control alone.
 
 What we can say without a control: Codex has no Word skill today, `codex mcp add jubarte -- uvx --from 'jubarte-docx[mcp]' jubarte-mcp --root .` adds one, and the token halving in section 2 was measured in Claude Code, against plain Claude Code as the control. The pi result compares a different harness with plain Claude Code, so it does not isolate the tool.
 
@@ -114,7 +116,7 @@ Install: `claude mcp add --transport stdio jubarte --scope project -- uvx --from
 
 ### pi
 
-jubarte 0.15 in pi: 0.486 against 0.494 for plain Claude Code on 134 tasks, with 15.0k output tokens against 44.8k. On the OpenAI-compatible route with `reasoning_effort: high`, the same model wrote about 169k output tokens per trial, 12 times the Anthropic route, for the same number of turns. The route mattered more than the tool. These trials are in the private archive `redline-bench-tree-2026-11-02` and are not yet public.
+jubarte 0.15 in pi: 0.486 against 0.494 for plain Claude Code on 134 tasks (the earlier control, which took 9 of those tasks from `deepseek-full`; not re-derived), with 15.0k output tokens against 44.8k. On the OpenAI-compatible route with `reasoning_effort: high`, the same model wrote about 169k output tokens per trial, 12 times the Anthropic route, for the same number of turns. The route mattered more than the tool. These trials are in `redline-bench-tree-2026-11-02` of the private local archive, which has had a public copy in the six-cohorts dataset's `archive/` since Nov. 23. They are in no documented public trial table.
 
 ### Cline
 
@@ -146,8 +148,8 @@ Qwen Code also converts Gemini CLI extensions, so `qwen extensions install https
 ## 6. Where jubarte costs more, or loses
 
 - **Documents that already carry the other side's tracked changes.** On Harvey LAB (jubarte 0.16) several such pairs cost more. In one, 8.9 M tokens against 3.2 M and 22.6 minutes against 13.6. Agents learned the existing-revision rules by experiment.
-- **First-turn rewrites.** On RedlineBench turn 1, 0.258 against 0.280. A paragraph rewrite was marked word by word: 254 spans per trial against 73.
-- **Over-striking.** With a one-flag strike, agents rejected more. "Rejects" rubric items: 47 won, 12 lost. "Accepts" items: 9 won, 62 lost.
+- **First-turn rewrites.** On RedlineBench turn 1, 0.248 against 0.275 (7 held-out tasks). A paragraph rewrite was marked word by word: 254 spans per trial against 73.
+- **Over-striking.** With a one-flag strike, agents rejected more. "Rejects" rubric items: 37 won, 12 lost. "Accepts" items: 8 won, 54 lost (120 held-out tasks).
 - **Small models.** On Nemotron 30B, 10 of 11 drafts scored below the control, which used the benchmark's own scripts.
 - **Atomic plans.** A 30 to 100 operation plan is refused whole for one bad anchor. `--skip-failed` exists; agents rarely found it.
 - **Version.** Runs used 0.14.0 to 0.17.0. 0.19.0 has not been benchmarked.

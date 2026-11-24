@@ -14,7 +14,7 @@ Trae's community skill: compares two files and adds comments. No tracked changes
 Grok: a built-in Word skill whose source is not public.
 Z.ai's Z Code: supports skills; I found no Word skill to check.
 
-Monday's numbers sit next to that gap: 18.5 minutes a task without a redline engine, 9.2 with one. Those arms ran on different days, so I report the gap, not its cause.
+Monday's numbers sit next to that gap: 18.3 minutes a task without a redline engine, 9.1 with one. Those arms ran on different days, so I report the gap, not its cause.
 
 jubarte 0.19 is out under Apache-2.0, so a lab can ship it inside a closed product. I drafted a drop-in skill for each harness that accepts contributions.
 

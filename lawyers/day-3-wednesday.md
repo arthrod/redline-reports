@@ -10,11 +10,11 @@ What I paid looked like none of them. The agent ran on a flat subscription with 
 
 Three things I did not expect:
 
-In the control arm, 91% of what the agent read was cache hits, billed at a twentieth of the normal rate on Claude. Billed as fresh input, one task at Opus prices would list at $11.33 instead of $2.29.
+In the control arm, 91% of what the agent read was cache hits, billed at a twentieth of the normal rate on Claude. Billed as fresh input, one task at Opus prices would list at $11.20 instead of $2.26.
 
 Grading is a second bill. A model scores every run against a rubric, and every regrade pays again.
 
-The bill moved more than I expected. At Opus prices, one task cost $2.29 with the benchmark's scripts and $1.32 with jubarte, with no score difference detected. In these runs the jubarte arm read 1.40 million tokens, not 2.61 million, and wrote 20.8 thousand, not 44.5 thousand; output was about half the saving. The arms ran on different days, so a provider change is not ruled out.
+The bill moved more than I expected. At Opus prices, one task cost $2.26 with the benchmark's scripts and $1.29 with jubarte, with no score difference detected. In these runs the jubarte arm read 1.39 million tokens, not 2.58 million, and wrote 20.7 thousand, not 44.0 thousand; output was about half the saving. The arms ran on different days, so a provider change is not ruled out.
 
 Disclosure: jubarte is mine, and these are my runs and my bills.
 
@@ -37,13 +37,13 @@ Nitty-gritty:
 - Cache-write surcharges are excluded, so the Claude figures are a floor.
 - Nemotron ran on a local GPU that reports no cache, so its tokens are priced as uncached.
 - Claude Code's own estimate in the run files: $9,590 for the archive.
-- Per task, 127 held-out: control $2.29 and jubarte $1.32 at Opus prices; $0.137 and $0.081 at DeepSeek's.
+- Per task, 120 held-out: control $2.26 and jubarte $1.29 at Opus prices; $0.135 and $0.079 at DeepSeek's.
 - The $100 is the Harvey LAB study on jubarte 0.17, self-hosted, 88 trials, 1.48 billion recorded input tokens.
 
 VISUAL SUGGESTIONS:
 14x | SAME RUNS, DIFFERENT PRICE LIST | $702 at DeepSeek list, $9,679 at Claude Opus 5.5
 91% | OF WHAT THE AGENT READ WAS CACHED | billed as fresh input, one task would cost about 5x more at Opus prices
-$1.32 | PER CONTRACT AT OPUS PRICES | $2.29 with the benchmark's scripts, no score difference detected
+$1.29 | PER CONTRACT AT OPUS PRICES | $2.26 with the benchmark's scripts, no score difference detected
 
 OPEN QUESTIONS FOR ARTHUR:
 1. What did the Synthetic plan cost? The run logs record credit levels but not the plan. If you want "what I actually paid" to carry a number, give me the plan and months used.
