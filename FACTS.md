@@ -2,11 +2,56 @@
 
 Every figure in the posts, the report and the artifacts is on this page.
 
+## jubarte 0.14 on RedlineBench: the numbers this week's posts use (added 2026-11-22)
+
+Source for every row: `reports/jubarte-0.14-redlinebench.md`, rebuilt from the `result.json`, `grade.json` and `agent/trajectory.json` of every trial in `redline-bench-deepseek-trajectories/redlinebench/`. Binary `f4c352db…` (0.14.0) in every jubarte trial of the per-task table and the 0.14-arms column below. The whole-archive column also counts the controls and runs on other versions, including the 0.15.0 arm `jubarte-study-v14b-015`.
+
+| Per task, 120 held-out tasks (`jubarte-ds-v12-rest` against `deepseek-full-b`) | Scripts | jubarte 0.14 | Change |
+|---|---:|---:|---:|
+| Score | 0.500 | 0.502 | +0.002 (95% CI −0.029 to +0.032); 45 better, 37 worse, 38 equal |
+| Agent minutes | 18.3 | 9.1 | −50% |
+| Turns | 70 | 37 | −47% |
+| Input tokens | 2.58M | 1.39M | −46% |
+| Output tokens | 44.0k | 20.7k | −53% |
+| At Claude Opus 5.5 list | $2.26 | $1.29 | −43% |
+
+Until 2026-11-24 this table paired 127 held-out tasks and took the control for 7 of them from an earlier job, `deepseek-full`. It now uses `deepseek-full-b` alone, as the six-cohort report does, which leaves 120. A trial graded twice counts as the mean of its two grades.
+
+| Scale | 0.14 arms | Whole RedlineBench archive |
+|---|---:|---:|
+| Runs with a result | 716 (30 jobs) | 1,357 (49 jobs) |
+| Run time, summed | 157.8 h | 414.5 h |
+| Input / output tokens | 1.43B / 21.1M | 3.29B / 46.2M |
+| Agent turns | 35,496 | 78,524 |
+| Runs per task | 2 to 27, median 3 | 4 to 42, median 7.5 |
+| At DeepSeek list / Sonnet 5.5 / Opus 5.5 | | $702 / $4,839 / $9,679 |
+
+Development set against held-out (DeepSeek, same control):
+
+- The best drafts scored up to 0.618 against 0.552 on the 10 tuning tasks the control ran (it never ran the other 2).
+- On the 120 held-out tasks, ds-v12 scored +0.002 and ds-v9 scored −0.024.
+
+Nemotron 30B-A3B: 10 of 11 drafts below the control on the 12 tasks (lowest 0.059 against 0.401). A twelfth run, `jubarte-v12-boxdown`, is left out: in 10 of its 12 trials the agent exited within seconds with no output.
+
+Judge repeatability: 47 trials have two GLM-5.3-Flash `grade.json` files under the same path in the public trajectories: the original grade and a regrade from 30 October (archive `colab_bench-2026-10-30-regrade`). 35 got a different score the second time and 12 the same. Across all 47 the two grades differ by 0.108 on average (median 0.062, largest 0.5), a mean per-trial standard deviation of 0.077; across the 35 that changed, by 0.146 (median 0.097). Only those 35 also have two `reward.json` files. The 47 are the trials that happened to be regraded, not a random sample; 17 of them are in the paired comparisons. List: `data/judge_regrades.csv`.
+
+## Corrections (2026-11-22)
+
+- RedlineBench's judge reads the markup (an annotated view with deletions, insertions and comment markers). Only Harvey LAB's extractor reads accepted text. The harness report said both read accepted text; it no longer does.
+- The 134-task row (0.494 vs 0.492; 125 tasks, 0.504 vs 0.501, since the control is `deepseek-full-b` alone) is jubarte **0.15.0** (`jubarte-study-v14b-015`, binary `469c7ff4…`), not 0.14.
+- The Harvey A/B has 180 trials (90 pairs). The public table has 181 rows because a folder named `analysis` was read in as a trial.
+- The 41 Codex trials and the 134 pi trials are in the private local archive. Since 2026-11-23 that archive has a public copy in the six-cohorts dataset's `archive/`, but the trials are in no documented public trial table (see `DATA-AUDIT.md`, section 2).
+
+## Corrections (2026-11-24)
+
+- Every Claude Code DeepSeek comparison now uses one control job, `deepseek-full-b`, as the six-cohort report does. It never ran 9 of the 140 tasks, so the full set is 130 tasks (was 139) and the held-out set 120 (was 127).
+- The pi (134 tasks) and Codex (41 tasks) rows were not re-derived. Their plain Claude Code figures come from the earlier control, which took 9 tasks from `deepseek-full`.
+
 ## What was run
 
 | Benchmark | Owner | Tasks | Agent harness | Model | jubarte | Judge |
 |---|---|---|---|---|---|---|
-| RedlineBench | Crosby + micro1 | 140 (3 scenarios × 4 turns) | Claude Code | DeepSeek-V4.1-Flash | 0.14.0 / 0.15.0 | GLM-5.3-Flash, one judge |
+| RedlineBench | Crosby + micro1 | 140 (3 scenarios × 4 turns) | Claude Code | DeepSeek-V4.1-Flash | 0.14.0 (all jobs except `jubarte-study-v14b-015`, which is 0.15.0) | GLM-5.3-Flash, one judge |
 | RedlineBench | same | 134 common | pi | DeepSeek-V4.1-Flash | 0.15.0 | same |
 | RedlineBench | same | 41 (hardest first) | Codex | DeepSeek-V4.1-Flash | 0.15.0 | same |
 | RedlineBench | same | 69 + 33 | Claude Code | Claude Haiku 5.5 | 0.12.0 | Crosby's panel |
@@ -21,13 +66,13 @@ scripts, and Harvey LAB's docx skill with its `redline.py`.
 
 | Run | Tasks | Benchmark's own tools | jubarte | Difference |
 |---|---|---|---|---|
-| RedlineBench, DeepSeek, Claude Code, 0.15.0 skill | 134 | 0.494 | 0.492 | −0.002 |
-| RedlineBench, DeepSeek, Claude Code, held-out set | 127 | 0.489 | 0.493 | +0.004 |
-| RedlineBench, DeepSeek, pi, 0.15.0 skill | 134 | 0.494 (Claude Code plain) | 0.486 | −0.008 |
+| RedlineBench, DeepSeek, Claude Code, 0.15.0 binary | 125 | 0.504 | 0.501 | −0.003 |
+| RedlineBench, DeepSeek, Claude Code, held-out set, 0.14.0 | 120 | 0.500 | 0.502 | +0.002 |
+| RedlineBench, DeepSeek, pi, 0.15.0 skill | 134 | 0.494 (Claude Code plain, earlier control) | 0.486 | −0.008 |
 | RedlineBench, Haiku 5.5, first 69 | 69 | 0.394 | 0.427 | +0.033 (35 wins, 24 losses, 10 ties) |
 | RedlineBench, Haiku 5.5, second block | 33 | 0.430 | 0.412 | −0.018 (12 wins, 8 losses, 13 ties) |
 | RedlineBench, GLM-5.3-flash | 40 | 0.350 | 0.364 | +0.014 (15 / 10 / 15) |
-| RedlineBench, Nemotron 3.5 Lightning | 12 | 0.401 | 0.425 | +0.024 |
+| RedlineBench, Nemotron 3.5 Lightning | 12 | 0.401 | 0.425 | +0.024, the best of 11 drafts; the other 10 scored 0.059 to 0.368 |
 | Harvey LAB redline tasks, DeepSeek | 90 pairs | 0.936 | 0.941 | +0.006, standard error 0.005 (33 / 24 / 33) |
 
 Per-task noise on RedlineBench is about ±0.04, and Harvey's judge moves about 0.02
@@ -37,13 +82,13 @@ between runs. None of these differences is outside the noise except Haiku's firs
 
 | Run | Measure | Own tools | jubarte | Change |
 |---|---|---|---|---|
-| RedlineBench, DeepSeek, held-out 127 | agent minutes per task | 18.6 | 9.2 | −51% |
-| same | input tokens per task | 2.61M | 1.40M | −46% |
-| same | output tokens per task | 44.5k | 20.8k | −53% |
-| RedlineBench, DeepSeek, 134 tasks, 0.15.0 | output tokens | 44.8k | 20.4k | −54% |
-| same | input tokens | 2.60M | 1.27M | −51% |
-| same, pi instead of Claude Code | output tokens | 44.8k | 15.0k | −67% |
-| same, pi | input tokens | 2.60M | 1.42M | −45% |
+| RedlineBench, DeepSeek, held-out 120 | agent minutes per task | 18.3 | 9.1 | −50% |
+| same | input tokens per task | 2.58M | 1.39M | −46% |
+| same | output tokens per task | 44.0k | 20.7k | −53% |
+| RedlineBench, DeepSeek, 125 tasks, 0.15.0 | output tokens | 44.4k | 20.2k | −54% |
+| same | input tokens | 2.57M | 1.24M | −52% |
+| RedlineBench, DeepSeek, 134 tasks, pi instead of Claude Code, earlier control | output tokens | 44.8k | 15.0k | −67% |
+| same | input tokens | 2.60M | 1.42M | −45% |
 | RedlineBench, GLM-5.3-flash | minutes per attempt | 102 | 68 | −33% |
 | same | output tokens per attempt | 0.24M | 0.18M | −25% |
 | same | tasks that finished with a valid score, of 69 | 42 | 59 | +17 tasks |
@@ -82,7 +127,7 @@ wrong. Its run with the benchmark's tools (158 trials, 52 valid, mean 0.385 as f
 graded) is the control of a paired comparison, and Muse was launched with jubarte
 three times:
 
-- 16–17 October: 140 trials, the jubarte arm of that comparison. Regraded by the
+- 16 to 17 October: 140 trials, the jubarte arm of that comparison. Regraded by the
   gpt-6.1-sol panel, the arms score 0.316 (jubarte) and 0.297 (control), +0.019 over
   140 paired tasks. Data:
   https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts
@@ -92,8 +137,8 @@ three times:
   backups. 100 have a reward, mean 0.292, but two judge panels gave them (48
   gpt-6.1-sol, 26 Claude Haiku 5.5) and 26 are zeros recorded without a judge, so that
   mean compares with nothing. On the 74 tasks with a gpt-6.1-sol grade or such a zero
-  it averages 0.221, against 0.238 for the 16–17 October arm and 0.268 for the control
-  on the same tasks. Data: `muse_oct18_relaunch` in the jubarte dataset.
+  it averages 0.221, against 0.238 for the 16 to 17 October arm and 0.268 for the control
+  on the same tasks. Data: the `muse_oct18_relaunch` config of `redline-bench-jubarte-trajectories`.
 
 ## Where the claim "always fewer tokens and less time" does not hold
 
@@ -104,10 +149,27 @@ three times:
    22.6 v 13.6 minutes on one repo/securities-lending pair). The mean still fell.
 3. Codex was never run without jubarte. Its 41 jubarte trials (hardest tasks first)
    scored 0.160 against 0.202 for plain Claude Code on the same tasks, and wrote
-   40-126k output tokens per trial, more than plain Claude Code.
+   40-126k output tokens per trial, more than plain Claude Code. That is a cross-harness
+   comparison: with no plain-Codex control, it says nothing about whether jubarte helps
+   or hurts Codex against Codex's own tools.
+4. One short 0.14 arm lost on score. `jubarte-study-v13` (27 tasks, 10 of them
+   development tasks) scored 0.481 against 0.572: −0.090 (−0.149 to −0.035), 4 wins
+   and 13 losses. Its time and input still fell (8.0 v 18.7 minutes, 0.98M v 2.48M).
 
-The accurate sentence: in every run since jubarte 0.14, with every model, mean time
-and mean tokens fell while the score stayed inside the noise.
+The accurate sentence: with DeepSeek-V4.1-Flash in Claude Code, in every 0.14 and 0.15
+arm on RedlineBench and in the Harvey LAB studies, mean time and mean tokens fell. No
+score difference was detected in any full-length arm; one 27-task arm, study-v13,
+scored lower (item 4). It does not hold for every model: Nemotron 30B scored below its
+0.401 control with 10 of 11 skill drafts (0.059 to 0.368) on the 12 development tasks.
+The lowest drafts sit far below judge noise; the closest, v10 at 0.368, is 0.032 below,
+inside the ±0.04 per-task noise above. No interval was computed for these means. Two
+details: v2's trial on `redline-s3-t4-g09a` failed the validity gate in its own verifier
+and scores 0, which puts v2 at 0.349 (the `glm` column of `data/per_job.csv`, 0.381,
+averages only its 11 GLM grades); v3's trial on `redline-s2-t3-g04a` has no grade at all
+and is left out, so v3's 0.351 covers 11 tasks, on which the control scored 0.406. A
+twelfth run, `jubarte-v12-boxdown`, is not counted: in 10 of its 12 trials the agent
+exited within seconds with no output.
+Codex (item 3) has no control of its own.
 
 ## What the grading cannot see
 
@@ -124,11 +186,15 @@ and mean tokens fell while the score stayed inside the noise.
 
 ## Where jubarte lost points on RedlineBench
 
-- Turn 1 (clean template): 0.258 v 0.280 on the held-out set. A rewritten paragraph
+- Turn 1 (clean template): 0.248 v 0.275 on the 7 held-out turn-1 tasks. A rewritten paragraph
   was marked one word at a time: 254 tracked spans per trial against 73, with a
   median insertion of 9 characters against 209.
-- Agents with a one-flag strike used it too much. Rubric items "Accepts X": 62 lost,
-  9 gained. Items "Rejects X": 47 gained, 12 lost.
+- Agents with a one-flag strike used it too much. On the 120 held-out tasks, rubric
+  items "Accepts X": 54 lost, 8 gained. Items "Rejects X": 37 gained, 12 lost. Counted
+  per task and rubric item from the public GLM `grade.json` files, ds-v12 against the
+  control, averaging a regraded trial's two verdicts. The earlier figures (62 lost and
+  9 gained, 47 gained and 12 lost, on 127 tasks) had no recorded script, and a re-count
+  on those 127 tasks gave 57 and 8, 38 and 12.
 
 ## Release
 

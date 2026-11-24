@@ -1,60 +1,55 @@
-# Day 1 · The redline that wasn't one
+# Day 1 · 716 runs for one sentence
 
-One of the redlines in our test had no tracked changes in it.
+MAIN POST:
 
-It looked right. Old words were struck through and new words sat beside them. But
-when we opened the file's XML, Word had recorded 39 runs of strikethrough
-*formatting* and zero insertions or deletions. The AI agent had drawn a redline
-instead of making one. Press "Accept All" on that file and nothing happens. The
-struck words stay in your contract, struck.
+It took 716 agent runs, 158 hours of run time and 1.43 billion input tokens to earn one sentence I can defend: half the work, no detectable change in the score.
 
-No lawyer caught this, because no lawyer was looking. The file came out of an
-automated benchmark, and the grader that scored it reads only the document's text.
-It scored 0.90 out of 1.
+The question was narrow. When an AI agent redlines a contract, does it do better legal work if it gets a real tracked-changes engine instead of the Python scripts the benchmark ships with?
 
-I have spent this year building **jubarte**, an open-source engine that makes real
-Word redlines without Word: tracked insertions, deletions and moves, comments,
-replies, accept and reject, all in the file format Word itself writes. This week it
-went out under the Apache 2.0 licence, which means anyone can use it, including
-inside a commercial product, at no cost.
+The test was Crosby and micro1's RedlineBench: 140 negotiation tasks, four rounds of markup each. DeepSeek-V4.1-Flash ran inside Claude Code. One arm used the benchmark's own scripts. The other used jubarte 0.14, the Word engine I write. Model, brief, contracts and grader stayed the same.
 
-Before releasing it, we wanted an answer to one question: **if you give an AI agent
-a proper redlining tool, does it do better legal work?**
+On 120 tasks I never used to tune anything:
 
-So we tested it on two public benchmarks built by legal AI companies:
+Score: 0.500 with their tools, 0.502 with mine. No difference detected.
+Minutes per task: 18.3 against 9.1.
+Turns: 70 against 37.
+Output tokens: 44.0k against 20.7k.
 
-- **RedlineBench**, from Crosby and micro1. 140 negotiation tasks. An agent
-  represents one party to a commercial contract across four rounds of markup,
-  and lawyers' rubrics say which changes it should have accepted, rejected or made.
-- **Harvey's Legal Agent Benchmark**. We took the tasks whose deliverable is a
-  marked-up document, ran 90 of them twice, and compared.
+Disclosure: jubarte is mine, and I ran every trial. One model grades every file compared; the one task it could not finish grading is left out. On 47 files that happened to be graded twice, the score moved by 0.108 on average, so only the 120-task average means anything.
 
-In each one the agent did the same task two ways: once with the tools the
-benchmark ships, and once with jubarte in their place. Same model, same
-instructions, same documents.
+Honest reading: nothing here shows the tool made the agent a better lawyer. With jubarte it took half the time and stopped writing Word's XML by hand. The arms ran on different days, so a provider change is not ruled out.
 
-Here is the whole result in three lines, so that nobody has to wait until Friday:
+Why 716 runs for one comparison? It took a dozen drafts of the agent's instructions, a control arm, and reruns after a full disk, a killed process and a Docker image deleted mid-run. Tomorrow: what those drafts taught me about every vendor demo.
 
-1. **The scores barely moved.** On Harvey's tasks, 0.936 with their tools and 0.941
-   with ours. On RedlineBench, 0.494 and 0.492. We hoped for more. Wednesday's post
-   is about that.
-2. **The work took about half the time.** On RedlineBench the agent finished a
-   round of markup in 9.2 minutes instead of 18.6, and used about half the tokens,
-   which is what you pay for.
-3. **The files were real redlines.** Their changes stayed under their name and ours
-   went in under ours, the way a negotiated draft is supposed to look.
+Links in comments. If you evaluate legal agents: how many runs sit behind your last headline number?
 
-A lawyer reading that list might shrug at number 2 and care most about number 3. An
-engineer would do the reverse. This series is written for the people who are a bit
-of both.
+COMMENT:
 
-**The week:**
+Report: https://github.com/arthrod/redline-reports/blob/main/reports/jubarte-0.14-redlinebench.md
+Every trial, file by file: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
+The 140 tasks as configured: https://huggingface.co/datasets/arthrod/redline-bench-jubarte-tasks
+jubarte: https://github.com/jandira-tech/jubarte
+RedlineBench is by Crosby and micro1: https://huggingface.co/datasets/crosbylegal/RedlineBench
 
-- **Tuesday** · How the test worked, and the things the graders cannot see.
-- **Wednesday** · The disappointment: why a better tool did not buy a better score.
-- **Thursday** · Half the time and half the tokens, and why that matters to a
-  practice more than it sounds.
-- **Friday** · What is free to use today, what it still gets wrong, and how to try
-  it on your own worst document.
+In plain English. Score: lawyers wrote a rubric for each task (accept this cure period, reject that uncapped indemnity), and a judge model ticks it, 0 to 1. A turn is one step the agent takes: read a file, run a command, write an edit. Tokens are what the model reads and writes, and what you are billed for. "Never used to tune" means I wrote the agent's instructions while watching 12 tasks and kept the other 128 out of sight; the 120 of those that the control also ran are the fair test.
 
-Try it now if you would rather not wait: https://github.com/jandira-tech/jubarte
+Nitty-gritty:
+- 0.14.0 linux-aarch64 binary, sha256 `f4c352db…`, in every trial of the arm.
+- Control: job `deepseek-full-b`, one run per task. It never ran 9 of the 140 tasks, so they are left out. jubarte: `jubarte-ds-v12-rest`.
+- Judge: GLM-5.3-Flash with the benchmark's rubric, on every task compared. It hit its output limit on `redline-s1-t4-g11a`; that task went to a three-judge panel and is left out too, which is why the full set is 130 tasks, not 140.
+- Difference +0.002, 95% bootstrap interval −0.029 to +0.032.
+- 45 tasks better, 37 worse, 38 equal.
+- The 716 runs cover 30 jobs from 26 to 30 October.
+- The arms were not interleaved: the control ran 27 to 28 October, the jubarte arm 28 to 30 October. Model, harness and grader were pinned, but a provider-side change between those days cannot be ruled out.
+- Later versions on Harvey's benchmark went the same direction with smaller savings. They are in the report and stay out of this post on purpose.
+
+VISUAL SUGGESTIONS:
+716 | RUNS ON JUBARTE 0.14 | to reach one clean comparison on 120 held-out contracts
+9.1 min | PER TASK WITH JUBARTE | 18.3 with the benchmark's own scripts, no score difference detected
+0.502 | SCORE, 120 HELD-OUT TASKS | 0.500 with the benchmark's scripts, no difference detected
+
+OPEN QUESTIONS FOR ARTHUR:
+1. The old Day 1 led with 134 tasks (0.494 vs 0.492), which is the 0.15.0 run. This version leads with the 0.14.0 held-out set. Confirm you want 0.14 as the headline.
+2. The report links point to `main` and resolve only after PR #1 merges. Merge before posting, or swap in the benchmarks.law URL if you publish it there.
+3. The old Monday opened with the strikethrough "redline". It is now Thursday's hook, where it fits the grader story. Say if you want it back on Monday.
+4. Since 2026-11-24 every figure uses one control job, `deepseek-full-b`, as the six-cohort report does. The held-out set is 120 tasks, not 127, and the score reads 0.500 vs 0.502, not 0.491 vs 0.495.

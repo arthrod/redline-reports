@@ -1,78 +1,54 @@
-# Day 5 · What you can do with it on Monday
+# Day 5 · Seven agents, one missing tool
 
-This week in one paragraph: we gave AI agents a real redlining tool and tested it on
-Crosby's and Harvey's benchmarks. The legal quality of the work did not change. The
-time and cost fell by about half on one benchmark and about an eighth on the other.
-And the files were actual redlines, with each side's changes under its own name.
+MAIN POST:
 
-## It is free, including for commercial use
+I checked what seven AI coding agents, plus MiniMax's skills catalog, ship for Word documents. None of the open ones gives the model a command that makes a tracked change. The model writes the markup itself.
 
-jubarte 0.19.0 came out on 21 November under the **Apache 2.0** licence. Earlier
-versions used a licence (AGPL) that many companies' legal departments will not
-allow near their products. If that was the reason your team could not try it, the
-reason is gone. You can run it inside a firm, ship it inside a product, and change
-it, without paying anyone or publishing your own code.
+Here is what each one does today, when you ask it to redline a contract.
 
-## Three ways to try it
+Codex: no Word skill in OpenAI's open repositories. The old curated one is gone.
+Qwen Code: none bundled.
+DeepSeek's terminal agent: a 19-line skill that says use python-docx or pandoc if available. Neither writes tracked changes.
+MiniMax Code and MiniMax's skills: Microsoft's .NET OpenXML SDK. Tracked changes, if the model writes them.
+Trae's community skill: compares two files and adds comments. No tracked changes.
+Grok: a built-in Word skill whose source is not public.
+Z.ai's Z Code: supports skills; I found no Word skill to check.
 
-**If you use an AI coding agent** (Claude Code, Codex, Gemini CLI), one line adds
-it:
+Monday's numbers sit next to that gap: 18.3 minutes a task without a redline engine, 9.1 with one. Those arms ran on different days, so I report the gap, not its cause.
 
-```
-claude mcp add --transport stdio jubarte --scope project -- uvx --from 'jubarte-docx[mcp]' jubarte-mcp --root .
-codex mcp add jubarte -- uvx --from 'jubarte-docx[mcp]' jubarte-mcp --root .
-gemini extensions install https://github.com/jandira-tech/jubarte
-```
+jubarte 0.19 is out under Apache-2.0, so a lab can ship it inside a closed product. I drafted a drop-in skill for each harness that accepts contributions.
 
-Then ask in plain words: "Compare these two drafts and give me a redline." "Reject
-their change to the indemnity cap and say why in a comment."
+Honest reading: the benchmarks ran on 0.14 to 0.16, not 0.19. No frontier model was the agent. Codex never ran without jubarte, so I have no Codex control.
 
-**If you are comfortable with a terminal:**
+Disclosure: jubarte is mine.
 
-```
-cargo install jubarte
-jubarte original.docx revised.docx -o redline.docx --author "Your Name"
-jubarte changes redline.docx
-jubarte scrub final.docx -o clean-to-send.docx
-```
+Links in comments. If you maintain one of these agents: would you run the missing Codex control with me?
 
-The last line removes authors, editing history, metadata and comments before a
-document leaves the building.
+COMMENT:
 
-**If you are neither**, send this post to whoever runs your firm's AI tools. The
-question to put to them: when our assistant marks up a contract, is the output a
-tracked-changes file with each side's edits preserved, and how do we know?
+jubarte: https://github.com/jandira-tech/jubarte
+The harness report, with every skill's source and what it calls: https://github.com/arthrod/redline-reports/blob/main/harness/report.md
+The drop-in skills: [links to the pull requests, once open]
 
-## What it still gets wrong
+The audit, by repository and commit:
+- `openai/codex` (codex-rs skill samples) and `openai/plugins`: no docx skill.
+- `openai/skills` `.curated/`: no `doc` skill at commit 49f948f.
+- `QwenLM/qwen-code`: no docx skill among the bundled skills.
+- `Hmbown/DeepSeek-TUI` `crates/skills/assets/skills/docx/SKILL.md`: 19 lines, python-docx or pandoc.
+- `MiniMax-AI/minimax-code` `packages/local-runtime/assets/skills/docx` and `MiniMax-AI/skills` `skills/minimax-docx`: .NET OpenXML SDK with tracked-change samples.
+- `trae-community/trae-skills` `skills/docx-diff-comment`: pandoc, python-docx and comment scripts.
+- `xai-org/plugin-marketplace`: no Word plugin. Grok's built-in "Word Documents" skill is described on x.ai; its source is not published.
+- Anthropic's `docx` skill for Claude Code: LibreOffice, Poppler, pandoc and docx-js, about 850 MB together, against 36 MB for jubarte, measured 4 October on Ubuntu 24.04.
 
-- **Rewritten paragraphs.** When an agent rewrites a paragraph in a document that
-  already carries the other side's changes, the markup can come out word by word and
-  hard to read. This cost us points on first drafts.
-- **Documents full of the other side's changes.** The tool is strict about not
-  touching their markup. That is correct, and it makes those tasks slower.
-- **Judgment.** It will strike whatever the agent tells it to strike. Our agents
-  rejected too much. Give the agent your playbook, and tell it what you concede.
-- **Old `.doc` files.** It reads the text, headings, lists and tables. For anything
-  where the exact layout of an old file matters, convert it in Word first.
-- **We have not re-run the benchmarks on 0.19.0.** The numbers this week come from
-  versions 0.12 to 0.16.
+In plain English. A skill is a set of instructions and tools an agent loads when a task needs them. When the skill has no redline tool, the model writes the file format itself. That was the arm with more time and tokens on Monday; the arms ran on different days, so the comparison does not prove the file format was the cause.
 
-## The test I would run
+VISUAL SUGGESTIONS:
+7 | AGENTS CHECKED FOR A WORD SKILL | none of the open ones has a command that makes a tracked change
+36 MB | JUBARTE, INSTALLED | about 850 MB for the tools Anthropic's docx skill installs
+Apache-2.0 | JUBARTE 0.19 | free to ship inside a commercial product
 
-Take the worst document in your drawer: the one with four rounds of markup from
-three authors, a table that breaks, and numbering that restarts. Ask your current
-AI tool for a counter-markup. Then open the result in Word and check three things.
-
-1. Review → Reviewing Pane. Are the other side's changes still there, under their
-   name?
-2. Accept All on a copy. Does the text become what you meant?
-3. Does Word open the file without offering to repair it?
-
-Then do the same with jubarte. If it fails where the other passes, tell us. The
-issue tracker is public, and a document that breaks the tool is the most useful
-thing anyone can send.
-
-Code, releases and the issue tracker: https://github.com/jandira-tech/jubarte
-Every page of 808 documents rendered beside Word: https://jandira-tech.github.io/neurotic_docx_bench/
-The agent transcripts for the Haiku and GLM runs: https://huggingface.co/datasets/arthrod/redline-bench-jubarte-trajectories
-Every DeepSeek run on both benchmarks, file by file: https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories
+OPEN QUESTIONS FOR ARTHUR:
+1. Post only after the pull requests are open, or reword "I drafted" to match what is live. The PR drafts are in `outreach/prs/` in your local folder, not in this public repo.
+2. You listed "mcode" and "minimax code" separately. I read both as MiniMax Code (its CLI is `mcode`) and count MiniMax's skills catalog as a source, not an agent, so the count is seven. If mcode is another product, it becomes eight once checked.
+3. Z Code: zcode.z.ai documents skills and plugins, but its built-in skills could not be fetched from here. Check its built-in list before posting the line.
+4. Claude Code is the eighth harness and the one every paired run used. It is in the comment and stays out of the headline count, because it was not on your list.

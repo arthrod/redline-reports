@@ -1,63 +1,45 @@
-# Day 4 · Half the time, half the tokens
+# Day 4 · The redline that wasn't one
 
-If the score is a tie, the question becomes what each side paid for it.
+MAIN POST:
 
-| Test | Measure | Their tools | jubarte | Change |
-|---|---|---|---|---|
-| RedlineBench, 127 tasks | minutes per round of markup | 18.6 | 9.2 | −51% |
-| | words the model wrote (output tokens) | 44,500 | 20,800 | −53% |
-| | text the model read (input tokens) | 2.61M | 1.40M | −46% |
-| Harvey redline tasks, 90 pairs | minutes per task | 37.2 | 32.4 | −13% |
-| | tokens per task | 10.4M | 8.9M | −14% |
-| Harvey editing tasks, 44 pairs, later version | minutes per task | 28.4 | 26.6 | −6% |
-| | text the model read | 17.2M | 16.2M | −6% |
-| RedlineBench, GLM-5.3-flash | minutes per attempt | 102 | 68 | −33% |
-| | tasks finished, of 69 | 42 | 59 | +17 |
+One "redline" in a benchmark I ran had no tracked changes in it, and it scored 0.90.
 
-Same model, same brief, same quality of legal answer.
+It looked right: old words struck through, new words beside them. Inside the file, Word had recorded 39 runs of strikethrough formatting and zero insertions or deletions. The agent drew a redline instead of making one. Accept All does nothing to that file.
 
-One run went the other way, and you should know about it. Claude Haiku 5.5, on an
-early version of jubarte, took 26 minutes where the other arm took 24, and cost
-about 7 cents more per task. Every run since then has been faster and cheaper. And
-inside the Harvey average there are single tasks where jubarte cost more: the ones
-where the document already carried the other side's tracked changes and the agent
-had to learn how to work around them.
+It passed because Harvey's grader reads the contract with every tracked change accepted, as plain text. It cannot tell a redline from a clean rewrite. On that benchmark, a tool built for real tracked changes can move the score only through the words.
 
-## Where the time went
+RedlineBench is different, and that matters for this week's result. Its judge sees every insertion, deletion and comment. jubarte showed no score difference there either, so a grader blind to markup cannot explain it. Whether that judge rewards cleaner markup is untested. My read, not a finding: the score tracks legal judgment, which a tool does not supply.
 
-Watch an agent redline with general-purpose tools and you see it do what nobody
-would ask of an associate. It unzips the Word file. It reads raw XML. It writes a
-small program to find a sentence, then another to wrap the old words in a deletion
-and the new ones in an insertion, in the order the file format demands. It runs the
-program, gets an error, and rewrites it. Then it renders the page to check.
+The judges are noisy, though. 47 RedlineBench runs were graded twice by the same model, and the two grades differ by 0.108 on average.
 
-With jubarte the same edit is one line: paragraph 12, replace *thirty days* with
-*forty-five days*, author *Maria Souza*. The tool refuses if the words are not
-there, or appear twice, or sit inside someone else's change, and says which.
+Then I audited my own write-up. My dataset card headlined a 0.15 result inside a 0.14 study. A trial table counted a folder named "analysis" as a run. And the card described Codex runs that the public data does not contain. All of it is listed in the audit, with the fixes.
 
-Tokens are the unit AI is billed in, so half the tokens is close to half the bill.
-But the other effects matter more in practice.
+Disclosure: jubarte is mine.
 
-## Why this matters to a practice
+If a vendor says its redlines score well, ask one question: does the grader open the tracked changes, or read the accepted text?
 
-**Waiting.** Nine minutes is a coffee. Nineteen is a meeting you start instead, and
-then the redline sits unread. The speed at which a draft comes back decides whether
-a lawyer stays in the document or leaves it.
+Links in comments. Who here checks a redline's markup before trusting its score?
 
-**Memory.** An agent can hold only so much text at once. When that fills up, it
-summarises what it has done and carries on from the summary, and things get lost.
-On the weaker models we saw agents, with either set of tools, finish with a summary
-instead of a contract. An agent that reads half as much has more room left for the
-contract and the playbook.
+COMMENT:
 
-**Finishing at all.** The slowest model finished 59 of 69 tasks with jubarte and 42
-with the other tools. The work it did not finish scored nothing.
+The audit: https://github.com/arthrod/redline-reports/blob/main/DATA-AUDIT.md
+Harvey LAB, the benchmark with the accepted-text grader: https://github.com/harveyai/harvey-labs
+RedlineBench: https://huggingface.co/datasets/crosbylegal/RedlineBench
 
-**The file.** The easiest part to overlook. On RedlineBench with DeepSeek, no jubarte
-file failed the benchmark's validity check, and jubarte's own check that every edit
-is tracked came back clean on 122 of 128. Their changes stayed theirs. Ours carried
-our author's name. That is a file you can send to the other side.
+In plain English. "Accepted text" means the document as it reads after clicking Accept All. A real redline and a clean rewrite look identical that way. A grader that reads the markup sees who changed what, as a lawyer does in the Reviewing Pane.
 
-For the people who build legal AI products, the same numbers read as margin: the
-same answer for half the compute, with a 36 MB tool in place of 850 MB or more of
-other software. Friday's post has the links for them, and for you.
+Nitty-gritty:
+- The strikethrough file was the control arm of Harvey LAB's capital-markets indenture markup: 39 `w:strike` runs, 0 `w:ins`, 0 `w:del`, scored 0.900. The jubarte file for the same task had 38 insertions and 39 deletions.
+- Harvey's extractor runs `pandoc --track-changes=accept`. Under the upstream extractor, which also shows Word comments, the first 19 pairs moved from 0.890 / 0.876 to 0.936 / 0.938.
+- RedlineBench's judge reads an annotated view with deletions as `~~…~~`, insertions as `++…++` and comment markers.
+- Judge repeatability: 47 trials with two GLM-5.3-Flash grades. Mean absolute difference 0.108, median 0.062, largest 0.5. They are the trials that happened to be regraded, not a random sample.
+- The Harvey runs used jubarte 0.16; the RedlineBench runs used 0.14.
+
+VISUAL SUGGESTIONS:
+0 | TRACKED CHANGES IN A "REDLINE" | 39 strikethrough runs, scored 0.90 by an accepted-text grader
+0.108 | SAME FILE, GRADED TWICE | average gap between two grades from one judge model
+7 | ERRORS IN MY OWN DATASET CARDS | found in this week's audit, fixed before this post
+
+OPEN QUESTIONS FOR ARTHUR:
+1. Post this only after the card fixes in DATA-AUDIT.md are live. The post says they are fixed.
+2. The old harness report says both graders read accepted text. That is wrong for RedlineBench (checked in the judges' annotated views), and the new harness report corrects it. Confirm nothing published elsewhere repeats the old claim.
