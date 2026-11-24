@@ -280,8 +280,10 @@ import polars as pl
 
 t = pl.read_parquet("hf://datasets/arthrod/redline-bench-jubarte-six-cohorts/data/trials.parquet")
 
+
 def per_task(x):
     return x.filter(pl.col("score").is_not_null()).group_by("pair_key").agg(pl.col("score").mean())
+
 
 for cohort in t["cohort"].unique().sort():
     arm = lambda a: t.filter((pl.col("cohort") == cohort) & (pl.col("arm") == a))
