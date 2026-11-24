@@ -1,6 +1,6 @@
 # jubarte in six cohorts: no score gain detected, and less work in five of them
 
-Report date: 2026-11-22.
+Report date: 2026-11-23.
 
 Scope: six groups of runs, called cohorts here, and nothing else. In each cohort an AI agent redlined contracts with jubarte, and a control run of the same agent on the same tasks used the benchmark's own tooling.
 
@@ -9,13 +9,13 @@ Scope: six groups of runs, called cohorts here, and nothing else. In each cohort
 | 0.14.0 DeepSeek | RedlineBench, 140 tasks | DeepSeek-V4.1-Flash-1017 in Claude Code 2.1.310 | 0.14.0 |
 | 0.14.0 Nemotron | RedlineBench, 12 tasks | Nemotron 3.5 Lightning 30B-A3B in Claude Code 2.1.310, one RTX 5090 | 0.14.0 |
 | 0.15.0 DeepSeek | RedlineBench, 135 tasks | DeepSeek-V4.1-Flash-1017 in Claude Code 2.1.310 | 0.15.0 |
-| 0.16 Harvey | Harvey LAB redline tasks, 90 A/B pairs | DeepSeek-V4.1-Flash in Claude Code, on Harbor Hub | 0.16.x |
-| 0.17 Harvey | Harvey LAB editing tasks, 17 tasks | DeepSeek Flash 1017 in Claude Code, served on a self-hosted MI355X | 0.17.x |
-| Muse Spark 1.3 | RedlineBench, 140 tasks | Muse Spark 1.3 Contributor | not recorded |
+| 0.16 Harvey | Harvey LAB redline tasks, 90 A/B pairs | DeepSeek-V4.1-Flash-1017 in Claude Code, on Harbor Hub | 0.16.x |
+| 0.17 Harvey | Harvey LAB editing tasks, 16 tasks | DeepSeek Flash 1017 in Claude Code, served on a self-hosted MI355X | 0.17.x |
+| Muse Spark 1.3 | RedlineBench, 140 tasks | Muse Spark 1.3 Contributor in Claude Code | not recorded |
 
-Data: every trial in the six cohorts, and nothing else, is in one public dataset: [`arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts).
+Data: every trial in the six cohorts, and nothing else, is in one public dataset: [`arthrod/redline-bench-jubarte-six-cohorts`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-six-cohorts). Section 1's scores and intervals can be recomputed from its `trials` table alone (section 8).
 
-Disclosure: Arthur Souza Rodrigues writes jubarte (Jandira Technologies) and ran every trial here. RedlineBench is by Crosby Legal and micro1, and the Legal Agent Benchmark (LAB) is by Harvey. No one at Crosby, micro1, Harvey, DeepSeek, NVIDIA or Synthetic reviewed this report.
+Disclosure: Arthur Souza Rodrigues writes jubarte (Jandira Technologies) and ran every trial here. RedlineBench is by Crosby Legal and micro1, and the Legal Agent Benchmark (LAB) is by Harvey. No one at Crosby, micro1, Harvey, DeepSeek, NVIDIA, Meta or Synthetic reviewed this report.
 
 ## 1. The answer, in one table
 
@@ -35,13 +35,14 @@ How to read it:
 - **Score.** In five cohorts no difference was detected: every interval includes zero. No equivalence margin was set, so this means "no difference detected", not "equal". In the sixth, Nemotron, jubarte scored lower, and its interval excludes zero.
 - **Work.** In those same five cohorts the agent finished sooner and used fewer tokens. The saving was largest with DeepSeek on RedlineBench, where time and output roughly halved, and smallest on Harvey's tasks (6% to 14%).
 - **Comparing cohorts.** Each cohort has its own judge, the same in both of its arms (section 2), except 0.16 Harvey, whose judge changed from gpt-5.4 to gpt-6-luna during the run (section 3). Scores compare within a row, not across rows: Harvey's 0.94 and RedlineBench's 0.50 come from different rubrics and different judges.
+- **Nothing here shows jubarte improving the legal quality of a redline.** The claim it supports is narrower: in five of six cohorts, no score difference detected, for less work.
 
 Method:
 
 - A task's score in each arm is the mean of its graded trials. Its minutes and tokens are averaged over the same graded trials, so an attempt that was never graded (it never started, or the grader failed) counts in neither the score nor the cost. Appendix A counts every trial.
 - The interval is a bootstrap over tasks (10,000 draws, seed 20261122).
 - A task counts as equal when the two arms' means differ by less than 10⁻¹², which is floating-point noise.
-- Tasks without a graded trial in both arms are left out. That is why the DeepSeek rows have 130 and 125 tasks, not 140, and 0.17 Harvey has 16 of its 17.
+- Tasks without a graded trial in both arms are left out. That is why the DeepSeek rows have 130 and 125 tasks, not 140.
 - Input tokens are Harbor's totals. For the DeepSeek provider these count uncached input twice; the prices in section 6 correct for it.
 - `uv run python scripts/cohorts.py` recomputes sections 1 to 5 from `data/cohort_trials.csv`. Section 6's per-response tables come from `scripts/harness.py` (`data/harness_responses.parquet`, `data/harness_requests.csv`); its headline table and Appendix A come from `scripts/metrics.py` (`data/trial_metrics.csv`). Section 8 lists every input.
 
@@ -50,17 +51,23 @@ Method:
 | Cohort | jubarte arm | Control arm | Judge, both arms | Dates (UTC) |
 |---|---|---|---|---|
 | 0.14.0 DeepSeek | 560 trials in 17 jobs | `deepseek-full-b`, one run per task | GLM-5.3-Flash, benchmark rubric | control Oct 27 22:05 to Oct 28 05:13; jubarte Oct 28 05:14 to Oct 30 15:46 |
-| 0.14.0 Nemotron | 144 trials in 11 jobs, 12 tasks each | `nemotron-full-5090`, 140 tasks | GLM-5.3-Flash | control Oct 26 02:59 to 12:32; jubarte Oct 26 12:33 to Oct 27 00:10 |
-| 0.15.0 DeepSeek | 147 trials in 2 jobs (`study-v14b-015` and a 6-trial retry) | `deepseek-full-b` | GLM-5.3-Flash | jubarte Oct 30 21:21 to Oct 31 02:05 |
-| 0.16 Harvey | 90 trials, `harvey-hub-ab` | 90 trials, paired A/B | Harvey's LAB judge: gpt-5.4 for 106 trials, then gpt-6-luna for 74 | Nov 1 to Nov 4 |
-| 0.17 Harvey | 48 trials over 17 tasks, two to four per task | 48 trials, the same tasks and counts | Harvey's LAB judge, gpt-6-luna | Nov 4 23:33 to Nov 5 02:56 |
-| Muse Spark 1.3 | 140 trials, `muse-1-3-contributor-total` | `muse-1-3-contributor-total-ooriginal` | gpt-6.1-sol panel | jubarte Oct 16 21:02 to Oct 17 02:50; control Oct 17 02:36 to 12:46 |
+| 0.14.0 Nemotron | 144 trials in 11 jobs, 12 tasks each | `nemotron-full-5090`, 160 trials over 140 tasks | GLM-5.3-Flash | control Oct 26 02:59 to 12:32; jubarte Oct 26 12:33 to Oct 27 00:10 |
+| 0.15.0 DeepSeek | 147 trials in 2 jobs (`study-v14b-015` and a 6-trial retry) | `deepseek-full-b`, shared with 0.14.0 | GLM-5.3-Flash | jubarte Oct 30 21:21 to Oct 31 02:05 |
+| 0.16 Harvey | 90 trials, `harvey-hub-ab` | 90 trials, paired A/B | Harvey's LAB judge: gpt-5.4 for 106 trials, then gpt-6-luna for 74 | both arms Nov 1 09:08 to Nov 4 02:11 |
+| 0.17 Harvey | 48 trials over 16 tasks, three per task | 48 trials, the same tasks and counts | Harvey's LAB judge, gpt-6-luna | both arms Nov 4 23:33 to Nov 5 02:56 |
+| Muse Spark 1.3 | 140 trials, `muse-1-3-contributor-total` | `muse-1-3-contributor-total-ooriginal`, 158 trials | gpt-6.1-sol panel | jubarte Oct 16 21:02 to Oct 17 02:50; control Oct 17 02:36 to 12:46 |
 
 Three design facts matter for every row:
 
-- **The arms were not interleaved.** In each RedlineBench cohort, the jubarte arm ran after the control (Muse is the exception: its jubarte arm started first, and the arms overlap by 14 minutes). Model, harness and grader were pinned, but a change at the model provider between those days cannot be ruled out. The time and token differences are observed differences between arms run hours or days apart, not controlled causal estimates.
-- **The control ran once per task.** Control run-to-run variance is not measured here.
+- **On RedlineBench the arms were not interleaved.** In each RedlineBench cohort, the jubarte arm ran after the control (Muse is the exception: its jubarte arm started first, and the arms overlap by 14 minutes). Model, harness and grader were pinned, but a change at the model provider between those hours or days cannot be ruled out. There, the time and token differences are observed differences between arms run apart, not controlled causal estimates. The two Harvey cohorts ran both arms in the same window.
+- **The control has one graded trial per task**, except in 0.17 Harvey, which ran three per task in both arms (two graded on the four tasks where one trial never started). Control run-to-run variance is not measured elsewhere.
 - **A zero is sometimes a gate, not a judgment.** On RedlineBench, a deliverable with no tracked changes scores 0 without reaching the judge. That applies equally to both arms.
+
+### It was not one run
+
+The six cohorts hold 1,716 trials: 1,129 with jubarte and 587 controls, counting the DeepSeek control once although two cohorts use it. Together they took 641 agent hours, 115,311 model calls, 6.88 billion input tokens as Harbor recorded them, and 119.7 million output tokens.
+
+The DeepSeek and Nemotron jubarte arms are not one planned run each but a development history: 11 tuning jobs on DeepSeek and 11 on Nemotron on the 12 tuning tasks (270 trials; one DeepSeek job reran half of them), drafts carried to the other tasks, and study passes. Section 1 pools all of it against one control per cohort; section 3 separates the jobs.
 
 ## 3. Cohort by cohort
 
@@ -68,11 +75,11 @@ Three design facts matter for every row:
 
 The cohort is the whole 0.14.0 study on DeepSeek. Its jobs fall into three groups:
 
-- 11 skill drafts, each run on the same 12 tuning tasks (`ds-v2` to `ds-v12`; `ds-v4-b` reran half of `ds-v4`).
+- 11 tuning jobs on the same 12 tuning tasks: skill drafts `ds-v2` to `ds-v12` (there is no `ds-v6`), plus `ds-v4-b`, which reran half of `ds-v4`.
 - Two drafts carried to the other 128 tasks (`ds-v9-rest`, `ds-v12-rest`).
 - A study pass (`study-v13`, `v14`, `v14-rest`, `v15`).
 
-Every job against the same control:
+The jobs of 30 or more tasks, and all jobs pooled by task type, against the same control:
 
 | jubarte runs | Trials | Paired tasks | Control | jubarte | Change (95% CI) | Minutes |
 |---|---:|---:|---:|---:|---|---|
@@ -84,27 +91,25 @@ Every job against the same control:
 | All jobs, the 12 tuning tasks | 153 | 10 | 0.552 | 0.582 | +0.030 (−0.017 to +0.080) | 18.4 → 11.6 |
 | All jobs, every other task | 407 | 120 | 0.499 | 0.490 | −0.010 (−0.034 to +0.014) | 18.3 → 10.2 |
 
-Two of the 12 tuning tasks have no control grade, which is why that row pairs 10.
+The cohort's control has no graded trial on two of the 12 tuning tasks (`redline-s1-t1-g01a` and `redline-s1-t2-g01a`), which is why that row pairs 10. The pooled rows include study trials: `study-v13`, `v14` and `v15` also ran some tuning tasks. `study-v15` (14 trials) pairs on only 9 tasks: 0.241 → 0.170, −0.071 (−0.149 to +0.031), minutes 23.7 → 10.4.
 
 Three readings:
 
-- **The tuning tasks flattered the skill.** The drafts were written while watching 12 tasks. There, jubarte led by 0.030; on the 120 tasks it never saw, it trailed by 0.010. Draft means on the tuning tasks ran from 0.510 (`ds-v3`) to 0.576 (`ds-v9`). The best of them, `ds-v9`, then lost 0.025 on the other tasks. A gain found on a dozen hand-watched tasks did not carry over.
-- **One study job lost outright.** `study-v13` is the only DeepSeek job whose interval excludes zero. `study-v15`, 14 tasks, averaged 0.213 and is too small to pair.
-- **The time saving held in every job, the losing one included.** Agent minutes fell by 37% to 57%.
+- **The tuning tasks flattered the skill.** The drafts were written while watching 12 tasks. There, jubarte led by 0.030; on the 120 tasks it never saw, it trailed by 0.010. Draft means on the tuning tasks ran from 0.510 (`ds-v3`) to 0.576 (`ds-v9`). The best of them, `ds-v9`, then lost 0.025 on the other tasks. A gain found on a dozen hand-watched tasks did not carry over. Any claim built on a small development set, ours included, should be read with this in mind.
+- **One study job lost outright.** `study-v13` is the only job of 30 or more tasks whose interval excludes zero. Among the small jobs, two tuning jobs on the tuning tasks excluded it on the winning side, `ds-v2` (+0.062 on 10 tasks) and `ds-v4-b` (+0.084 on 6), which is the flattery the first reading describes.
+- **The time saving held in every job, the losing ones included.** Agent minutes fell in all 17 jobs, by 20% (`ds-v4`) to 57% (`study-v13`), `study-v15` included.
 
 ### 0.14.0 Nemotron: the one cohort where jubarte lost
 
-Eleven skill drafts on the same 12 tasks, on a 30B-parameter model with 3B active, served from one GPU. Against a control of 0.401 on those tasks, only `jubarte-v9` came out ahead (0.425). The others ranged from 0.059 (`v1`) to 0.368 (`v10`). Pooled, the cohort lost 0.093, and the interval excludes zero.
+Eleven tuning jobs (144 trials) on the same 12 tasks, on a 30B-parameter model with 3B active, served from one GPU. `jubarte-v3` ran each task twice; `jubarte-v6-v3rep` is, by its name, a repeat of it. Against a control of 0.401 on those tasks, only `jubarte-v9` came out ahead (0.425). The others ranged from 0.059 (`v1`) to 0.368 (`v10`). Pooled, the cohort lost 0.093, and the interval excludes zero. A twelfth job, `jubarte-v12-boxdown`, is in the DeepSeek dataset's archive but not in this cohort: in 10 of its 12 trials the agent exited with an error and scored 0, and the other 2 left no reward.
 
-It also did not save work. Output rose 5% and input 19%. Agent minutes fell 22%, partly because 12 jubarte trials hit the agent timeout, which caps their time. Another 13 ended in runtime errors and were not graded.
+It also did not save tokens. Output rose 5% and input 19%. Agent minutes fell 22%: model time per call fell from 18.1 to 12.5 seconds, and 12 jubarte trials hit the agent timeout, which caps their time. The jubarte arm pools eleven jobs against one control run, so the time figure is a lead, not a measured effect. Another 13 jubarte trials ended in runtime errors and were not graded.
 
-The binary was the same 0.14.0 in all eleven drafts; only the skill text changed. On this model, the instructions cost more than the tool saved. Section 6 shows one mechanism: Nemotron thinks on every response, and a long skill gives it more to think about.
+The binary was the same 0.14.0 in every job; only the skill text changed, yet job means on the same 12 tasks ran from 0.059 to 0.425. The data show that the skill text mattered on this model; they cannot say which part of it helped or hurt.
 
 ### 0.15.0 DeepSeek: the same result on the next build
 
 One study job (141 trials, 135 tasks) plus a 6-trial retry. Against the same control: −0.003 (−0.028 to +0.024), with time down 45% and output down 54%. The main job alone, on its 119 paired tasks: +0.004 (−0.022 to +0.031).
-
-The study changed builds between 0.14.0 and 0.15.0 with the same skill, and the result did not move.
 
 ### 0.16 Harvey: 90 A/B pairs, a small saving
 
@@ -112,22 +117,23 @@ Harvey LAB's redline tasks, run in pairs on Harbor Hub. Each pair is one task, r
 
 The judge changed during the run: gpt-5.4 graded 106 trials and gpt-6-luna graded 74. A pair can therefore straddle the two judges. Harvey's judge also moves about 0.02 between runs of the same file, which is larger than the difference measured here.
 
-LAB's scores sit near the ceiling (median 0.962 in the jubarte arm). There is little room for any tool to move them.
+LAB's scores sit near the ceiling (median 0.962 in both arms). There is little room for any tool to move them.
 
-### 0.17 Harvey: 17 tasks, no material saving
+### 0.17 Harvey: 16 tasks, no material saving
 
-LAB editing tasks on a self-hosted MI355X, 48 trials per arm over 17 tasks (two to four per task): −0.002 (−0.026 to +0.022) on the 16 tasks graded in both arms, with about 6% less time and tokens. Four trials in each arm never started, so 44 of 48 were graded in each; one graded jubarte trial is flagged as a failed execution. At 16 tasks, a saving of a few percent cannot be told apart from run-to-run variation.
+LAB editing tasks on a self-hosted MI355X, 48 trials per arm over 16 tasks (three per task): −0.002 (−0.026 to +0.022) on all 16, with about 6% less time and tokens. Four trials in each arm never started (one on each of four tasks; the study's design table marks them not admitted), so 44 of 48 were graded in each; one graded jubarte trial is flagged as a failed execution. At 16 tasks, a saving of a few percent cannot be told apart from run-to-run variation.
 
-### Muse Spark 1.3: no difference detected, and two caveats
+### Muse Spark 1.3: no difference detected, and three caveats
 
-On all 140 RedlineBench tasks: +0.019 (−0.033 to +0.071), with 26% less time and input and 20% less output. The judge is a gpt-6.1-sol panel in both arms.
+On all 140 RedlineBench tasks: +0.019 (−0.033 to +0.071), with 26% less time and input and 20% less output. jubarte scored higher on 57 tasks and lower on 60. The judge is a gpt-6.1-sol panel in both arms.
 
-Two caveats, both stated plainly:
+Three caveats:
 
-- **The jubarte build was not recorded.** The trials carry no binary hash.
+- **The jubarte build was not recorded.** The trials carry no binary hash. They ran nine days before the first 0.14.0 run.
 - **The jubarte arm started first.** It ran Oct 16 21:02 to Oct 17 02:50 UTC. The control started at 02:36, near the end of the jubarte arm, and ran to 12:46, so the arms overlap by 14 minutes.
+- **Timeouts shape the time figures.** Half the control trials (78 of 158) hit the 60-minute agent limit, against under a quarter of the jubarte trials (33 of 140). The limit caps both arms' minutes, the control's twice as often, so 48.8 and 36.1 understate how long each arm would have run without it, and the uncapped difference is unknown. Timed-out trials were still graded on whatever the agent had saved, and most zeros are timeouts (29 of jubarte's 41, 31 of the control's 47).
 
-Timeouts weigh on both arms. The jubarte arm hit the agent timeout in 33 of 140 trials, and 29 of those scored zero. The control hit it in 78 of 158 trials. Timed-out trials were still graded on whatever the agent had saved.
+Muse ran with jubarte twice more, on 18 October. Neither run can join the comparison above. The first launch (30 trials) failed at authentication or was cancelled. The relaunch (150 trials) was graded by two judge panels, so its trials cannot be pooled. On the 74 tasks where it has a gpt-6.1-sol grade or a zero recorded without a judge, it averages 0.221, against 0.238 for the 16 to 17 October jubarte arm and 0.268 for the control on the same tasks ([`FACTS.md`](../FACTS.md); data in the `muse_oct18_relaunch` config of [`arthrod/redline-bench-jubarte-trajectories`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-trajectories)).
 
 ## 4. Where jubarte gains and loses within RedlineBench
 
@@ -168,8 +174,9 @@ The control arms, for comparison:
 
 - DeepSeek: 1 timeout and 6 zeros in 131 trials.
 - Nemotron: 25 timeouts, 8 cancelled and 38 zeros in 160 trials.
-- Muse: 78 timeouts, 17 cancelled and 47 zeros in 158 trials.
-- 0.17 Harvey: 4 of 48 trials ungraded, the same count as the jubarte arm.
+- 0.16 Harvey: 4 timeouts, no zeros, in 90 trials.
+- 0.17 Harvey: 4 of 48 trials never started, the same count as the jubarte arm.
+- Muse: 78 timeouts, 17 cancelled, 1 runtime error and 47 zeros in 158 trials.
 
 ## 6. Time, tokens and money
 
@@ -210,7 +217,7 @@ The headline, on the same tasks as section 1: each task's mean over its graded t
 | 0.17 Harvey | 16 | 168 → 159 | 28.4 → 26.6 | n/a | 143.5k → 133.1k | $2.67 → $2.50 | $71.68 → $67.31 |
 | Muse Spark 1.3 | 140 | 47 → 34 | 48.8 → 36.1 | n/a → 35.0 | 226.3k → 181.0k | $0.076 → $0.064 | $6.22 → $5.04 |
 
-`scripts/metrics.py` prints this table; the unformatted values are in `data/metrics_paired_by_cohort.csv`. OpenRouter prices are at the base rate; DeepSeek's weekday peak doubles them. Nemotron's and 0.17 Harvey's costs are inflated because their servers reported no caching. Appendix A has every metric per trial, as mean and median, by cohort and by run. Per trial, the two Nemotron arms cover different tasks (140 against 12), so compare arms in this table, not there.
+`scripts/metrics.py` prints this table; the unformatted values are in `data/metrics_paired_by_cohort.csv`. Its tokens come from the session logs and trajectories, not Harbor's totals, so a few differ slightly from section 1. Inference minutes need a Claude Code session log, which the 0.17 Harvey trials and the Muse control do not have. OpenRouter prices are at the base rate; DeepSeek's weekday peak doubles them. Nemotron's and 0.17 Harvey's costs are inflated because their servers reported no caching. Appendix A has every metric per trial, as mean and median, by cohort and by run. Per trial, the two Nemotron arms cover different tasks (140 against 12), so compare arms in this table, not there.
 
 What the logs show:
 
@@ -218,17 +225,18 @@ What the logs show:
 - **For DeepSeek, the saving follows the call count.** Calls fell 45% (0.14.0) and 50% (0.15.0), and inference time fell about as much, at a steady 14 to 15 seconds of model time per call. In 0.17 Harvey, calls fell 5% and time 6%.
 - **Nemotron is the exception.** On its 12 tasks, calls rose 4% and the OpenRouter estimate 17%, yet time fell 22%, because model time per call fell from 18.1 to 12.5 seconds. Its jubarte arm pools eleven different drafts against one control run, so this is a lead, not a measured effect.
 - **Muse is slow per call.** In its jubarte arm a call took 62 seconds of model time (its control has no session logs), against 12 to 18 seconds for the other models. Muse made fewer calls than any other model, in both arms, and still timed out the most.
+- **For a buyer.** The same tokens cost $0.05 or $1.80 per DeepSeek task depending only on whose list price applies. Ask a vendor for calls and tokens per task, and its cache rate, not price per seat.
 
 A separate harness article, "What Claude Code asks of models that are not Claude", covers why output and thinking behave as they do here, including a fixed output ceiling on DeepSeek responses and a provider report that counts uncached input twice.
 
 ## 7. Limits
 
-- **Not interleaved.** See section 2. A provider-side change between arms cannot be ruled out.
-- **One control run per task**, so control variance is not measured.
+- **Not interleaved on RedlineBench.** See section 2. A provider-side change between arms cannot be ruled out.
+- **One graded control trial per task** outside 0.17 Harvey, so control variance is not measured.
 - **Judges differ by cohort.** Each is used in both arms of its cohort (0.16 Harvey's changed model during the run), but a GLM-5.3-Flash score and a gpt-6.1-sol score are not on the same scale. None of the RedlineBench judges is Crosby's own panel, so these scores do not compare with Crosby's leaderboard.
-- **The judge is noisy.** Harvey's judge moves about 0.02 between runs. A single task's difference says little; only the cohort average carries weight.
-- **The DeepSeek cohort includes its tuning tasks.** Section 3 separates them; the cohort-level figure does not.
-- **No frontier model as the agent.** A frontier model may take fewer turns on its own, which could shrink the time saving.
+- **The judge is noisy.** Harvey's judge moves about 0.02 between runs of the same file. A single task's difference says little; only the cohort average carries weight.
+- **The DeepSeek cohort includes its tuning tasks, and the Nemotron cohort is nothing but them.** Section 3 separates DeepSeek's; the cohort-level figure does not.
+- **No frontier model as the agent.** A frontier model may take fewer calls on its own, which could shrink the time saving.
 - **Muse's build is unrecorded, and its arms ran in reverse order.**
 
 ## 8. Reproduce
@@ -243,12 +251,16 @@ Data:
   - `files/redlinebench.parquet` holds every file of the DeepSeek and Nemotron trials and their controls, session logs included.
   - `files/harvey_016.parquet` holds 0.16 Harvey; `files/harvey_017_*.parquet` hold 0.17 Harvey.
   - `files/muse_jubarte.parquet` and `files/muse_control_trials.parquet` hold Muse Spark 1.3.
-- The 140 task definitions: `hf://datasets/arthrod/redline-bench-jubarte-tasks`.
+  - Its card lists the configs: `trials`, `redlinebench_files`, `harvey_016_files`, `harvey_017_trials`, `harvey_017_steps`, `harvey_017_design`, `harvey_017_documents`, `muse_jubarte_files` and `muse_control_trials`. It is the only public copy of the Muse jubarte arm.
+- The full RedlineBench archive the DeepSeek and Nemotron cohorts were cut from, with drafts and failed jobs outside the cohorts: [`arthrod/redline-bench-deepseek-trajectories`](https://huggingface.co/datasets/arthrod/redline-bench-deepseek-trajectories) (1,406 trial directories, 1,357 with a result), plus the Harvey studies in `harvey_lab/` and `harvey_lab_017/`.
+- The 18 October Muse relaunch (`muse_oct18_relaunch`), and earlier Claude Haiku 5.5 and GLM-5.3-flash runs on jubarte 0.12.0, which are not part of this report: [`arthrod/redline-bench-jubarte-trajectories`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-trajectories).
+- The 140 task definitions: [`arthrod/redline-bench-jubarte-tasks`](https://huggingface.co/datasets/arthrod/redline-bench-jubarte-tasks).
 
 Scores are single-judge:
 
 - For the DeepSeek and Nemotron cohorts, only GLM-5.3-Flash grades count, plus validity-gate zeros.
 - For Muse, only gpt-6.1-sol panel grades count, plus validity-gate zeros.
+- For Harvey, the LAB judge's reward as recorded.
 - Where a trial carries grades from other judges, they are ignored.
 
 Commands:
@@ -260,13 +272,33 @@ uv run python scripts/metrics.py   # section 6 headline and Appendix A
 uv run pytest                      # pins the published figures
 ```
 
+Without cloning this repository, section 1's scores and intervals come from the public table alone:
+
+```python
+import numpy as np
+import polars as pl
+
+t = pl.read_parquet("hf://datasets/arthrod/redline-bench-jubarte-six-cohorts/data/trials.parquet")
+
+def per_task(x):
+    return x.filter(pl.col("score").is_not_null()).group_by("pair_key").agg(pl.col("score").mean())
+
+for cohort in t["cohort"].unique().sort():
+    arm = lambda a: t.filter((pl.col("cohort") == cohort) & (pl.col("arm") == a))
+    p = per_task(arm("jubarte")).join(per_task(arm("control")), on="pair_key", suffix="_c").sort("pair_key")
+    d = (p["score"] - p["score_c"]).to_numpy()
+    rng = np.random.default_rng(20261122)
+    lo, hi = np.percentile(d[rng.integers(0, len(d), size=(10_000, len(d)))].mean(axis=1), [2.5, 97.5])
+    print(f"{cohort}: {len(d)} tasks, {d.mean():+.3f} ({lo:+.3f} to {hi:+.3f})")
+```
+
 ## 9. Rights
 
 - RedlineBench tasks and documents: Crosby Legal and micro1. Code MIT, data CC-BY-4.0.
 - Harvey LAB material: Harvey AI, MIT.
 - Trajectories, deliverables and grades from these runs: CC-BY-4.0.
 
-Not affiliated with or endorsed by Crosby, micro1, Harvey, DeepSeek, NVIDIA, Synthetic or Anthropic. The contracts are synthetic benchmark material, and nothing here is legal advice.
+Not affiliated with or endorsed by Crosby, micro1, Harvey, DeepSeek, NVIDIA, Meta, Synthetic or Anthropic. The contracts are synthetic benchmark material, and nothing here is legal advice.
 
 ## Appendix A. Every metric, aggregated and per run
 

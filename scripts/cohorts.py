@@ -120,7 +120,7 @@ def overview(d: pl.DataFrame) -> pl.DataFrame:
                 "cohort": c,
                 "trials": j.height,
                 "graded": g.len(),
-                "tasks": j["task"].n_unique(),
+                "tasks": j["task"].drop_nulls().n_unique(),
                 "jobs": j["job"].n_unique(),
                 "mean": round(num(g.mean()), 3),
                 "median": round(num(g.median()), 3),
@@ -205,7 +205,7 @@ def jobs(d: pl.DataFrame) -> pl.DataFrame:
         .group_by("cohort", "job")
         .agg(
             pl.len().alias("trials"),
-            pl.col("task").n_unique().alias("tasks"),
+            pl.col("task").drop_nulls().n_unique().alias("tasks"),
             pl.col("score").mean().round(3).alias("mean"),
             pl.col("minutes").median().round(1).alias("median_minutes"),
         )
@@ -222,9 +222,10 @@ def inside(d: pl.DataFrame) -> pl.DataFrame:
         groups = [
             (job, j.filter(pl.col("job") == job))
             for job in j["job"].unique().sort().to_list()
-            if j.filter(pl.col("job") == job)["task"].n_unique() >= 30
+            if j.filter(pl.col("job") == job)["task"].drop_nulls().n_unique() >= 30
         ]
-        drafts = j.group_by("job").agg(pl.col("task").n_unique().alias("n")).filter(pl.col("n") == 12)["job"]
+        n_tasks = pl.col("task").drop_nulls().n_unique().alias("n")
+        drafts = j.group_by("job").agg(n_tasks).filter(pl.col("n") == 12)["job"]
         if c != "0.14.0 Nemotron" and drafts.len():
             tune = j.filter(pl.col("job").is_in(drafts.implode()))["task"].unique()
             groups += [

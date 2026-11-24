@@ -140,3 +140,21 @@ def test_report_outcome_table_matches_status(data: pl.DataFrame) -> None:
         if cells[0] in rows:
             got = {n: int(c.split()[0]) for n, c in zip(names, cells[1:], strict=True)}
             assert got == {n: s[rows[cells[0]]][n] for n in names}, cells[0]
+
+
+def test_never_started_trials_are_not_a_task(data: pl.DataFrame) -> None:
+    """0.17 Harvey ran 16 tasks, three per arm; the four trials per arm that never started carry
+    no task id, and a null must not count as a 17th task."""
+    h = data.filter((pl.col("cohort") == "0.17 Harvey") & pl.col("task").is_null())
+    assert h.height == 8
+    o = {r["cohort"]: r for r in cohorts.overview(data).iter_rows(named=True)}
+    assert o["0.17 Harvey"]["tasks"] == 16
+    j = cohorts.jobs(data).filter(pl.col("cohort") == "0.17 Harvey")
+    assert j["tasks"].to_list() == [16]
+
+
+def test_report_states_the_harvey_017_task_count(data: pl.DataFrame) -> None:
+    o = {r["cohort"]: r for r in cohorts.overview(data).iter_rows(named=True)}
+    report = (cohorts.ROOT / "reports" / "jubarte-six-cohorts.md").read_text()
+    assert f"48 trials over {o['0.17 Harvey']['tasks']} tasks" in report
+    assert "17 tasks" not in report
