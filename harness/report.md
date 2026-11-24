@@ -140,7 +140,7 @@ Qwen Code also converts Gemini CLI extensions, so `qwen extensions install https
 
 - **Harvey LAB reads accepted text.** Its extractor runs `pandoc --track-changes=accept`, so a redline and a clean rewrite look the same to the judge. One control-arm "redline" had 39 strikethrough formatting runs and no `w:ins` or `w:del`, and scored 0.900.
 - **RedlineBench reads the markup.** Its judge gets an annotated view with deletions, insertions and comment markers. An earlier version of this report said both graders read accepted text; that was wrong for RedlineBench. So the result cannot be blamed on a grader that never sees the markup. Whether this judge rewards better markup has not been tested, so grading insensitivity is not ruled out.
-- **Judges are noisy.** 47 RedlineBench trials were graded twice by GLM-5.3-Flash; the two grades differ by 0.108 on average (median 0.062). Harvey's judge moves about 0.02 between runs.
+- **Judges are noisy.** 47 RedlineBench trials were graded twice by GLM-5.3-Flash; the two grades differ by 0.108 on average (median 0.062). List: `data/judge_regrades.csv`. Harvey's judge moves about 0.02 between runs.
 - **The RedlineBench judge was one model.** GLM-5.3-Flash, not Crosby's panel, so these scores compare with each other and not with Crosby's leaderboard.
 
 ## 6. Where jubarte costs more, or loses

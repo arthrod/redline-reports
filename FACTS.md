@@ -33,7 +33,7 @@ Development set against held-out (DeepSeek, same control):
 
 Nemotron 30B-A3B: 11 of 12 drafts below the control on the 12 tasks (lowest 0.059 against 0.401).
 
-Judge repeatability: 47 trials graded twice by GLM-5.3-Flash. The two grades differ by 0.108 on average (median 0.062, largest 0.5); the mean per-trial standard deviation is 0.077. The 47 are the trials that happened to be regraded, not a random sample.
+Judge repeatability: 47 trials have two GLM-5.3-Flash `grade.json` files under the same path in the public trajectories: the original grade and a regrade from 30 October (archive `colab_bench-2026-10-30-regrade`). 35 got a different score the second time and 12 the same. Across all 47 the two grades differ by 0.108 on average (median 0.062, largest 0.5), a mean per-trial standard deviation of 0.077; across the 35 that changed, by 0.146 (median 0.097). Only those 35 also have two `reward.json` files. The 47 are the trials that happened to be regraded, not a random sample; 17 of them are in the paired comparisons. List: `data/judge_regrades.csv`.
 
 ## Corrections (2026-11-22)
 
@@ -67,7 +67,7 @@ scripts, and Harvey LAB's docx skill with its `redline.py`.
 | RedlineBench, Haiku 5.5, first 69 | 69 | 0.394 | 0.427 | +0.033 (35 wins, 24 losses, 10 ties) |
 | RedlineBench, Haiku 5.5, second block | 33 | 0.430 | 0.412 | −0.018 (12 wins, 8 losses, 13 ties) |
 | RedlineBench, GLM-5.3-flash | 40 | 0.350 | 0.364 | +0.014 (15 / 10 / 15) |
-| RedlineBench, Nemotron 3.5 Lightning | 12 | 0.401 | 0.425 | +0.024, the best of 12 drafts; the other 11 scored 0.059 to 0.381 |
+| RedlineBench, Nemotron 3.5 Lightning | 12 | 0.401 | 0.425 | +0.024, the best of 12 drafts; the other 11 scored 0.059 to 0.381 (v2 and v3 on the 11 tasks they have a grade for) |
 | Harvey LAB redline tasks, DeepSeek | 90 pairs | 0.936 | 0.941 | +0.006, standard error 0.005 (33 / 24 / 33) |
 
 Per-task noise on RedlineBench is about ±0.04, and Harvey's judge moves about 0.02
@@ -156,8 +156,12 @@ arm on RedlineBench and in the Harvey LAB studies, mean time and mean tokens fel
 score difference was detected in any full-length arm; one 33-task arm, study-v13,
 scored lower (item 4). It does not hold for every model: Nemotron 30B scored below its
 0.401 control with 11 of 12 skill drafts (0.059 to 0.381) on the 12 development tasks.
-The lowest drafts sit far below judge noise; the closest, 0.381, is 0.020 below, inside
-the ±0.04 per-task noise above, and no interval was computed for these 12-task means.
+Two drafts, v2 and v3, have a grade on 11 of the 12: one trial each ended without one,
+and it is left out, as in every paired comparison. The lowest drafts sit far below judge
+noise; the closest, v2 at 0.381, is 0.017 below the control's 0.398 on the same 11 tasks,
+inside the ±0.04 per-task noise above. No interval was computed for these means. Scoring
+the two missing trials 0 instead puts v2 at 0.349, v3 at 0.322 and the top of the range
+at v10, 0.368; 11 of 12 drafts are below the control either way.
 Codex (item 3) has no control of its own.
 
 ## What the grading cannot see

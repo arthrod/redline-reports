@@ -6,7 +6,7 @@ Not reachable from this session: `~/temp/T/colab_bench`, `~/temp/T/1-blog-posts`
 
 ## Verdict
 
-The runs in the Hugging Face datasets are preserved. One set is not confirmed: the 41 Codex trials are in none of the datasets checked, and their presumed local copy (`~/temp/T/colab_bench`) could not be inspected, so their preservation is unconfirmed until someone looks there. The public description of the runs has seven errors, and two local folders hold unarchived material. Nothing found here changes a score. Fix the dataset cards before any post links to them.
+The runs in the Hugging Face datasets are preserved. One set is not confirmed: the 41 Codex trials are in none of the datasets checked, and their presumed local copy (`~/temp/T/colab_bench`) could not be inspected, so their preservation is unconfirmed until someone looks there. The public description of the runs has eight errors, and two local folders hold unarchived material. Nothing found here changes a score. Fix the dataset cards before any post links to them.
 
 ## Where everything is
 
@@ -50,8 +50,9 @@ How these were checked: each dataset was read through the Hugging Face API from 
    - 1,357 directories carry a `result.json`, across 49 jobs. Four jobs have none: `_aborted-deepseek-smoke-for-full`, `_aborted-jubarte-ds-v9-memkill`, `k2-smoke-high-b2048`, `truncated-grades`.
    - Fix: state both counts.
 5. **`harvey_lab/trials.parquet` has 180 trials, not 181.** One row is a folder named `analysis` read in as a lab trial (empty `task` and `pair`, null reward and tokens). The 90 pairs are right. Fix: drop the row and change the card to 180.
-6. **The archive manifests say `jubarte_version: jubarte 0.12.0`.** That is the converter that turned `.docx` into Markdown for storage, not the binary the agents ran. Fix: rename the field `docx_converter_version`.
-7. **The local-archive README stops at Oct 28.** It documents `colab_bench-2026-10-27` to `10-28c`. It does not document `10-29`, `10-30`, `10-30-regrade`, `10-31`, `jubarte-study-2026-10-30`, `jubarte-study-v14b-2026-10-31` or `redline-bench-tree-2026-11-02` (611 trials, the pi and Cline runs). Fix: add one section per folder.
+6. **Regraded files share a path with the original.** 47 `grade.json` and 35 `reward.json` files under `runs/rejudge-synthetic/GLM-5.3-Flash/` appear twice in `files-*.parquet`, once from the first grading and once from `colab_bench-2026-10-30-regrade`. Only the `archive` column separates them. Fix: say so on the card, and name the column. The 47 are listed in `data/judge_regrades.csv`.
+7. **The archive manifests say `jubarte_version: jubarte 0.12.0`.** That is the converter that turned `.docx` into Markdown for storage, not the binary the agents ran. Fix: rename the field `docx_converter_version`.
+8. **The local-archive README stops at Oct 28.** It documents `colab_bench-2026-10-27` to `10-28c`. It does not document `10-29`, `10-30`, `10-30-regrade`, `10-31`, `jubarte-study-2026-10-30`, `jubarte-study-v14b-2026-10-31` or `redline-bench-tree-2026-11-02` (611 trials, the pi and Cline runs). Fix: add one section per folder.
 
 ## Accounted for, and how
 
@@ -60,7 +61,7 @@ How these were checked: each dataset was read through the Hugging Face API from 
 - **Harvey judges changed mid-study.** gpt-5.4 graded until 2026-11-03 19:40Z, gpt-6-luna after. Each pair shares a judge, and each trial's `local-verifier/judge.txt` names it. A 12-trial gpt-5.6-luna batch was regraded and kept separately.
 - **Harvey 0.17 missing slots.** Eight of 96 registered slots never started. They are in `design` with reward missing, not zero.
 - **RedlineBench control.** Ran once per task. One task (`redline-s1-t4-g11a`) has no GLM grade because GLM hit its output limit 8 times. A 3-judge panel (gpt-5.4-mini, claude-haiku-4-5, gemini-3.1-flash-lite) graded it in the DeepSeek control (`deepseek-full-b`), both full 0.14 jubarte arms (`jubarte-ds-v9-rest`, `jubarte-ds-v12-rest`) and the Nemotron control. It is left out of every paired comparison: the full-set comparisons (ds-v9, ds-v12) use 139 tasks, not 140, the ds-v9 and ds-v12 held-out comparisons use 127 (139 minus the 12 development tasks), and the study-v14 held-out comparison uses 113.
-- **Judge repeatability.** 47 RedlineBench trials carry two GLM grades; the two grades differ by 0.108 on average (median 0.062, largest 0.5), a mean per-trial standard deviation of 0.077. These 47 are the trials that happened to be regraded, not a random sample.
+- **Judge repeatability.** 47 RedlineBench trials carry two GLM-5.3-Flash `grade.json` files under the same path in `runs/rejudge-synthetic/GLM-5.3-Flash/`: the original grade and a regrade from 30 October. In `files-*.parquet` the `archive` column tells them apart (`colab_bench-2026-10-30-regrade` is the second); the path does not. 35 of the 47 changed score and also carry two `reward.json` files; 12 kept the same score, so their `reward.json` appears once. Across all 47 the two grades differ by 0.108 on average (median 0.062, largest 0.5), a mean per-trial standard deviation of 0.077; across the 35 that changed, 0.146 (median 0.097). The per-task scores average both grades. These 47 are the trials that happened to be regraded, not a random sample; 17 are in the paired comparisons (5 `deepseek-full-b`, 8 `jubarte-ds-v9-rest`, 3 `jubarte-ds-v12-rest`, 1 `jubarte-ds-v12`). List with both grades and their archives: `data/judge_regrades.csv`.
 
 ## Harbor Hub
 
