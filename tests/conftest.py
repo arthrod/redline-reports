@@ -1,4 +1,5 @@
 import sys
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+ROOT = Path(__file__).resolve().parent.parent
+sys.path[:0] = [str(ROOT / "scripts"), str(ROOT / "tools")]

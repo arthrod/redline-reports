@@ -1,0 +1,6 @@
+arm,model,thinking,effort,max_tokens,ctx,requests,trials
+0.14.0 DeepSeek,hf:deepseek-ai/DeepSeek-V4.1-Flash-1017,"{""display"": ""updates"", ""type"": ""adaptive""}",high,16384,"{""edits"": [{""keep"": ""all"", ""type"": ""clear_thinking_20251015""}]}",22144,560
+0.14.0 Nemotron,nemotron-3.5-lightning-30b-a3b,"{""display"": ""updates"", ""type"": ""adaptive""}",high,16384,"{""edits"": [{""keep"": ""all"", ""type"": ""clear_thinking_20251015""}]}",12918,131
+0.15.0 DeepSeek,hf:deepseek-ai/DeepSeek-V4.1-Flash-1017,"{""display"": ""updates"", ""type"": ""adaptive""}",high,16384,"{""edits"": [{""keep"": ""all"", ""type"": ""clear_thinking_20251015""}]}",4961,138
+DeepSeek control,hf:deepseek-ai/DeepSeek-V4.1-Flash-1017,"{""display"": ""updates"", ""type"": ""adaptive""}",high,16384,"{""edits"": [{""keep"": ""all"", ""type"": ""clear_thinking_20251015""}]}",9156,131
+Nemotron control,nemotron-3.5-lightning-30b-a3b,"{""display"": ""updates"", ""type"": ""adaptive""}",high,16384,"{""edits"": [{""keep"": ""all"", ""type"": ""clear_thinking_20251015""}]}",14201,140
